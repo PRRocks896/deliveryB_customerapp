@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Shopertino</string>
+    <string name="facebook_app_id">446386286210335</string>
+    <string name="fb_login_protocol_scheme">fb446386286210335</string> 
+</resources>

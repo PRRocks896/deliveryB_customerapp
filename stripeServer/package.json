@@ -1,0 +1,25 @@
+{
+  "name": "instamobile-stripe-payments",
+  "description": "accepting universal payments with Stripe.",
+  "version": "0.0.1",
+  "private": true,
+  "author": "instamobile.io",
+  "license": "MIT",
+  "engines": {
+    "node": "10.x"
+  },
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "dotenv": "^4.0.0",
+    "ejs": "^2.5.7",
+    "express": "^4.15.2",
+    "morgan": "^1.9.1",
+    "stripe": "^6.28.0"
+  },
+  "devDependencies": {
+    "ngrok": "^3.2.3"
+  }
+}
