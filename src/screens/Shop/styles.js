@@ -24,6 +24,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 10
   },
+  shopCategorySkeleton: {
+    width: 350,
+    height: 80,
+    margin: 20,
+    borderRadius: 10
+  },
+  shopmainSkeleton:{
+    flexDirection: "row", alignItems: "center"
+  }
+
 });
 
 export default styles;

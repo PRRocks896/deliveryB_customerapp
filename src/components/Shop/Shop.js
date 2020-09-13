@@ -4,15 +4,12 @@ import { FlatList, View, Text } from "react-native";
 import CategoryCard from "../CategoryCard/CategoryCard";
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
-import getCategory from "../../services/Products/getCategory";
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+
+
 
 function Shop(props) {
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(colorScheme);
-  const [category, setCategory] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-
   const { extraData, categories, appConfig } = props;
 
   const onCategoryPress = item => {
@@ -24,44 +21,21 @@ function Shop(props) {
     });
   };
 
-  useEffect(() => {
-    getCategoryProducts()
-  }, [])
-
-  const getCategoryProducts = async () => {
-    setIsLoading(true)
-    const data = await getCategory();
-    setCategory(data.data)
-    setIsLoading(false)
-  }
-
-  const renderItem = ({ item, index }) => {
-    if (isLoading) {
-      console.log("call if")
-      return (
-        <SkeletonPlaceholder>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View style={{ width: 350, height: 60, margin: 20, borderRadius: 10 }} />
-          </View>
-        </SkeletonPlaceholder>
-      )
-    } else {
-      return (
+ 
+  const renderItem = ({ item, index }) => (
         <CategoryCard
           onCategoryPress={() => onCategoryPress(item)}
           imageContainerStyle={styles.categoryImageContainerStyle}
           key={index}
           item={item}
-        />
-      )
-    }
-  }
+        /> 
+  )
 
   return (
     <View style={styles.container}>
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={category}
+        data={categories}
         keyExtractor={(item, index) => index.toString()}
         extraData={extraData}
         renderItem={renderItem}

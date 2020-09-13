@@ -154,9 +154,7 @@ function Home(props) {
       }
       {
         isLoadingProduct == true ?
-
           <SkeletonPlaceholder>
-
             <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
               <View style={{ flex: 6, flexDirection: 'row' }}>
                 <View>
@@ -183,9 +181,6 @@ function Home(props) {
                 </View>
               </View>
             </View>
-
-
-
           </SkeletonPlaceholder>
 
           :
