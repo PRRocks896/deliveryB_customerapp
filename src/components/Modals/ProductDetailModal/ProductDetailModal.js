@@ -44,7 +44,7 @@ function ProductDetailModal(props) {
     }
   }
 
-  const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, alreadyAddecart } = props;
+  const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, alreadyAddecart,navigation } = props;
   const onSizeSelected = index => {
     props.item.selectedSizeIndex = index;
   };
@@ -67,42 +67,6 @@ function ProductDetailModal(props) {
     }
   };
 
-  const onPay = async () => {
-    const items = [
-      {
-        label: "Shopertino, Inc",
-        amount: `${props.item.price}`
-      }
-    ];
-    const options = {
-      requiredBillingAddressFields: ["all"],
-      billing_address_required: true,
-      total_price: `${props.item.price}`,
-      currency_code: "USD",
-      shipping_countries: ["US", "CA"], //android
-      line_items: [
-        {
-          currency_code: "USD",
-          description: "Pay Shopertino, Inc",
-          unit_price: `${props.item.price}`,
-          total_price: `${props.item.price}`,
-          quantity: "1"
-        }
-      ],
-      shippingMethods: [...props.shippingMethods]
-    };
-
-    try {
-      const token = await stripe.paymentRequestWithNativePay(options, items);
-
-      // api.sendTokenToBackend(token)
-      // You should complete the operation by calling
-      // stripe.completeApplePayRequest()
-    } catch (error) {
-      stripe.cancelNativePayRequest();
-
-    }
-  };
 
   return (
 
@@ -119,6 +83,7 @@ function ProductDetailModal(props) {
       backdropOpacity={0.5}
       deviceWidth={deviceWidth}
       deviceHeight={deviceHeight}
+      onBackButtonPress={onCancelPress}
     >
 
       <View style={styles.transparentContainer}>

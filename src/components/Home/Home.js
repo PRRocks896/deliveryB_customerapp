@@ -204,6 +204,7 @@ function Home(props) {
         productDetails={productDetails}
         appConfig={appConfig}
         alreadyAddecart={alreadyAddecart}
+        navigation={navigation}
       />
     </ScrollView>
   );

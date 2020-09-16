@@ -14,6 +14,7 @@ import getProductsbyID from "../../services/Products/getProductsbyid";
 import getbagproduct from "../../services/AddToBag/getbagProduct";
 import addtobag from "../../services/AddToBag";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { EventRegister } from 'react-native-event-listeners'
 
 class CategoryProductGridScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
