@@ -58,11 +58,26 @@ const api = {
     addToBag: {
         addToBag: Config.getURL + 'customer/wishlist'
     },
+    getbagproduct:{
+        getbagproduct : Config.getURL + 'customer/wishlistByCustomerId/'
+    },
     wishlistchangeStatus: {
-        wishlistchangeStatus: Config.getURL + 'customer/wishlist/changeStatus/'
+        wishlistchangeStatus: Config.getURL + 'customer/wishlist/'
     },
     changeMobile: {
         changeMobile: Config.getURL + 'shared/change-mobile'
+    },
+    createWallet:{
+        createWallet: Config.getURL + 'wallet'
+    },
+    addamountWallet:{
+        addamountWallet: Config.getURL + 'wallet/add/'
+    },
+    getamountwallet:{
+        getamountwallet: Config.getURL + 'wallet/'
+    },
+    payfromwallet:{
+        payfromwallet: Config.getURL + 'wallet/pay/wallet/shop/'
     },
 
 

@@ -12,12 +12,14 @@ import {
   WishlistScreen,
   SearchScreen,
   ProfileScreen,
-  ShoppingBagScreen
+  ShoppingBagScreen,
+  
 } from "../screens";
 import styles from "./styles";
 import AppStyles from "../AppStyles";
 import ShopertinoConfig from "../ShopertinoConfig";
-
+import MyWallet from '../screens/MyWallet/mywallet'
+import AddCards from '../screens/AddCards/addCards'
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: HomeScreen,
@@ -26,7 +28,9 @@ const DrawerNavigator = createDrawerNavigator(
     Wishlist: WishlistScreen,
     Search: SearchScreen,
     Profile: ProfileScreen,
-    ShoppingBag: ShoppingBagScreen
+    ShoppingBag: ShoppingBagScreen,
+    MyWallet:MyWallet,
+    AddCards:AddCards
   },
   {
     drawerPosition: "left",
@@ -115,6 +119,10 @@ const getDrawerScreenTitle = routeKey => {
       return "Profile";
     case "ShoppingBag":
       return "Shopping Bag";
+    case "MyWallet":
+      return "MyWallet";
+    case "AddCards": 
+      return "AddCards";  
     default:
       return "Home";
   }

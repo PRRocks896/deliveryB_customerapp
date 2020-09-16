@@ -103,7 +103,7 @@ function SmsAuthenticationScreen(props) {
 
   const signUpWithPhoneNumber = async (smsCode) => {
     console.log("Call else for otp verification", useridsignup, smsCode)
-
+    // props.navigation.navigate('AddProfileScreen');
     let body = JSON.stringify({ id: useridsignup, otp: smsCode })
     const data = await verifyOTP(body);
     console.log("Data in verify  screen", data)

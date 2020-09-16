@@ -17,6 +17,7 @@ import { Dialog } from 'react-native-simple-dialogs';
 import styles from "react-native-icon-badge/style";
 import AsyncStorage from "@react-native-community/async-storage";
 import { EventRegister } from 'react-native-event-listeners'
+import payfromwallet from "../../services/Wallet/payfromwallet";
 
 const options = {
   requiredBillingAddressFields: "full",
@@ -107,7 +108,11 @@ class PaymentMethodScreen extends Component {
   setOrderDetails = async () => {
     const { chargeConfirm, transactionid } = this.state
     let data = this.props.navigation.state.params
-
+    let mobile = await AsyncStorage.getItem('CurrentUser')
+    let mobileParsed= JSON.parse(mobile)
+    let phoneno = mobileParsed.data.mobile
+    let payamount = data.totalPrice
+    console.log("data =====in payment method",data.product)
     //  fo cards
     if (chargeConfirm == 'succeeded') {
       // console.log("Confirm>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
@@ -131,6 +136,33 @@ class PaymentMethodScreen extends Component {
         payment_method: 'COD',
         order_number: Math.floor(100000000000 + Math.random() * 900000000000)
       });
+    }else if(chargeConfirm == 'MyWallet'){
+      console.log("For call wallet",payamount,phoneno)
+      let body = JSON.stringify({
+        shop_mobile:phoneno,
+        amount:payamount
+      })
+      const paydata = await payfromwallet(body,phoneno)
+      if(paydata.statusCode == 200){
+        console.log("for wallte",paydata.data.transaction_id)
+        this.props.navigation.replace("ShippingAddress", {
+          appConfig: this.appConfig,
+          transactionid: paydata.data.transaction_id,
+          customerID: data.customerID,
+          bagproduct: data.product,
+          totalammount: payamount,
+          payment_method: 'WALLET',
+          order_number: Math.floor(100000000000 + Math.random() * 900000000000)
+        });
+      }else{
+        Alert.alert(
+          "",
+          data.messageCode,
+          [
+            { text: "Ok", },
+          ],
+        );
+      }
     }
     else {
       Alert.alert(
@@ -264,8 +296,18 @@ class PaymentMethodScreen extends Component {
         { text: "Ok", },
       ],
     );
-
-
+  }
+  pressmywallet = () => {
+    // EventRegister.emit("CODdata", "true")
+    console.log("calll wallet")
+    this.setState({ chargeConfirm: 'MyWallet' })
+    Alert.alert(
+      "Pay from wallet",
+      "Now you can able to click next",
+      [
+        { text: "Ok", },
+      ],
+    );
   }
 
   render() {
@@ -285,6 +327,7 @@ class PaymentMethodScreen extends Component {
           cardNumbersEnding={this.props.cardNumbersEnding}
           paymentMethods={this.props.paymentMethods}
           totalprice={this.props.navigation.state.params.totalPrice}
+          onmywalletpress={this.pressmywallet}
 
         />
         {/* dialog box open for add new card */}

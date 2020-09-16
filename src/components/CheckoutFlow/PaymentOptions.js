@@ -19,7 +19,7 @@ import { EventRegister } from 'react-native-event-listeners'
 function PaymentOptions(props) {
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(colorScheme);
-  const { paymentMethods, onAddNewCard, onpressCod, totalprice } = props;
+  const { paymentMethods, onAddNewCard, onpressCod, onmywalletpress,totalprice } = props;
 
   const [selectedMethodIndex, setSelectedMethodIndex] = useState(0);
   const [getCards, setGetCards] = useState([])
@@ -278,6 +278,18 @@ function PaymentOptions(props) {
         </View>
         <View style={styles.addNewCardTitleContainer}>
           <Text style={styles.addNewCardTitle}>{"Cod"}</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={onmywalletpress}
+        style={styles.addNewCardContainer}
+      >
+        <View style={styles.addNewCardIconContainer}>
+          <Icon name={'payment'} size={25} />
+        </View>
+        <View style={styles.addNewCardTitleContainer}>
+          <Text style={styles.addNewCardTitle}>{"My Wallete"}</Text>
         </View>
       </TouchableOpacity>
 

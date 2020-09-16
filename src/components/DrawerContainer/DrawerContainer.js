@@ -161,6 +161,22 @@ function DrawerContainer(appConfig) {
               navigation.navigate("Order", { appConfig });
             }}
           />
+           <DrawerItem
+            title="ADD CARDS"
+            source={AppStyles.imageSet.creditCard}
+            onPress={() => {
+              navigation.closeDrawer()
+              navigation.navigate("AddCards", { appConfig });
+            }}
+          />
+           <DrawerItem
+            title="MY WALLET"
+            source={AppStyles.imageSet.payment}
+            onPress={() => {
+              navigation.closeDrawer()
+              navigation.navigate("MyWallet", { appConfig });
+            }}
+          />
           <DrawerItem
             title="PROFILE"
             source={AppStyles.iconSet.profileDrawer}

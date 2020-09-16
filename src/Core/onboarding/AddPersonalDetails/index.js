@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Keyboard, Picker, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import addProfile from '../../../services/Profile';
+import createWallet from '../../../services/Wallet/createWallet';
+import api from '../../../services/url.service';
 
 const AddProfileScreen = props => {
 
@@ -15,12 +17,14 @@ const AddProfileScreen = props => {
     const [passwordError, setpasswordError] = useState('')
     const [apiError, setApiError] = useState('')
 
-
+    
 
     const submit = async () => {
         let userId = await AsyncStorage.getItem('useridSignup')
-        console.log("userid========================add details", userId)
-        isLoading(true)
+        let phoneno = await AsyncStorage.getItem('userSignupData')
+        let parsedphonNo = JSON.parse(phoneno)
+        console.log("userid========================add details",userId, parsedphonNo.data.mobile)
+        setisLoading(true)
         if (name != '' && email != '', password != '') {
 
             let body = JSON.stringify({
@@ -32,14 +36,22 @@ const AddProfileScreen = props => {
                 deliverytype: "0"
             })
             const data = await addProfile(body);
-            console.log("data in profile details", data)
-            console.log("===================", props.navigation.popToTop)
-            props.navigation.popToTop('AuthStackNavigator')
             AsyncStorage.setItem('username', name);
             AsyncStorage.setItem('email', email);
-            // console.log("dta in profile", data)
-            if (data.success) {
-                // props.navigation.navigate('MainStack', { user: userId });
+            setisLoading(false)
+            if (data.statusCode == 200) {
+                let body = JSON.stringify({
+                    user_mobile:parsedphonNo.data.mobile,
+                    name:name
+                })
+                const data = await createWallet(body)
+                console.log("data ", data)
+                if(data.statusCode == 200){
+                    setisLoading(false)
+                      props.navigation.popToTop('AuthStackNavigator')
+                }else{
+                    setApiError(data.messageCode)
+                }
             } else {
                 setApiError('Something went wrong')
             }
@@ -150,10 +162,16 @@ const AddProfileScreen = props => {
                                 <Text style={styles.buttonText}>Submit</Text>
                             </TouchableOpacity>
                             :
-                            <ActivityIndicator color={colors.whiteColor} size="large" />
+                            <ActivityIndicator color={'#000'} size="large" />
                         }
                     </TouchableOpacity>
-
+                    {
+                        apiError != '' ?
+                            <View>
+                                <Text style={styles.error}>{apiError}</Text>
+                            </View>
+                            : null
+                    }
                 </View>
             </ScrollView>
         </SafeAreaView>

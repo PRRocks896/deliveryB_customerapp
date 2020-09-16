@@ -72,7 +72,9 @@ class ShoppingBagScreen extends Component {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
 
     let userid = await AsyncStorage.getItem('userId')
+    console.log("userid", userid)
     const getdata = await getbagproduct(userid)
+    console.log("=================",getdata)
     this.setState({ allShoppingBag: getdata.data })
     if (getdata.data.length !== 0) this.setState({ isShowData: true })
     else if (getdata.data.length == 0) this.setState({ isShowData: false })

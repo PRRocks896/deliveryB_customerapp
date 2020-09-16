@@ -115,7 +115,8 @@ const iconSet = {
   jcb: require("../assets/icons/jcb.png"),
   mastercard: require("../assets/icons/mastercard.png"),
   unionpay: require("../assets/icons/unionpay.png"),
-  saveAddress: require("../assets/icons/location.png")
+  saveAddress: require("../assets/icons/location.png"),
+ 
 };
 
 const fontFamily = {

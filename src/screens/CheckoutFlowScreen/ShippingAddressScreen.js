@@ -100,6 +100,8 @@ class ShippingAddressScreen extends Component {
     let data = this.props.navigation.state.params
     console.log(this.state.currentAddressId)
     if (this.state.currentAddressId !== '') {
+
+      console.log("in shipping addresss",data.bagproduct)
       this.props.navigation.replace("Checkout", {
         appConfig: this.appConfig,
         transactionid: data.transactionid,

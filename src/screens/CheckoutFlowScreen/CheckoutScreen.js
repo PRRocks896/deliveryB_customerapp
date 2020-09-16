@@ -58,6 +58,8 @@ class CheckoutScreen extends Component {
     let paramdata = this.props.navigation.state.params
     let bagData = paramdata.bagproduct
     let shopsid = []
+
+    console.log("bagData",bagData)
     bagData.map((item) => {
       shopsid.push(item.products[0].product_id.shop_id);
     });
@@ -104,12 +106,16 @@ class CheckoutScreen extends Component {
     })
     // console.log("=================", JSON.stringify(result))
     const placeorderresponse = await placeOrder(JSON.stringify(result));
-    if (placeorderresponse.success) {
+    if (placeorderresponse.statusCode == 200) {
       this.setState({ isLoading: false })
       this.setState({ dialogVisible: false })
+      console.log("=====================================place order",bagData,placeorderresponse)
       bagData.map(async (item) => {
+        console.log("item._id",item._id,item)
         const cartStatus = await changeCartStatus(item._id)
-        if (cartStatus.success) {
+        console.log("calll cartStatus",cartStatus)
+        if (cartStatus.statusCode == 200) {
+          console.log("calllllll :::::::::::::::::::::::::::::::::::::")
           this.props.navigation.navigate("Order", { appConfig: this.appConfig });
         }
       })
