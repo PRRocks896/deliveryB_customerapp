@@ -52,6 +52,12 @@ class ShoppingBagScreen extends Component {
       isShowData: true
     }
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+    this.props.navigation.addListener(
+      'didFocus',
+      payload => {
+          this.componentDidMount()
+
+      });
 
   }
   componentWillUnmount() {
@@ -81,7 +87,6 @@ class ShoppingBagScreen extends Component {
     this.props.setTotalShoppingBagPrice();
     const total = getdata.data.map(item => item.amount).reduce((prev, next) => prev + next);
     this.setState({ totalPayamount: total })
-
   }
 
 

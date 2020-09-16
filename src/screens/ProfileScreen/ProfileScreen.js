@@ -45,7 +45,7 @@ class ProfileScreen extends Component {
   onItemPress = (routeName, title) => {
     this.props.navigation.navigate(routeName, {
       title: title ? title : routeName,
-      appConfig: this.appConfig
+      appConfig: this.appConfig,
     });
   };
 

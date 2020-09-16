@@ -33,12 +33,6 @@ function Profile(props) {
           iconSource={AppStyles.iconSet.saveAddress}
         />
         <ProfileItem
-          title={"Order History"}
-          onPress={() => onItemPress("Order")}
-          itemIconStyle={{ tintColor: "#baa3f3" }}
-          iconSource={AppStyles.iconSet.orderDrawer}
-        />
-        <ProfileItem
           title={"Settings"}
           onPress={() => onItemPress("Settings")}
           itemIconStyle={{ tintColor: "#a6a4b1" }}

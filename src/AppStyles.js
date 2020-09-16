@@ -77,7 +77,8 @@ const imageSet = {
   googlePay: require("../assets/images/google-pay.png"),
   googlePayColored: require("../assets/images/google-pay-colored.png"),
   creditCard: require("../assets/images/credit-card.png"),
-  box: require("../assets/images/box.png")
+  box: require("../assets/images/box.png"),
+  
 };
 
 const iconSet = {
@@ -116,6 +117,7 @@ const iconSet = {
   mastercard: require("../assets/icons/mastercard.png"),
   unionpay: require("../assets/icons/unionpay.png"),
   saveAddress: require("../assets/icons/location.png"),
+  rupee:require("../assets/icons/rupee.png")
  
 };
 

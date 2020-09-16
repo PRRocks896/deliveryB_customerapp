@@ -13,6 +13,8 @@ import { Searchbar } from 'react-native-paper';
 import searchproducts from '../../services/Search/index'
 import getbagproduct from "../../services/AddToBag/getbagProduct";
 import addtobag from "../../services/AddToBag";
+import { EventRegister } from 'react-native-event-listeners'
+
 class SearchScreen extends Component {
   constructor(props) {
     super(props);
@@ -61,9 +63,48 @@ class SearchScreen extends Component {
 
     let userid = await AsyncStorage.getItem('userId')
     let products = []
+    let found;
     const getdata = await getbagproduct(userid)
-    let found = getdata.data.some(i => i.products[0].product_id.id == item.productDetail._id)
-    if (found == false) {
+    // console.log("getdata=======================",getdata)
+    if (getdata.data !== null) {
+      found = getdata.data.some(i => i.products[0].product_id.id == item.productDetail._id)
+      console.log("Found", found)
+
+      if (found == false) {
+        this.setState({ isProductDetailVisible: false });
+        products.push({
+          product_id: item.productDetail._id,
+          price: item.productDetail.price,
+          quantity: 1,
+          name: item.name,
+          productImage: item.productImage
+        })
+        let body = {
+          customer_id: userid,
+          shop_id: item.productDetail.shop_id,
+          amount: item.productDetail.price,
+          products: products
+        }
+        const data = await addtobag(JSON.stringify(body))
+        console.log("data===================================================",data)
+        const getdata = await getbagproduct(userid)
+        // console.log("getdata================",getdata)
+        if (getdata.success && getdata.data !== null) {
+          EventRegister.emit('cartlength', getdata.data.length)
+        }
+      } else {
+        this.setState({ alreadyAddecart: true })
+        Alert.alert(
+          '',
+          "Already added",
+          [{ text: 'OK' }],
+          {
+            cancelable: false,
+          },
+        );
+        this.setState({ isProductDetailVisible: false });
+      }
+    } else {
       this.setState({ isProductDetailVisible: false });
       products.push({
         product_id: item.productDetail._id,
@@ -79,25 +120,8 @@ class SearchScreen extends Component {
         products: products
       }
       const data = await addtobag(JSON.stringify(body))
-      const getdata = await getbagproduct(userid)
-      if (getdata.success) {
-        console.log("in home  screen", getdata.data.length)
-        EventRegister.emit('cartlength', getdata.data.length)
-      }
-
-    } else {
-      this.setState({ alreadyAddecart: true })
-      Alert.alert(
-        '',
-        "Already added",
-        [{ text: 'OK' }],
-        {
-          cancelable: false,
-        },
-      );
-      this.setState({ isProductDetailVisible: false });
+      console.log("when null ", data)
     }
-
 
     // this.setState({ isProductDetailVisible: false });
   };

@@ -79,6 +79,9 @@ const api = {
     payfromwallet:{
         payfromwallet: Config.getURL + 'wallet/pay/wallet/shop/'
     },
+    walletTransaction:{
+        walletTransaction: Config.getURL+ 'wallet/transactions/'
+    },
 
 
 

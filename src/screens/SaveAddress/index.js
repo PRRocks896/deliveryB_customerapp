@@ -70,6 +70,8 @@ class SaveAddress extends Component {
         const data = await getAddressviaUSer(userid);
         if (data.data) {
             this.setState({ address: data.data.address, addressid: data.data._id })
+            console.log("address id ", data.data._id)
+            AsyncStorage.setItem("AddressId", data.data._id)
             this.state.address.map((item) => {
                 console.log(item.isDefault)
                 if (item.isDefault == true) this.setState({ value: item._id })

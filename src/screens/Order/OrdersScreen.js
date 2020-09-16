@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Order } from "../../components";
-import { firebaseDataManager } from "../../apis";
 import {
   loadOrderHistory,
   setSubtotalPrice,
@@ -12,7 +10,7 @@ import {
 } from "../../redux/";
 import getOrder from "../../services/Order";
 import AsyncStorage from "@react-native-community/async-storage";
-import { StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler } from 'react-native'
 import Appstyle from '../../AppStyles'
 import moment from "moment";
 class OrdersScreen extends Component {
@@ -21,6 +19,8 @@ class OrdersScreen extends Component {
     this.appConfig =
       props.navigation.state.params.appConfig ||
       props.navigation.getParam("appConfig");
+      this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+
     this.state = {
       orderHistory: [],
       isShowData: true
@@ -28,7 +28,7 @@ class OrdersScreen extends Component {
     this.props.navigation.addListener(
       'didFocus',
       payload => {
-        this.getOrders()
+        this.componentDidMount()
 
       });
 
@@ -36,10 +36,22 @@ class OrdersScreen extends Component {
 
   componentDidMount() {
     this.getOrders()
-  }
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
 
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+ /**
+   * for back to prev screen
+   */
+  handleBackButtonClick() {
+      this.props.navigation.goBack(null);
+      return true;
+    
+  }
   getOrders = async () => {
-    let userid = await AsyncStorage.getItem('userId')
+    let addressid = await AsyncStorage.getItem('AddressId')
     let body = JSON.stringify({
       "where": {
         "available": "true"
@@ -51,12 +63,12 @@ class OrdersScreen extends Component {
         "page": 1
       }
     })
-    const data = await getOrder(userid, body)
-    console.log("length", data.data)
+    const data = await getOrder(addressid, body)
+
     if (data.data.length !== 0) this.setState({ isShowData: true })
     else if (data.data.length == 0 || data.data.length == undefined) this.setState({ isShowData: false })
     if (data.success) {
-      this.setState({ orderHistory: data.data.list })
+      this.setState({ orderHistory: data.data })
     }
   }
 
@@ -68,8 +80,7 @@ class OrdersScreen extends Component {
       <FlatList
         data={orderHistory}
         renderItem={(item, index) => {
-          const date = moment(item.item.updatedAt.split('T')[0]).format('DD/MM/YYYY')
-          const time = moment(item.item.updatedAt.split('T')[1], "HH:mm").format("LT")
+          const date = moment(item.createdAt).format('DD/MM/YYYY HH:mm')
           return (
             <View style={styles.card}>
               <View style={styles.row}>
@@ -87,7 +98,7 @@ class OrdersScreen extends Component {
               </View>
 
               <View style={[styles.row, { position: 'absolute', right: 10, bottom: 10, marginTop: 10 }]}>
-                <Text style={styles.timedate}>{date} - {time}</Text>
+                <Text style={styles.timedate}>{date}</Text>
               </View>
 
               <View>
@@ -109,7 +120,6 @@ class OrdersScreen extends Component {
         </>
       );
     } else {
-      console.log("call else")
       return (
         <View style={styles.emptyView}>
           <Text style={[styles.text, { fontSize: 20 }]}>No Orders or transactions found.</Text>
