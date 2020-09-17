@@ -30,6 +30,7 @@ import signin from '../../../services/SignIn';
 import getProfileDetails from '../../../services/Profile/getProfile';
 import deviceStorage from '../../../utils/deviceStorage';
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import getAddressviaUSer from '../../../services/SavedAddress/getAddressviaUser';
 function SmsAuthenticationScreen(props) {
   // console.log("props,", props.navigation.state.params.isSigningUp, props)
   const appConfig =
@@ -68,11 +69,18 @@ function SmsAuthenticationScreen(props) {
   }, [phoneRef]);
 
 
-
+/**
+ * For show & hide Password
+ */
   const checkVisibility = () => {
     setvisibility(!visibility)
   }
 
+  /**
+   * 
+   * @param {number} userValidPhoneNumber user phone no
+   * for Sign up user
+   */
   const signInWithPhoneNumber = async (userValidPhoneNumber) => {
     console.log("For Sign up", userValidPhoneNumber)
     setLoading(true);
@@ -89,7 +97,6 @@ function SmsAuthenticationScreen(props) {
       AsyncStorage.setItem("userSignupData", JSON.stringify(data))
       setuseridsignup(data.data._id)
       AsyncStorage.setItem("useridSignup", data.data._id)
-      let userId = await AsyncStorage.getItem('userSignupData')
     } else {
       setLoading(false);
       Alert.alert(
@@ -101,6 +108,11 @@ function SmsAuthenticationScreen(props) {
     }
   };
 
+  /**
+   * 
+   * @param {number} smsCode otp code
+   * For Otp verification
+   */
   const signUpWithPhoneNumber = async (smsCode) => {
     console.log("Call else for otp verification", useridsignup, smsCode)
     // props.navigation.navigate('AddProfileScreen');
@@ -131,26 +143,8 @@ function SmsAuthenticationScreen(props) {
       setPhoneNumber(userValidPhoneNumber);
       console.log("in onPressSend", isSigningUp, userValidPhoneNumber)
       if (!isSigningUp) {
-        authManager.retrieveUserByPhone(userValidPhoneNumber).then(response => {
-          if (response.success) {
-            signInWithPhoneNumber(userValidPhoneNumber);
-          } else {
-            setPhoneNumber(null);
-            setLoading(false);
-            Alert.alert(
-              '',
-              IMLocalized(
-                'You cannot log in. There is no account with this phone number.',
-              ),
-              [{ text: IMLocalized('OK') }],
-              {
-                cancelable: false,
-              },
-            );
-          }
-        });
       } else {
-
+        // Sign up user
         signInWithPhoneNumber(userValidPhoneNumber);
       }
     } else {
@@ -173,28 +167,17 @@ function SmsAuthenticationScreen(props) {
     setCountryModalVisible(false);
   };
 
+  /**
+   * 
+   * @param {number} newCode otp code
+   * for otp verification check
+   */
   const onFinishCheckingCode = async (newCode) => {
     console.log("newCode", newCode, isSigningUp)
     setLoading(true);
     if (isSigningUp) {
       signUpWithPhoneNumber(newCode);
     } else {
-
-      authManager.loginWithSMSCode(newCode, verificationId).then(response => {
-        if (response.error) {
-          Alert.alert(
-            '',
-            localizedErrorMessage(response.error),
-            [{ text: IMLocalized('OK') }],
-            { cancelable: false },
-          );
-        } else {
-          const user = response.user;
-          // props.setUserData({ user });
-          props.navigation.navigate('MainStack', { user: user });
-        }
-        setLoading(false);
-      });
     }
   };
 
@@ -236,6 +219,9 @@ function SmsAuthenticationScreen(props) {
     );
   };
 
+  /**
+   * otp box open 
+   */
   const codeInputRender = () => {
     console.log("for otp scrren ")
     return (
@@ -253,7 +239,6 @@ function SmsAuthenticationScreen(props) {
   };
 
   const renderAsSignUpState = () => {
-    // console.log("renderAsSignUpState")
     return (
       <>
         <Text style={styles.title}>{IMLocalized('Create new account')}</Text>
@@ -262,6 +247,10 @@ function SmsAuthenticationScreen(props) {
       </>
     );
   };
+
+  /**
+   * For user Login 
+   */
   const loginfun = async () => {
     setLoading(true)
     let userId = await AsyncStorage.getItem('userId')
@@ -289,9 +278,7 @@ function SmsAuthenticationScreen(props) {
       } else {
         setLoading(false)
         getCurrentProfileDetails()
-        // props.setUserData({
-        //   user: data.userId,
-        // });
+        getAddressid()
         props.navigation.navigate('MainStack', { user: data.userId });
       }
     } else {
@@ -307,6 +294,23 @@ function SmsAuthenticationScreen(props) {
     }
 
   }
+
+  /**
+   * Get Address id 
+   * For get Orders
+   */
+  const getAddressid = async () => {
+    let userid = await AsyncStorage.getItem('userId')
+    // get address via user
+    const data = await getAddressviaUSer(userid);
+    if (data.data) {
+      console.log("address id ", data.data._id)
+      AsyncStorage.setItem("AddressId", data.data._id)
+    }
+  }
+/**
+ * Get Profile Details
+ */
   const getCurrentProfileDetails = async () => {
 
     let loginData = await AsyncStorage.getItem('LoginData')
@@ -330,6 +334,9 @@ function SmsAuthenticationScreen(props) {
     }
   }
 
+  /**
+   * For Display Login Screen
+   */
   const renderAsLoginState = () => {
 
     return (

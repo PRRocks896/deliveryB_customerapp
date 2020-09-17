@@ -107,8 +107,7 @@ class CheckoutScreen extends Component {
     // console.log("=================", JSON.stringify(result))
     const placeorderresponse = await placeOrder(JSON.stringify(result));
     if (placeorderresponse.statusCode == 200) {
-      this.setState({ isLoading: false })
-      this.setState({ dialogVisible: false })
+      this.setState({ dialogVisible: false ,isLoading: false})
       console.log("=====================================place order",bagData,placeorderresponse)
       bagData.map(async (item) => {
         console.log("item._id",item._id,item)
@@ -117,9 +116,20 @@ class CheckoutScreen extends Component {
         if (cartStatus.statusCode == 200) {
           console.log("calllllll :::::::::::::::::::::::::::::::::::::")
           this.props.navigation.navigate("Order", { appConfig: this.appConfig });
+        }else{
+          this.setState({ dialogVisible: false ,isLoading: false})
+          Alert.alert(
+            "",
+            cartStatus.messageCode,
+            [
+              { text: "OK" }
+            ],
+            { cancelable: true }
+          );
         }
       })
     } else {
+      this.setState({ dialogVisible: false ,isLoading: false})
       Alert.alert(
         "",
         placeorderresponse.messageCode,

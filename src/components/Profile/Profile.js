@@ -45,13 +45,7 @@ function Profile(props) {
           iconSource={AppStyles.iconSet.contactUs}
         />
       </View>
-      <View style={styles.footerButtonContainer}>
-        <FooterButton
-          footerContainerStyle={styles.footerContainerStyle}
-          title={"Logout"}
-          onPress={onLogout}
-        />
-      </View>
+ 
     </ScrollView>
   );
 }

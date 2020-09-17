@@ -8,12 +8,10 @@ import {
   setShoppingBag,
   setProductPricesBYQty
 } from "../../redux/";
-import { View, AsyncStorage } from "react-native";
+import { View } from "react-native";
 import { Searchbar } from 'react-native-paper';
 import searchproducts from '../../services/Search/index'
-import getbagproduct from "../../services/AddToBag/getbagProduct";
-import addtobag from "../../services/AddToBag";
-import { EventRegister } from 'react-native-event-listeners'
+import addToBagProduct from "../../components/AddTobagProduct/addbagproduct";
 
 class SearchScreen extends Component {
   constructor(props) {
@@ -23,6 +21,7 @@ class SearchScreen extends Component {
       product: {},
       searchQuery: '',
       searchResultProducts: [],
+      alreadyAddecart:false
     };
     this.appConfig =
       props.navigation.state.params.appConfig ||
@@ -47,83 +46,16 @@ class SearchScreen extends Component {
     );
   };
 
+  /**
+   * @param {any} item product  add to bag
+   */
   onAddToBag = async (item) => {
-    // const uniqueId = uuid();
-    // const itemCopy = { ...item, shoppingBagId: uniqueId };
-    // const product = {
-    //   id: uniqueId,
-    //   qty: 1,
-    //   totalPrice: Number(item.price)
-    // };
+    this.setState({isProductDetailVisible : false})
+    const {alreadyAddecart} = this.state
 
-    // updatePricesByQty(product, this.props.productPricesByQty, pricesByQty => {
-    //   this.props.setShoppingBag(itemCopy);
-    //   this.props.setProductPricesBYQty(pricesByQty);
-    // });
-
-    let userid = await AsyncStorage.getItem('userId')
-    let products = []
-    let found;
-    const getdata = await getbagproduct(userid)
-    // console.log("getdata=======================",getdata)
-    if (getdata.data !== null) {
-      found = getdata.data.some(i => i.products[0].product_id.id == item.productDetail._id)
-      console.log("Found", found)
-
-      if (found == false) {
-        this.setState({ isProductDetailVisible: false });
-        products.push({
-          product_id: item.productDetail._id,
-          price: item.productDetail.price,
-          quantity: 1,
-          name: item.name,
-          productImage: item.productImage
-        })
-        let body = {
-          customer_id: userid,
-          shop_id: item.productDetail.shop_id,
-          amount: item.productDetail.price,
-          products: products
-        }
-        const data = await addtobag(JSON.stringify(body))
-        console.log("data===================================================",data)
-        const getdata = await getbagproduct(userid)
-        // console.log("getdata================",getdata)
-        if (getdata.success && getdata.data !== null) {
-          EventRegister.emit('cartlength', getdata.data.length)
-        }
-      } else {
-        this.setState({ alreadyAddecart: true })
-        Alert.alert(
-          '',
-          "Already added",
-          [{ text: 'OK' }],
-          {
-            cancelable: false,
-          },
-        );
-        this.setState({ isProductDetailVisible: false });
-      }
-    } else {
-      this.setState({ isProductDetailVisible: false });
-      products.push({
-        product_id: item.productDetail._id,
-        price: item.productDetail.price,
-        quantity: 1,
-        name: item.name,
-        productImage: item.productImage
-      })
-      let body = {
-        customer_id: userid,
-        shop_id: item.productDetail.shop_id,
-        amount: item.productDetail.price,
-        products: products
-      }
-      const data = await addtobag(JSON.stringify(body))
-      console.log("when null ", data)
-    }
-
-    // this.setState({ isProductDetailVisible: false });
+    //add to bag product call from component
+    addToBagProduct(item, alreadyAddecart)
+   
   };
 
   onModalCancel = () => {
@@ -150,6 +82,7 @@ class SearchScreen extends Component {
           <Searchbar
             placeholder="Search"
             onChangeText={(query) => this.onChangeSearch(query)}
+            value={this.state.searchQuery}
           />
         </View>
         <Search

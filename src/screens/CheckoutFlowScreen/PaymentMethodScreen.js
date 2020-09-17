@@ -143,6 +143,7 @@ class PaymentMethodScreen extends Component {
         amount:payamount
       })
       const paydata = await payfromwallet(body,phoneno)
+      console.log("Pay from wallet",paydata)
       if(paydata.statusCode == 200){
         console.log("for wallte",paydata.data.transaction_id)
         this.props.navigation.replace("ShippingAddress", {
@@ -155,9 +156,10 @@ class PaymentMethodScreen extends Component {
           order_number: Math.floor(100000000000 + Math.random() * 900000000000)
         });
       }else{
+        
         Alert.alert(
           "",
-          data.messageCode,
+          paydata.messageCode,
           [
             { text: "Ok", },
           ],
@@ -286,28 +288,15 @@ class PaymentMethodScreen extends Component {
    * for cod method
    */
   pressCodMethod = () => {
-    console.log("casll cod")
-    EventRegister.emit("CODdata", "true")
+    EventRegister.emit("CODdata", "COD")
     this.setState({ chargeConfirm: 'COD' })
-    Alert.alert(
-      "You select COD Method",
-      "Now you can able to click next",
-      [
-        { text: "Ok", },
-      ],
-    );
   }
+  /**
+   * For Wallet method
+   */
   pressmywallet = () => {
-    // EventRegister.emit("CODdata", "true")
-    console.log("calll wallet")
+    EventRegister.emit("CODdata", "MyWallet")
     this.setState({ chargeConfirm: 'MyWallet' })
-    Alert.alert(
-      "Pay from wallet",
-      "Now you can able to click next",
-      [
-        { text: "Ok", },
-      ],
-    );
   }
 
   render() {

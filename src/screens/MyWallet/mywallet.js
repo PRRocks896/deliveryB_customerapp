@@ -95,7 +95,7 @@ export default class MyWallet extends Component {
     render() {
         const { isLoading, amount, walleteamount } = this.state
         return (
-            <View style={styles.container}>
+            <View style={[styles.container,{backgroundColor:'#fff'}]}>
                 <View style={[styles.card,styles.row]}>
                     <Image style={styles.imgrs} source={AppStyles.iconSet.rupee}/>
                     <Text style={styles.rstxt}>{walleteamount}</Text>

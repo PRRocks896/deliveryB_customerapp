@@ -11,13 +11,16 @@ import {
 import getbagproduct from "../../services/AddToBag/getbagProduct";
 import addtobag from "../../services/AddToBag";
 import { Alert, AsyncStorage } from 'react-native'
+import addToBagProduct from "../../components/AddTobagProduct/addbagproduct";
 
 class WishlistScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isProductDetailVisible: false,
-      product: {}
+      product: {},
+      alreadyAddecart:false
+
     };
     this.appConfig =
       props.navigation.state.params.appConfig ||
@@ -25,40 +28,11 @@ class WishlistScreen extends Component {
   }
 
   onAddToBag = async (item) => {
-    let userid = await AsyncStorage.getItem('userId')
-    let products = []
-    const getdata = await getbagproduct(userid)
-    let found = getdata.data.some(i => i.products[0].product_id.id == item.productDetail._id)
-    console.log("Found", found)
-    if (found == false) {
-      this.setState({ isProductDetailVisible: false });
-      products.push({
-        product_id: item.productDetail._id,
-        price: item.productDetail.price,
-        quantity: 1,
-        name: item.name,
-        productImage: item.productImage
-      })
-      let body = {
-        customer_id: userid,
-        shop_id: item.productDetail.shop_id,
-        amount: item.productDetail.price,
-        products: products
-      }
-      const data = await addtobag(JSON.stringify(body))
+    this.setState({isProductDetailVisible : false})
+    const {alreadyAddecart} = this.state
 
-    } else {
-      this.setState({ alreadyAddecart: true })
-      Alert.alert(
-        '',
-        "Already added",
-        [{ text: 'OK' }],
-        {
-          cancelable: false,
-        },
-      );
-      this.setState({ isProductDetailVisible: false });
-    }
+    //add to bag product call from component
+    addToBagProduct(item, alreadyAddecart)
 
   };
 

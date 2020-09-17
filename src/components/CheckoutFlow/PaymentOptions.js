@@ -31,13 +31,21 @@ function PaymentOptions(props) {
   const [transactionId, setTransactionId] = useState('')
   const [chargeConfirm, setChargeConfirm] = useState('')
   const [isLoading, setisLoading] = useState(false)
+  const [isSelect , setIsSelect] = useState('')
 
 
 
   useEffect(() => {
     props.setSelectedPaymentMethod(props.paymentMethods[0]);
     EventRegister.addEventListener('CODdata', (data) => {
-      if (data == "true") return setvalueRadio('')
+      if (data == "COD") {
+        setvalueRadio('')
+        setIsSelect('COD')
+      }
+      else if(data == "MyWallet") {
+        setvalueRadio('')
+        setIsSelect('MyWallet')
+      }
     })
     EventRegister.addEventListener('SavedCards', (data) => {
       console.log("cardsssss", data)
@@ -217,7 +225,7 @@ function PaymentOptions(props) {
           renderItem={(item, index) => {
             return (
               <>
-                <RadioButton.Group onValueChange={value => [setvalueRadio(value), setdialogVisible(true)]} value={valueradio}>
+                <RadioButton.Group onValueChange={value => [setvalueRadio(value), setdialogVisible(true) ,setIsSelect('')]} value={valueradio}>
                   <TouchableOpacity
                     style={styles.addNewCardContainer}>
                     <View style={{ flex: 8, marginLeft: 5 }}>
@@ -277,7 +285,7 @@ function PaymentOptions(props) {
           <Icon name={'payment'} size={25} />
         </View>
         <View style={styles.addNewCardTitleContainer}>
-          <Text style={styles.addNewCardTitle}>{"Cod"}</Text>
+          <Text style={[styles.addNewCardTitle,{color: isSelect == 'COD'? '#008080' : '#000'}]}>{"Cod"}</Text>
         </View>
       </TouchableOpacity>
 
@@ -289,7 +297,7 @@ function PaymentOptions(props) {
           <Icon name={'payment'} size={25} />
         </View>
         <View style={styles.addNewCardTitleContainer}>
-          <Text style={styles.addNewCardTitle}>{"My Wallete"}</Text>
+          <Text style={[styles.addNewCardTitle,{color: isSelect == 'MyWallet'? '#008080' : '#000'}]}>{"My Wallete"}</Text>
         </View>
       </TouchableOpacity>
 

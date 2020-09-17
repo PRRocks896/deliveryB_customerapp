@@ -19,7 +19,7 @@ class OrdersScreen extends Component {
     this.appConfig =
       props.navigation.state.params.appConfig ||
       props.navigation.getParam("appConfig");
-      this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
 
     this.state = {
       orderHistory: [],
@@ -42,13 +42,13 @@ class OrdersScreen extends Component {
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
   }
- /**
-   * for back to prev screen
-   */
+  /**
+    * for back to prev screen
+    */
   handleBackButtonClick() {
-      this.props.navigation.goBack(null);
-      return true;
-    
+    this.props.navigation.goBack(null);
+    return true;
+
   }
   getOrders = async () => {
     let addressid = await AsyncStorage.getItem('AddressId')
@@ -107,6 +107,8 @@ class OrdersScreen extends Component {
             </View>
           )
         }}
+        onEndReachedThreshold={0.8}
+        onEndReached={this.LoadMoreRandomData()}
 
       />
     )
@@ -186,7 +188,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   timedate: {
-    color: '#FF0000',
+    color: '#a3a3a3',
+    fontSize: 12,
     fontFamily: Appstyle.fontFamily.semiBoldFont
   },
   emptyView: {

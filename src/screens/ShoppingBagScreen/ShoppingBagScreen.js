@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { Alert, StatusBar, Image, Dimensions, BackHandler, TouchableOpacity, StyleSheet, View, Text, FlatList, ActivityIndicator } from "react-native";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { ShoppingBag, FooterButton } from "../../components";
-import { updatePricesByQty } from "../../utils/updatePricesByQty";
+import { connect } from "react-redux"; 
 import AppStyles from "../../AppStyles";
 import {
   setProductPricesBYQty,
@@ -366,7 +364,8 @@ const styles = StyleSheet.create({
   img: {
     width: '100%',
     height: 100,
-    borderRadius: 5
+    borderRadius: 5,
+    resizeMode:'contain'
   },
   text: {
     fontFamily: AppStyles.fontFamily.regularFont,
