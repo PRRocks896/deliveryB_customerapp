@@ -11,6 +11,9 @@ import getStripeToken from '../../services/StripeApi/getToken'
 import createStripeCustomer from '../../services/StripeApi/createCustomer'
 import customerCharges from '../../services/StripeApi/customerCharges'
 import addamountwallet from '../../services/Wallet/addamountwallet';
+import { EventRegister } from 'react-native-event-listeners'
+import getamountWallet from '../../services/Wallet/getamountWallet';
+
 export default class AddCards extends Component {
     constructor(props) {
         super(props);
@@ -202,7 +205,7 @@ export default class AddCards extends Component {
               "",
               "Success",
               [
-                { text: "Ok", },
+                { text: "Ok", onPress: () => this.reDirectToWallet() },
               ],
             );
             this.setState({
@@ -222,6 +225,30 @@ export default class AddCards extends Component {
                 ],
               ); 
         }
+    }else{
+        this.setState({
+            isLoading:false,
+            cvvdialogVisible:false
+        })
+        Alert.alert(
+            "",
+            data.error.code,
+            [
+              { text: "Ok", },
+            ],
+          ); 
+    }
+  }
+
+  reDirectToWallet = async () => {
+    let mobile = await AsyncStorage.getItem('CurrentUser')
+    let mobileParsed = JSON.parse(mobile)
+    let phoneno = mobileParsed.data.mobile
+    console.log("mobile", phoneno)
+    const data = await getamountWallet(phoneno)
+    if (data.success) {
+        EventRegister.emit('WalletRefresh', data.data.balance)
+        this.props.navigation.navigate("MyWallet")
     }
   }
   /**

@@ -106,6 +106,7 @@ class SaveAddress extends Component {
             <FlatList
                 data={address}
                 renderItem={(item, indexofaddress) => {
+                    console.log("item.item", item.item)
                     return (
                         <TouchableOpacity style={[styles.row, styles.card]} >
                             <RadioButton.Group onValueChange={value => [this.updateaddress(item.index), this.setState({ value: value })]} value={value}>
@@ -122,7 +123,7 @@ class SaveAddress extends Component {
                                     <Text style={{ color: '#000', fontSize: 12 }}>{item.item.address_line_1}</Text>
                                     <Text style={{ color: '#000', fontSize: 12 }}>{item.item.address_line_2}</Text>
                                 </View>
-                                <TouchableOpacity style={styles.homeAddEditView} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { mainAddressId: addressid, onClickaddress: item })}>
+                                <TouchableOpacity style={styles.homeAddEditView} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { mainAddressId: addressid, onClickaddress: item , address: this.state.address, obclickaddressid: item.item._id})}>
                                     <Icon name={'pencil-square-o'} size={25} color='#000' />
                                 </TouchableOpacity>
                             </RadioButton.Group>

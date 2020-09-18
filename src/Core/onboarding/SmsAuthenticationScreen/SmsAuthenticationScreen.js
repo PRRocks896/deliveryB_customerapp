@@ -10,17 +10,12 @@ import {
 } from 'react-native';
 import Button from 'react-native-button';
 import PhoneInput from 'react-native-phone-input';
-import CodeField from 'react-native-confirmation-code-field';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useColorScheme } from 'react-native-appearance';
 import TNActivityIndicator from '../../truly-native/TNActivityIndicator';
-import TNProfilePictureSelector from '../../truly-native/TNProfilePictureSelector/TNProfilePictureSelector';
 import CountriesModalPicker from '../../truly-native/CountriesModalPicker/CountriesModalPicker';
 import { IMLocalized } from '../../localization/IMLocalization';
 import { setUserData } from '../redux/auth';
 import { connect } from 'react-redux';
-import authManager from '../utils/authManager';
-import { localizedErrorMessage } from '../utils/ErrorCode';
 import TermsOfUseView from '../components/TermsOfUseView';
 import dynamicStyles from './styles';
 import signup from '../../../services/SignUp';
@@ -43,19 +38,16 @@ function SmsAuthenticationScreen(props) {
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(appStyles, colorScheme);
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
   const [isPhoneVisible, setIsPhoneVisible] = useState(true);
   const [phoneNumber, setPhoneNumber] = useState(false);
   const [countriesPickerData, setCountriesPickerData] = useState(null);
   const [verificationId, setVerificationId] = useState(null);
-  const [profilePictureURL, setProfilePictureURL] = useState(null);
   const [countryModalVisible, setCountryModalVisible] = useState(false);
   const myCodeInput = useRef(null);
   const phoneRef = useRef(null);
   const [password, setPassword] = useState('')
-  const [email, setEmail] = useState('')
+  const [mobile, setMobile] = useState('')
   const [visibility, setvisibility] = useState(false)
   const [useridsignup, setuseridsignup] = useState('')
 
@@ -254,10 +246,10 @@ function SmsAuthenticationScreen(props) {
   const loginfun = async () => {
     setLoading(true)
     let userId = await AsyncStorage.getItem('userId')
-    if (email != '' && password != '') {
+    if (mobile != '' && password != '') {
 
       let body = JSON.stringify({
-        email: email,
+        mobile: `+91${mobile}`,
         password: password,
       })
       const data = await signin(body);
@@ -344,11 +336,10 @@ function SmsAuthenticationScreen(props) {
         <Text style={styles.title}>{IMLocalized('Sign In')}</Text>
         <TextInput
           style={styles.InputContainer}
-          keyboardType='email-address'
-          autoCapitalize='none'
-          placeholder="Enter Email"
+          keyboardType='number-pad'
+          placeholder="Enter Phone no"
           placeholderTextColor='#aaaaaa'
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={(text) => setMobile(text)}
         />
         <View style={[styles.InputContainer, { flexDirection: 'row' }]}>
           <TextInput
@@ -382,7 +373,7 @@ function SmsAuthenticationScreen(props) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{flex:1}}>
       <TouchableOpacity onPress={() => props.navigation.goBack()}>
         <Image
           style={appStyles.styleSet.backArrowStyle}

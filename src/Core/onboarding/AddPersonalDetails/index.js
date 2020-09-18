@@ -56,7 +56,7 @@ const AddProfileScreen = props => {
             } else {
                 console.log("add error",data)
                 setisLoading(false)
-                setApiError('Something went wrong')
+                setApiError(data.message)
             }
             setisLoading(false)
 

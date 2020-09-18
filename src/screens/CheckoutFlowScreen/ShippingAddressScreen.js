@@ -71,6 +71,12 @@ class ShippingAddressScreen extends Component {
       address: [],
       currentAddressId: ''
     }
+    this.props.navigation.addListener(
+      'didFocus',
+      payload => {
+          this.componentDidMount()
+
+      });
   }
 
   componentDidMount = async () => {

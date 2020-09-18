@@ -53,9 +53,9 @@ const WebReq = {
                     'Authorization': changeContenttype ? `Bearer ${STRIPE_PUBLISHABLE_KEY}` : secretKey ? `Bearer ${STRIPE_SECRET_KEY}` : token.xauthtoken,
                 } :
                     Headers
-            console.log("body", url, body, headers)
+            // console.log("body", url, body, headers)
             const res = await fetch(url, { headers: headers, method: 'POST', body: body });
-            console.log("In WEB REQ service:", res)
+            // console.log("In WEB REQ service:", res)
             if (res && res.status === 200) {
                 const authToken = res.headers.map['x-auth-token'];
                 const data = await res.json();

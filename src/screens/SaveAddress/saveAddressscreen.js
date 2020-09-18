@@ -118,7 +118,6 @@ class SaveAddressScreen extends Component {
                     user_id: userId,
                     address: [
                         ...this.props.navigation.state.params.address,
-                        //onlyappend new address entry
                         {
                             name: name,
                             address_line_1: address_line_1,
@@ -153,13 +152,27 @@ class SaveAddressScreen extends Component {
      */
     updateAddress = async () => {
         let userId = await AsyncStorage.getItem('userId')
-        // console.log("Update", this.props.navigation.state.params.mainAddressId)
+        // console.log("Update", this.props.navigation.state.params.mainAddressId,    this.props.navigation.state.params.address,)
         let id = this.props.navigation.state.params.mainAddressId
         const { country, address_line_1, address_line_2, district, pinCode, state, name, mobile } = this.state
+        let appendaddress = this.props.navigation.state.params.address
+        let clickedaddressid = this.props.navigation.state.params.obclickaddressid
+        // console.log("For only update", appendaddress, clickedaddressid)
+
+        let found = appendaddress.some(i => i._id == clickedaddressid)
+        // console.log("Found", found)
+        if (found == true) {
+            let index = appendaddress.findIndex(i => i._id == clickedaddressid)
+            // console.log("index", index)
+            appendaddress.splice(index, 1)
+            // console.log(appendaddress.length, "finalAddressArray", appendaddress)
+        }
+
         if (address_line_1 != '' && address_line_2 != '' && district != '' && pinCode != '' && state != '' && mobile != '' && country != '') {
             let body = JSON.stringify({
                 user_id: userId,
                 address: [
+                    ...appendaddress,
                     {
                         name: name,
                         address_line_1: address_line_1,
@@ -173,7 +186,7 @@ class SaveAddressScreen extends Component {
                 ]
             })
             const data = await updateAddress(body, id)
-            // console.log("Final update address", data)
+            console.log("Final update address", data)
             if (data.success) {
                 this.props.navigation.goBack()
             } else {

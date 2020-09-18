@@ -1,6 +1,6 @@
 "use strict";
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, TextInput, Keyboard } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, TextInput, BackHandler } from 'react-native';
 import AppStyles from '../../AppStyles'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Dialog } from 'react-native-simple-dialogs';
@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import getwallettransactions from '../../services/Wallet/getwalletTransaction';
 import Appstyle from '../../AppStyles'
 import moment from "moment";
+import { EventRegister } from 'react-native-event-listeners'
 
 export default class MyWallet extends Component {
     constructor(props) {
@@ -19,7 +20,8 @@ export default class MyWallet extends Component {
             amount: '',
             isLoading: false,
             walleteamount: '',
-            transctionslist: []
+            transctionslist: [],
+            dataRefresh: false
         };
         this.props.navigation.addListener(
             'didFocus',
@@ -27,9 +29,24 @@ export default class MyWallet extends Component {
                 this.componentDidMount()
 
             });
+        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+    }
+
+    /**
+      * for back to prev screen
+      */
+    handleBackButtonClick() {
+        this.props.navigation.goBack(null);
+        return true;
 
     }
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
     componentDidMount = async () => {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        EventRegister.addEventListener('WalletRefresh', (data) => this.setState({ walleteamount: data }))
+        console.log("re call this")
         let mobile = await AsyncStorage.getItem('CurrentUser')
         let mobileParsed = JSON.parse(mobile)
         let phoneno = mobileParsed.data.mobile
@@ -61,31 +78,31 @@ export default class MyWallet extends Component {
                 data={transctionslist}
                 renderItem={({ item, index }) => {
                     const date = moment(item.createdAt).format('DD/MM/YYYY HH:mm')
-                    
-                    return(
-                    <View style={{ marginBottom: 10, margin: 3 }}>
-                        <View style={[styles.card, styles.detailMainCard]}>
-                            <View style={{ flex: 8, flexDirection: 'column', justifyContent: 'center' }}>
-                                <View style={styles.row}>
-                                    <Text style={styles.tital}>Details: </Text>
-                                    <Text style={styles.subtitle}> {item.transaction_details}</Text>
+
+                    return (
+                        <View style={{ marginBottom: 10, margin: 3 }}>
+                            <View style={[styles.card, styles.detailMainCard]}>
+                                <View style={{ flex: 8, flexDirection: 'column', justifyContent: 'center' }}>
+                                    <View style={styles.row}>
+                                        <Text style={styles.tital}>Details: </Text>
+                                        <Text style={styles.subtitle}> {item.transaction_details}</Text>
+                                    </View>
+                                    <View style={styles.row}>
+                                        <Text style={styles.tital}>Type: </Text>
+                                        <Text style={[styles.subtitle, { color: '#008000', fontFamily: Appstyle.fontFamily.semiBoldFont }]}> {item.transaction_type}</Text>
+                                    </View>
+                                    <View style={styles.row}>
+                                        <Text style={styles.tital}>Amount: </Text>
+                                        <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}> {item.amount}</Text>
+                                    </View>
                                 </View>
-                                <View style={styles.row}>
-                                    <Text style={styles.tital}>Type: </Text>
-                                    <Text style={[styles.subtitle,{ color: '#008000', fontFamily: Appstyle.fontFamily.semiBoldFont }]}> {item.transaction_type}</Text>
+                                <View style={[styles.row, { position: 'absolute', right: 10, bottom: 10, marginTop: 10 }]}>
+                                    <Text style={styles.timedate}>{date}</Text>
                                 </View>
-                                <View style={styles.row}>
-                                    <Text style={styles.tital}>Amount: </Text>
-                                    <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}> {item.amount}</Text>
-                                </View>
-                            </View>
-                            <View style={[styles.row, { position: 'absolute', right: 10, bottom: 10, marginTop: 10 }]}>
-                               <Text style={styles.timedate}>{date}</Text>
-                            </View>
 
 
+                            </View>
                         </View>
-                    </View>
                     )
                 }}
                 keyExtractor={(item) => item.id}
@@ -95,9 +112,9 @@ export default class MyWallet extends Component {
     render() {
         const { isLoading, amount, walleteamount } = this.state
         return (
-            <View style={[styles.container,{backgroundColor:'#fff'}]}>
-                <View style={[styles.card,styles.row]}>
-                    <Image style={styles.imgrs} source={AppStyles.iconSet.rupee}/>
+            <View style={[styles.container, { backgroundColor: '#fff' }]}>
+                <View style={[styles.card, styles.row]}>
+                    <Image style={styles.imgrs} source={AppStyles.iconSet.rupee} />
                     <Text style={styles.rstxt}>{walleteamount}</Text>
                 </View>
                 <View style={styles.mainView}>
@@ -163,7 +180,7 @@ const styles = StyleSheet.create({
     rstxt: {
         fontFamily: AppStyles.fontFamily.boldFont,
         fontSize: 30,
-        color:'#fff'
+        color: '#fff'
     },
     mainView: {
         flex: 1,
@@ -220,11 +237,11 @@ const styles = StyleSheet.create({
     timedate: {
         color: '#a3a3a3',
         fontFamily: Appstyle.fontFamily.semiBoldFont,
-        fontSize:12
-      },
-      imgrs:{
-          width:25,
-          height:25,
-          marginTop:3
-      }
+        fontSize: 12
+    },
+    imgrs: {
+        width: 25,
+        height: 25,
+        marginTop: 3
+    }
 });
