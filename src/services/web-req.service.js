@@ -29,6 +29,9 @@ const WebReq = {
                     success: false
                 }
             }
+            else if (res && res.status === 400) {
+                return await res.json()
+            }
         } catch (err) {
             throw err;
         }
@@ -50,9 +53,9 @@ const WebReq = {
                     'Authorization': changeContenttype ? `Bearer ${STRIPE_PUBLISHABLE_KEY}` : secretKey ? `Bearer ${STRIPE_SECRET_KEY}` : token.xauthtoken,
                 } :
                     Headers
-            // console.log("body", url, body, headers)
+            console.log("body", url, body, headers)
             const res = await fetch(url, { headers: headers, method: 'POST', body: body });
-            // console.log("In WEB REQ service:", res)
+            console.log("In WEB REQ service:", res)
             if (res && res.status === 200) {
                 const authToken = res.headers.map['x-auth-token'];
                 const data = await res.json();
@@ -68,12 +71,7 @@ const WebReq = {
                 }
             }
             else if (res && res.status === 400) {
-                return {
-                    data: {},
-                    message: 'Somthing went wrong',
-                    messageCode: 'Somthing went wrong',
-                    success: false
-                }
+                return await res.json()
             }
         } catch (err) {
             console.log("Error", err)
@@ -105,6 +103,9 @@ const WebReq = {
                     success: false
                 }
             }
+            else if (res && res.status === 400) {
+                return await res.json()
+            }
         } catch (err) {
             throw err;
         }
@@ -134,6 +135,9 @@ const WebReq = {
                     messageCode: 'Internal server error',
                     success: false
                 }
+            }
+            else if (res && res.status === 400) {
+                return await res.json()
             }
         } catch (err) {
             throw err;

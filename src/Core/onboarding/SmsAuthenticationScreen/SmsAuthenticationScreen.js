@@ -269,7 +269,7 @@ function SmsAuthenticationScreen(props) {
         console.log(data.messageCode)
         Alert.alert(
           '',
-          data.messageCode,
+          data.message,
           [{ text: IMLocalized('OK') }],
           {
             cancelable: false,

@@ -63,49 +63,6 @@ function PaymentOptions(props) {
     setGetCards(cardParsed)
   }
 
-  const onPaymentMethodPress = (index, item) => {
-    setSelectedMethodIndex(index);
-    props.setSelectedPaymentMethod(item);
-  };
-
-  const renderMethodFields = ({ index, item }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => onPaymentMethodPress(index, item)}
-        onLongPress={() => {
-          index != 0 && props.onPaymentMethodLongPress(item);
-        }}
-        style={[
-          styles.shippingMethodContainer,
-          {
-            borderBottomWidth:
-              index === props.paymentMethods.length - 1 ? 0 : 0.5
-          }
-        ]}
-        key={index + ""}
-      >
-        <View style={styles.paymentOptionIconContainer}>
-          <Image
-            source={item.iconSource}
-            resizeMode="contain"
-            style={styles.paymentOptionIcon}
-          />
-        </View>
-        <View style={styles.optionDetailContainer}>
-          <Text style={styles.optionTitle}>{item.title}</Text>
-        </View>
-        <View style={styles.methodIconContainer}>
-          {selectedMethodIndex === index && (
-            <Image
-              source={AppStyles.iconSet.tick}
-              resizeMode="contain"
-              style={styles.shippingAddressIcon}
-            />
-          )}
-        </View>
-      </TouchableOpacity>
-    );
-  };
 
   /**
    * 

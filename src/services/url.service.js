@@ -82,6 +82,9 @@ const api = {
     walletTransaction:{
         walletTransaction: Config.getURL+ 'wallet/transactions/'
     },
+    getShopDetails:{
+        getShopDetails: Config.getURL + 'customer/shop/'
+    },
 
 
 

@@ -18,7 +18,6 @@ const AddProfileScreen = props => {
     const [apiError, setApiError] = useState('')
 
     
-
     const submit = async () => {
         let userId = await AsyncStorage.getItem('useridSignup')
         let phoneno = await AsyncStorage.getItem('userSignupData')
@@ -44,15 +43,19 @@ const AddProfileScreen = props => {
                     user_mobile:parsedphonNo.data.mobile,
                     name:name
                 })
-                const data = await createWallet(body)
-                console.log("data ", data)
-                if(data.statusCode == 200){
+                const datawallet = await createWallet(body)
+                console.log("data ", datawallet)
+                if(datawallet.statusCode == 200){
                     setisLoading(false)
-                      props.navigation.popToTop('AuthStackNavigator')
+                    props.navigation.popToTop('AuthStackNavigator')
                 }else{
-                    setApiError(data.messageCode)
+                    console.log("wallet error",datawallet)
+                    setisLoading(false)
+                    setApiError(datawallet.message)
                 }
             } else {
+                console.log("add error",data)
+                setisLoading(false)
                 setApiError('Something went wrong')
             }
             setisLoading(false)

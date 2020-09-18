@@ -107,8 +107,7 @@ class OrdersScreen extends Component {
             </View>
           )
         }}
-        onEndReachedThreshold={0.8}
-        onEndReached={this.LoadMoreRandomData()}
+  
 
       />
     )

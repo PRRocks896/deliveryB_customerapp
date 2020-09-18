@@ -18,6 +18,7 @@ import styles from "react-native-icon-badge/style";
 import AsyncStorage from "@react-native-community/async-storage";
 import { EventRegister } from 'react-native-event-listeners'
 import payfromwallet from "../../services/Wallet/payfromwallet";
+import shopdetails from "../../services/ShopDetails/shopdetails";
 
 const options = {
   requiredBillingAddressFields: "full",
@@ -108,63 +109,18 @@ class PaymentMethodScreen extends Component {
   setOrderDetails = async () => {
     const { chargeConfirm, transactionid } = this.state
     let data = this.props.navigation.state.params
-    let mobile = await AsyncStorage.getItem('CurrentUser')
-    let mobileParsed= JSON.parse(mobile)
-    let phoneno = mobileParsed.data.mobile
     let payamount = data.totalPrice
-    console.log("data =====in payment method",data.product)
-    //  fo cards
-    if (chargeConfirm == 'succeeded') {
-      // console.log("Confirm>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    console.log("data =====in payment method", chargeConfirm)
+    if (chargeConfirm !== '') {
       this.props.navigation.replace("ShippingAddress", {
         appConfig: this.appConfig,
-        transactionid: transactionid,
+        transactionid: chargeConfirm == 'succeeded' ? transactionid : '',
         customerID: data.customerID,
         bagproduct: data.product,
-        totalammount: data.totalPrice,
-        payment_method: 'Card',
+        totalammount: chargeConfirm == 'MyWallet' ? payamount : data.totalPrice,
+        payment_method: chargeConfirm,
         order_number: Math.floor(100000000000 + Math.random() * 900000000000)
       });
-    } else if (chargeConfirm == 'COD') { // for COD 
-      // console.log("Cod Method")
-      this.props.navigation.replace("ShippingAddress", {
-        appConfig: this.appConfig,
-        transactionid: '',
-        customerID: data.customerID,
-        bagproduct: data.product,
-        totalammount: data.totalPrice,
-        payment_method: 'COD',
-        order_number: Math.floor(100000000000 + Math.random() * 900000000000)
-      });
-    }else if(chargeConfirm == 'MyWallet'){
-      console.log("For call wallet",payamount,phoneno)
-      let body = JSON.stringify({
-        shop_mobile:phoneno,
-        amount:payamount
-      })
-      const paydata = await payfromwallet(body,phoneno)
-      console.log("Pay from wallet",paydata)
-      if(paydata.statusCode == 200){
-        console.log("for wallte",paydata.data.transaction_id)
-        this.props.navigation.replace("ShippingAddress", {
-          appConfig: this.appConfig,
-          transactionid: paydata.data.transaction_id,
-          customerID: data.customerID,
-          bagproduct: data.product,
-          totalammount: payamount,
-          payment_method: 'WALLET',
-          order_number: Math.floor(100000000000 + Math.random() * 900000000000)
-        });
-      }else{
-        
-        Alert.alert(
-          "",
-          paydata.messageCode,
-          [
-            { text: "Ok", },
-          ],
-        );
-      }
     }
     else {
       Alert.alert(
@@ -180,54 +136,15 @@ class PaymentMethodScreen extends Component {
     }
   };
 
-  setPaymentMethods = methods => {
-    this.props.updatePaymentMethods(methods);
-  };
-
-  setShippingMethods = async methods => {
-    if (methods.length > 1) {
-      this.props.setShippingMethods(methods);
-    }
-  };
-
-
+  /**
+   * For add new Cards
+   */
   onAddNewCard = async () => {
     const { user } = this.props;
     this.setState({ dialogVisible: true })
   };
 
-  onPaymentMethodLongPress = method => {
-    Alert.alert(
-      "Remove card",
-      "This card will be removed from payment methods.",
-      [
-        {
-          text: "Remove",
-          onPress: () => this.removeFromPaymentMethods(method),
-          style: "destructive"
-        },
-        {
-          text: "Cancel"
-        }
-      ],
-      { cancelable: true }
-    );
-  };
 
-  removeFromPaymentMethods = async method => {
-    try {
-      const result = await stripeDataManager.deletePaymentSource(
-        this.props.stripeCustomer,
-        method.cardId
-      );
-
-      if (result.data.response.deleted) {
-        await firebaseDataManager.deleteFromUserPaymentMethods(method.cardId);
-      }
-    } catch (error) {
-      alert(error);
-    }
-  };
 
   /**
    * add cards from here

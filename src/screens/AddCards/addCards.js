@@ -27,7 +27,9 @@ export default class AddCards extends Component {
             customerid:''
         };
     }
-
+/**
+ * get cards from async storage
+ */
     componentDidMount = async () => {
         console.log("amount========", this.props.navigation.state.params.amount)
         let cards = await AsyncStorage.getItem('CardData')
@@ -89,6 +91,10 @@ export default class AddCards extends Component {
         }
 
     }
+    /**
+     * 
+     * @param {number} index index of remove card
+     */
     removeCardAlert = async (index) => {
 
         Alert.alert(
@@ -110,10 +116,10 @@ export default class AddCards extends Component {
 * remove card from async storage
 */
     removecard = async (index) => {
-        let data = this.state.addCards
+        let data = this.state.getcards
         data.splice(index, 1)
         AsyncStorage.setItem('CardData', JSON.stringify(data))
-        this.componentDidMount()
+        this.componentDidMount() 
     }
   /**
    * 
@@ -180,14 +186,14 @@ export default class AddCards extends Component {
        let mobile = await AsyncStorage.getItem('CurrentUser')
        let mobileParsed= JSON.parse(mobile)
        console.log("mobile", mobileParsed.data.mobile)
-    let total = this.props.navigation.state.params.amount
+    let total = parseFloat(this.props.navigation.state.params.amount)
     let body = `amount=${total}&currency=usd&customer=${customerID}&description=Tribata Shopping`
     // call stripe charge api
     const data = await customerCharges(body);
     if (data.status == 'succeeded') {
         let phoneNo = mobileParsed.data.mobile
         let body = JSON.stringify({
-            amount:total
+            amount: total
         })
         const data = await addamountwallet(body, phoneNo)
         console.log("amount=======in api",data)
@@ -218,12 +224,17 @@ export default class AddCards extends Component {
         }
     }
   }
+  /**
+   * check amount or not for add money to wallet
+   */
   checkamountvalue = () => {
       if(this.props.navigation.state.params.amount !== undefined){
           this.setState({cvvdialogVisible: true})
       }
   }
-
+/**
+ * Show all Save cards
+ */
     showSavedCards = () => {
         const { valueradio, getcards,cvvdialogVisible,isLoading } = this.state
         return (
