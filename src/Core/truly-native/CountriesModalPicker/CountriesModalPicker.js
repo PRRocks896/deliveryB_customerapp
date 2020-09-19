@@ -16,6 +16,7 @@ const CountriesModalPicker = props => {
   useEffect(() => {
     setSelected(props.initValue);
     setData(props.data);
+    // console.log("propsdata",props.data)
     setModalVisible(props.visible);
   });
 

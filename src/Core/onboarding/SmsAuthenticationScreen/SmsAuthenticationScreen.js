@@ -61,9 +61,9 @@ function SmsAuthenticationScreen(props) {
   }, [phoneRef]);
 
 
-/**
- * For show & hide Password
- */
+  /**
+   * For show & hide Password
+   */
   const checkVisibility = () => {
     setvisibility(!visibility)
   }
@@ -93,7 +93,7 @@ function SmsAuthenticationScreen(props) {
       setLoading(false);
       Alert.alert(
         '',
-        data.messageCode,
+        data.message,
         [{ text: IMLocalized('OK') }],
         { cancelable: false },
       );
@@ -120,7 +120,7 @@ function SmsAuthenticationScreen(props) {
       setLoading(false);
       Alert.alert(
         '',
-        data.messageCode,
+        data.message,
         [{ text: IMLocalized('OK') }],
         { cancelable: false },
       );
@@ -218,7 +218,7 @@ function SmsAuthenticationScreen(props) {
     console.log("for otp scrren ")
     return (
       <>
-        <OTP otp="9999" code={(code) => setOtpCode(code)} status={(a) => { a == '200' ? this.props.navigation.navigate('App') : null }} />
+        <OTP otp="9999" code={(code) => setOtpCode(code)} status={(a) => { a == '200' ? onFinishCheckingCode(otpcode) : null }} />
         <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => onFinishCheckingCode(otpcode)}>
           <Text>Verify</Text>
         </TouchableOpacity>
@@ -246,10 +246,11 @@ function SmsAuthenticationScreen(props) {
   const loginfun = async () => {
     setLoading(true)
     let userId = await AsyncStorage.getItem('userId')
-    if (mobile != '' && password != '') {
+    let mobileNo = phoneRef.current.getValue()
+    if (mobileNo != '' && password != '') {
 
       let body = JSON.stringify({
-        mobile: `+91${mobile}`,
+        mobile: mobileNo,
         password: password,
       })
       const data = await signin(body);
@@ -258,7 +259,7 @@ function SmsAuthenticationScreen(props) {
       AsyncStorage.setItem("userId", data.userId)
       if (data.success == false) {
         setLoading(false)
-        console.log(data.messageCode)
+        console.log(data.message)
         Alert.alert(
           '',
           data.message,
@@ -300,9 +301,9 @@ function SmsAuthenticationScreen(props) {
       AsyncStorage.setItem("AddressId", data.data._id)
     }
   }
-/**
- * Get Profile Details
- */
+  /**
+   * Get Profile Details
+   */
   const getCurrentProfileDetails = async () => {
 
     let loginData = await AsyncStorage.getItem('LoginData')
@@ -334,13 +335,31 @@ function SmsAuthenticationScreen(props) {
     return (
       <>
         <Text style={styles.title}>{IMLocalized('Sign In')}</Text>
-        <TextInput
+        <PhoneInput
           style={styles.InputContainer}
-          keyboardType='number-pad'
-          placeholder="Enter Phone no"
-          placeholderTextColor='#aaaaaa'
-          onChangeText={(text) => setMobile(text)}
+          flagStyle={styles.flagStyle}
+          textStyle={styles.phoneInputTextStyle}
+          ref={phoneRef}
+          onPressFlag={onPressFlag}
+          offset={10}
+          allowZeroAfterCountryCode
+          textProps={{
+            placeholder: IMLocalized('Phone number'),
+            placeholderTextColor: '#aaaaaa',
+          }}
         />
+        {countriesPickerData && (
+          <CountriesModalPicker
+            data={countriesPickerData}
+            appStyles={appStyles}
+            onChange={country => {
+              selectCountry(country);
+            }}
+            cancelText={IMLocalized('Cancel')}
+            visible={countryModalVisible}
+            onCancel={onPressCancelContryModalPicker}
+          />
+        )}
         <View style={[styles.InputContainer, { flexDirection: 'row' }]}>
           <TextInput
             style={{ flex: 8 }}
@@ -373,7 +392,7 @@ function SmsAuthenticationScreen(props) {
   };
 
   return (
-    <View style={{flex:1}}>
+    <View style={{ flex: 1 }}>
       <TouchableOpacity onPress={() => props.navigation.goBack()}>
         <Image
           style={appStyles.styleSet.backArrowStyle}

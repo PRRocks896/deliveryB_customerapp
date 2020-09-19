@@ -82,7 +82,6 @@ class SearchScreen extends Component {
           <Searchbar
             placeholder="Search"
             onChangeText={(query) => this.onChangeSearch(query)}
-            value={this.state.searchQuery}
           />
         </View>
         <Search

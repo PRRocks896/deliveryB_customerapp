@@ -116,8 +116,10 @@ export default class test extends Component {
     }
 
     varifiedOTP(otp) {
+
+        console.log("for latst char " ,otp, this.state.otp)
         this.props.code(otp);
-        if (otp == this.state.otp) {
+        if (otp) {
             this.props.status('200');
             return true;
         }
