@@ -1,25 +1,47 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Keyboard, Picker, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useState ,useRef, useEffect} from 'react';
+import { View, Text, TextInput, Alert,BackHandler, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Keyboard, Picker, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import addProfile from '../../../services/Profile';
 import forgotpassword from '../../../services/ForgotPassword';
 import OTP from '../SmsAuthenticationScreen/otpInput'
 import verifyOTP from '../../../services/OTPVerification';
 import { EventRegister } from 'react-native-event-listeners'
-
-function ForgotPasswordScreen({ navigation }) {
+import PhoneInput from 'react-native-phone-input';
+import CountriesModalPicker from '../../truly-native/CountriesModalPicker/CountriesModalPicker'
+import { IMLocalized } from '../../localization/IMLocalization';
+import appStyles from '../../../AppStyles'
+function ForgotPasswordScreen({ navigation}) {
 
     const [mobile, setMobile] = useState('')
     const [isLoading, setisLoading] = useState(false)
     const [isshowOtpScreen, setisshowOtpScreen] = useState(false)
     const [otpCode, setOtpCode] = useState('')
     const [userid, setuserid] = useState('')
-
+    const phoneRef = useRef(null);
+    const [countryModalVisible, setCountryModalVisible] = useState(false);
+    const [countriesPickerData, setCountriesPickerData] = useState(null);
+    useEffect(() => {
+        if (phoneRef && phoneRef.current) {
+          setCountriesPickerData(phoneRef.current.getPickerData());
+        }
+        const backAction = () => {
+           navigation.goBack()
+            return true;
+          };
+      
+          const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+          );
+      
+          return () => backHandler.remove();
+      }, [phoneRef]);
+    
     const submit = async () => {
         setisLoading(true)
         if (mobile != '') {
             let body = JSON.stringify({
-                mobile: `+91${mobile}`
+                mobile: mobile
             })
             const data = await forgotpassword(body)
             console.log('forgot password screen res', data)
@@ -67,6 +89,13 @@ function ForgotPasswordScreen({ navigation }) {
         }
     }
 
+    const onPressFlag = () => {
+        setCountryModalVisible(true);
+      };
+    
+      const onPressCancelContryModalPicker = () => {
+        setCountryModalVisible(false);
+      };
     return (
         <SafeAreaView style={styles.container}>
 
@@ -77,14 +106,40 @@ function ForgotPasswordScreen({ navigation }) {
                     <ScrollView style={styles.mainView}>
                         <View style={styles.formView}>
                             {/* Name. */}
-                            <View style={styles.textInputView}>
+                            <PhoneInput
+                                style={styles.InputContainer}
+                                flagStyle={styles.flagStyle}
+                                initialCountry='in'
+                                textStyle={styles.phoneInputTextStyle}
+                                ref={phoneRef}
+                                onPressFlag={onPressFlag}
+                                offset={10}
+                                allowZeroAfterCountryCode
+                                textProps={{
+                                    placeholder: IMLocalized('Phone number'),
+                                    placeholderTextColor: '#aaaaaa',
+                                }}
+                            />
+                            {countriesPickerData && (
+                                <CountriesModalPicker
+                                    data={countriesPickerData}
+                                    appStyles={appStyles}
+                                    onChange={country => {
+                                        selectCountry(country);
+                                    }}
+                                    cancelText={IMLocalized('Cancel')}
+                                    visible={countryModalVisible}
+                                    onCancel={onPressCancelContryModalPicker}
+                                />
+                            )}
+                            {/* <View style={styles.textInputView}>
                                 <TextInput
                                     style={styles.textInput}
                                     keyboardType='number-pad'
                                     maxLength={10}
                                     placeholder="Enter Your Number"
                                     onChangeText={(number) => setMobile(number)} />
-                            </View>
+                            </View> */}
 
                             {/* Submit Button */}
                             <TouchableOpacity disabled={isLoading} onPress={() => submit()} style={styles.buttonView}>
@@ -162,5 +217,17 @@ const styles = StyleSheet.create({
     error: {
         color: 'red',
         fontWeight: 'bold'
-    }
+    },
+    InputContainer: {
+        height: 42,
+        borderWidth: 1,
+        borderColor: '#a3a3a3',
+        paddingLeft: 10,
+        color: '#000',
+        width: '100%',
+        // alignSelf: 'center',
+        marginTop: 20,
+        // alignItems: 'center',
+        borderRadius: 5,
+      },
 });

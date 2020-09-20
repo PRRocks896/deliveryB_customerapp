@@ -181,6 +181,7 @@ function SmsAuthenticationScreen(props) {
           flagStyle={styles.flagStyle}
           textStyle={styles.phoneInputTextStyle}
           ref={phoneRef}
+          initialCountry='in'
           onPressFlag={onPressFlag}
           offset={10}
           allowZeroAfterCountryCode
@@ -342,6 +343,7 @@ function SmsAuthenticationScreen(props) {
           ref={phoneRef}
           onPressFlag={onPressFlag}
           offset={10}
+          initialCountry='in'
           allowZeroAfterCountryCode
           textProps={{
             placeholder: IMLocalized('Phone number'),
