@@ -53,13 +53,13 @@ const WelcomeScreen = props => {
   return (
     <View style={styles.container}>
       <View style={styles.logo}>
-        <Image style={styles.logoImage} source={appStyles.iconSet.logo} />
+        <Image style={{width:'100%', height:'100%'}} source={appStyles.imageSet.logoapp} />
       </View>
       <Text style={styles.title}>
-        {appConfig.onboardingConfig.welcomeTitle}
+        {'Welcome to Tribata App'}
       </Text>
-      <Text style={styles.caption}>
-        {appConfig.onboardingConfig.welcomeCaption}
+      <Text style={[styles.caption,{fontSize:20}]}>
+        {"Shop - Travel - Eat"}
       </Text>
       <Button
         containerStyle={styles.loginContainer}

@@ -249,32 +249,47 @@ function SmsAuthenticationScreen(props) {
     let userId = await AsyncStorage.getItem('userId')
     let mobileNo = phoneRef.current.getValue()
     if (mobileNo != '' && password != '') {
-
-      let body = JSON.stringify({
-        mobile: mobileNo,
-        password: password,
-      })
-      const data = await signin(body);
-      console.log("data in sign in ", data)
-      AsyncStorage.setItem("LoginData", JSON.stringify(data))
-      AsyncStorage.setItem("userId", data.userId)
-      if (data.success == false) {
+      console.log("login------------------------",mobileNo.length)
+      if(mobileNo.length < 13 || mobileNo.length > 13){
         setLoading(false)
-        console.log(data.message)
+        console.log("mobile in validation",mobile)
         Alert.alert(
           '',
-          data.message,
+          IMLocalized('Please enter a valid phone number.'),
           [{ text: IMLocalized('OK') }],
           {
             cancelable: false,
           },
         );
-      } else {
-        setLoading(false)
-        getCurrentProfileDetails()
-        getAddressid()
-        props.navigation.navigate('MainStack', { user: data.userId });
+      }else{
+
+        let body = JSON.stringify({
+          mobile: mobileNo,
+          password: password,
+        })
+        const data = await signin(body);
+        console.log("data in sign in ", data)
+        AsyncStorage.setItem("LoginData", JSON.stringify(data))
+        AsyncStorage.setItem("userId", data.userId)
+        if (data.success == false) {
+          setLoading(false)
+          console.log(data.message)
+          Alert.alert(
+            '',
+            data.message,
+            [{ text: IMLocalized('OK') }],
+            {
+              cancelable: false,
+            },
+          );
+        } else {
+          setLoading(false)
+          getCurrentProfileDetails()
+          getAddressid()
+          props.navigation.navigate('MainStack', { user: data.userId });
+        }
       }
+
     } else {
       setLoading(false)
       Alert.alert(

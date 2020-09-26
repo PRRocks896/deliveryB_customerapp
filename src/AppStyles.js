@@ -78,7 +78,7 @@ const imageSet = {
   googlePayColored: require("../assets/images/google-pay-colored.png"),
   creditCard: require("../assets/images/credit-card.png"),
   box: require("../assets/images/box.png"),
-  
+  logoapp: require("../assets/images/logo.png"),
 };
 
 const iconSet = {

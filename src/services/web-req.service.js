@@ -63,12 +63,7 @@ const WebReq = {
             } else if (res && res.status === 404) {
                 return await res.json()
             } else if (res && res.status === 500) {
-                return {
-                    data: {},
-                    message: 'Internal server error',
-                    messageCode: 'Internal server error',
-                    success: false
-                }
+                return await res.json()
             }
             else if (res && res.status === 400) {
                 return await res.json()
