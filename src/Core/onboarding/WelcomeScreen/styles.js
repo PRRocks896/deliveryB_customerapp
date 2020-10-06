@@ -64,6 +64,19 @@ const dynamicStyles = (appStyles, colorScheme) => {
     signupText: {
       color: appStyles.colorSet[colorScheme].mainThemeForegroundColor,
     },
+    offlineContainer: {
+      backgroundColor: 'red',
+      height: 30,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+      width:'100%',
+      position: 'absolute',
+      top: 30
+  },
+  offlineText: {
+      color: '#fff'
+  }
   });
 };
 

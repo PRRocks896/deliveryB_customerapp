@@ -212,7 +212,13 @@ function EditProfile(props) {
       >
         <View>
           <OTP otp="9999" code={(code) => setOtpCode(code)} status={(a) => { a == '200' ? this.props.navigation.navigate('App') : null }} />
-          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ justifyContent: 'center', alignItems: 'center' ,flexDirection:'row'}}>
+           <View style={{flex:6}}>
+           <TouchableOpacity style={[styless.buttonView,{marginRight:10}]} onPress={() => setdialogVisible(false)}>
+                <Text style={styless.buttonText}>cancel</Text>
+              </TouchableOpacity>
+           </View>
+           <View style={{flex:6}}>
             {!isLoading ?
               <TouchableOpacity style={styless.buttonView} onPress={() => onFinishCheckingCode()}>
                 <Text style={styless.buttonText}>Verify</Text>
@@ -220,6 +226,7 @@ function EditProfile(props) {
               :
               <ActivityIndicator color={'#fff'} size="large" />
             }
+           </View>
           </View>
         </View>
       </Dialog>

@@ -14,12 +14,13 @@ import getStripeToken from "../../services/StripeApi/getToken";
 import createStripeCustomer from "../../services/StripeApi/createCustomer";
 import customerCharges from "../../services/StripeApi/customerCharges";
 import { EventRegister } from 'react-native-event-listeners'
+import getamountWallet from "../../services/Wallet/getamountWallet";
 
 
 function PaymentOptions(props) {
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(colorScheme);
-  const { paymentMethods, onAddNewCard, onpressCod, onmywalletpress,totalprice } = props;
+  const { paymentMethods, onAddNewCard, onpressCod, onmywalletpress, totalprice } = props;
 
   const [selectedMethodIndex, setSelectedMethodIndex] = useState(0);
   const [getCards, setGetCards] = useState([])
@@ -31,8 +32,9 @@ function PaymentOptions(props) {
   const [transactionId, setTransactionId] = useState('')
   const [chargeConfirm, setChargeConfirm] = useState('')
   const [isLoading, setisLoading] = useState(false)
-  const [isSelect , setIsSelect] = useState('')
-
+  const [isSelect, setIsSelect] = useState('')
+  const [walleteamount, setwalleteamount] = useState('')
+  const [walleterror, setwalleterror] = useState('')
 
 
   useEffect(() => {
@@ -42,9 +44,9 @@ function PaymentOptions(props) {
         setvalueRadio('')
         setIsSelect('COD')
       }
-      else if(data == "MyWallet") {
+      else if (data == "WALLET") {
         setvalueRadio('')
-        setIsSelect('MyWallet')
+        setIsSelect('WALLET')
       }
     })
     EventRegister.addEventListener('SavedCards', (data) => {
@@ -52,7 +54,25 @@ function PaymentOptions(props) {
       setGetCards(data)
     })
     getSavedCards()
+    getwalletvalue()
   });
+  const getwalletvalue = async () => {
+    let mobile = await AsyncStorage.getItem('CurrentUser')
+    let mobileParsed = JSON.parse(mobile)
+    let phoneno = mobileParsed.data.mobile
+    // console.log("mobile", phoneno)
+    const data = await getamountWallet(phoneno)
+    if (data.success) {
+      // console.log("data", data.data.balance)
+      setwalleteamount(data.data.balance)
+      // this.setState({ walleteamount: data.data.balance })
+      if (totalprice > data.data.balance) {
+        setwalleterror('insufficient balance, Please add amount to your wallet')
+      } else {
+        setwalleterror('')
+      }
+    }
+  }
 
   /**
    * get already saved card details from Async storage for display cards
@@ -182,7 +202,7 @@ function PaymentOptions(props) {
           renderItem={(item, index) => {
             return (
               <>
-                <RadioButton.Group onValueChange={value => [setvalueRadio(value), setdialogVisible(true) ,setIsSelect('')]} value={valueradio}>
+                <RadioButton.Group onValueChange={value => [setvalueRadio(value), setdialogVisible(true), setIsSelect('')]} value={valueradio}>
                   <TouchableOpacity
                     style={styles.addNewCardContainer}>
                     <View style={{ flex: 8, marginLeft: 5 }}>
@@ -207,7 +227,18 @@ function PaymentOptions(props) {
                       style={styles.cvvinput}
                       onChangeText={(text) => setcvv(text)}
                     />
-                    <View style={styles.addbtnContainer}>
+                     <View style={{ flexDirection: 'row' }}>
+                     <View style={{ flex: 6 }}>
+                     <View style={styles.addbtnContainer}>
+                                    <TouchableOpacity style={[styles.addcvvbutton,{width:'50%'}]} onPress={() => setdialogVisible(false)}>
+                                      
+                                                <Text style={styles.addtext}>Cancel</Text>
+                                      
+                                    </TouchableOpacity>
+                                </View>
+                     </View>
+                     <View style={{ flex: 6 }}>
+                     <View style={styles.addbtnContainer}>
                       <TouchableOpacity style={styles.addcvvbutton} onPress={() => paymentGetToken(item.item)}>
                         {
                           isLoading ?
@@ -217,6 +248,9 @@ function PaymentOptions(props) {
                         }
                       </TouchableOpacity>
                     </View>
+                     </View>
+                     </View>
+                   
                   </View>
 
                 </Dialog>
@@ -242,7 +276,7 @@ function PaymentOptions(props) {
           <Icon name={'payment'} size={25} />
         </View>
         <View style={styles.addNewCardTitleContainer}>
-          <Text style={[styles.addNewCardTitle,{color: isSelect == 'COD'? '#008080' : '#000'}]}>{"Cod"}</Text>
+          <Text style={[styles.addNewCardTitle, { color: isSelect == 'COD' ? '#008080' : '#000' }]}>{"Cod"}</Text>
         </View>
       </TouchableOpacity>
 
@@ -253,10 +287,17 @@ function PaymentOptions(props) {
         <View style={styles.addNewCardIconContainer}>
           <Icon name={'payment'} size={25} />
         </View>
-        <View style={styles.addNewCardTitleContainer}>
-          <Text style={[styles.addNewCardTitle,{color: isSelect == 'MyWallet'? '#008080' : '#000'}]}>{"My Wallete"}</Text>
+        <View style={{ flexDirection: 'row', flex: 6 }}>
+          <Text style={[styles.addNewCardTitle, { color: isSelect == 'WALLET' ? '#008080' : '#000' }]}>{"My Wallete"}</Text>
+          <Text style={[styles.amounttxt,{color : walleterror !== '' ? 'red' : 'green'}]}> ( ₹  {walleteamount} )</Text>
         </View>
       </TouchableOpacity>
+        {
+          walleterror !== '' ? <View>
+            <Text style={styles.errortxt}> {walleterror}</Text>
+          </View>
+          : null
+        }
 
       <TouchableOpacity
         onPress={onAddNewCard}

@@ -117,7 +117,7 @@ class PaymentMethodScreen extends Component {
         transactionid: chargeConfirm == 'succeeded' ? transactionid : '',
         customerID: data.customerID,
         bagproduct: data.product,
-        totalammount: chargeConfirm == 'MyWallet' ? payamount : data.totalPrice,
+        totalammount: chargeConfirm == 'WALLET' ? payamount : data.totalPrice,
         payment_method: chargeConfirm,
         order_number: Math.floor(100000000000 + Math.random() * 900000000000)
       });
@@ -212,8 +212,8 @@ class PaymentMethodScreen extends Component {
    * For Wallet method
    */
   pressmywallet = () => {
-    EventRegister.emit("CODdata", "MyWallet")
-    this.setState({ chargeConfirm: 'MyWallet' })
+    EventRegister.emit("CODdata", "WALLET")
+    this.setState({ chargeConfirm: 'WALLET' })
   }
 
   render() {

@@ -18,6 +18,7 @@ import itemQuentity from "../../services/AddToBag/itemquentity";
 import removeCartItem from "../../services/AddToBag/removecartitem";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { EventRegister } from 'react-native-event-listeners'
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 
 const { width, height } = Dimensions.get("window");
@@ -47,7 +48,8 @@ class ShoppingBagScreen extends Component {
       count: 1,
       totalPayamount: '',
       isLoading: false,
-      isShowData: true
+      isShowData: true,
+      isDataLoading:false
     }
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.props.navigation.addListener(
@@ -77,14 +79,20 @@ class ShoppingBagScreen extends Component {
 
     let userid = await AsyncStorage.getItem('userId')
     console.log("userid", userid)
+    this.setState({isDataLoading:true})
     const getdata = await getbagproduct(userid)
     console.log("=================",getdata)
-    this.setState({ allShoppingBag: getdata.data })
-    if (getdata.data.length !== 0) this.setState({ isShowData: true })
-    else if (getdata.data.length == 0) this.setState({ isShowData: false })
-    this.props.setTotalShoppingBagPrice();
-    const total = getdata.data.map(item => item.amount).reduce((prev, next) => prev + next);
-    this.setState({ totalPayamount: total })
+    if(getdata.statusCode == 200) {
+      this.setState({isDataLoading: false})
+      this.setState({ allShoppingBag: getdata.data })
+      if (getdata.data.length !== 0) this.setState({ isShowData: true })
+      else if (getdata.data.length == 0) this.setState({ isShowData: false })
+      this.props.setTotalShoppingBagPrice();
+      const total = getdata.data.map(item => item.amount).reduce((prev, next) => prev + next);
+      this.setState({ totalPayamount: total })
+    }else{
+      this.setState({isDataLoading: true})
+    }
   }
 
 
@@ -245,13 +253,26 @@ class ShoppingBagScreen extends Component {
   }
 
   render() {
-    const { totalPayamount, isLoading, isShowData } = this.state
+    const { totalPayamount, isLoading, isShowData ,isDataLoading} = this.state
 
     if (isShowData == true) {
 
       return (
         <View style={styles.container}>
-          {this.getbagProducts()}
+          {
+            isDataLoading ?  
+            <SkeletonPlaceholder>
+            <View style={styles.shopmainSkeleton}>
+             <View style={styles.shopCategorySkeleton} />
+           </View>
+           <View style={styles.shopmainSkeleton}>
+             <View style={styles.shopCategorySkeleton} />
+           </View>
+      
+         </SkeletonPlaceholder>
+         :
+          this.getbagProducts()
+          }
           {
             this.state.allShoppingBag.length != 0 ?
               <>
@@ -408,5 +429,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#fff',
     textAlignVertical: 'center'
+  },
+  shopCategorySkeleton: {
+    width: 350,
+    height: 80,
+    margin: 20,
+    borderRadius: 10
+  },
+  shopmainSkeleton:{
+    flexDirection: "row", alignItems: "center"
   }
 })

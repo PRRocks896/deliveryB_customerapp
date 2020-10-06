@@ -28,7 +28,7 @@ class HomeScreen extends Component {
       productDetails: {},
       category: [],
       asyncAddBagArray: [],
-      alreadyAddecart: false
+      alreadyAddecart: false,
     };
     this.appConfig =
       props.navigation.state.params.appConfig ||

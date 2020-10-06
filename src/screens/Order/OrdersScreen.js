@@ -10,7 +10,7 @@ import {
 } from "../../redux/";
 import getOrder from "../../services/Order";
 import AsyncStorage from "@react-native-community/async-storage";
-import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler } from 'react-native'
+import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl } from 'react-native'
 import Appstyle from '../../AppStyles'
 import moment from "moment";
 class OrdersScreen extends Component {
@@ -23,7 +23,8 @@ class OrdersScreen extends Component {
 
     this.state = {
       orderHistory: [],
-      isShowData: true
+      isShowData: true,
+      refreshing : false
     }
     this.props.navigation.addListener(
       'didFocus',
@@ -63,8 +64,9 @@ class OrdersScreen extends Component {
         "page": 1
       }
     })
+    console.log("addressid",addressid)
     const data = await getOrder(addressid, body)
-
+      console.log("=====================order id", data)
     if (data.data.length !== 0) this.setState({ isShowData: true })
     else if (data.data.length == 0 || data.data.length == undefined) this.setState({ isShowData: false })
     if (data.success) {
@@ -75,10 +77,13 @@ class OrdersScreen extends Component {
 
   getOrderList = () => {
 
-    const { orderHistory } = this.state
+    const { orderHistory ,refreshing} = this.state
     return (
       <FlatList
         data={orderHistory}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
+          this.getOrders()
+      }} />}
         renderItem={(item, index) => {
           const date = moment(item.createdAt).format('DD/MM/YYYY HH:mm')
           return (

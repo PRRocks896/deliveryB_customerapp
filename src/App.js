@@ -42,7 +42,6 @@ export default App;
 
 
 
-
 // return (
 //   <Provider store={store}>
 //     <AppearanceProvider>

@@ -13,6 +13,7 @@ import ImagePicker from 'react-native-image-picker'
 import RNFetchBlob from 'react-native-fetch-blob'
 import api from '../../services/url.service'
 import { EventRegister } from 'react-native-event-listeners'
+import { ScrollView } from "react-native-gesture-handler";
 const options = {
   title: 'Select Profile',
   storageOptions: {
@@ -103,7 +104,7 @@ function DrawerContainer(appConfig) {
       )
     }
     return (
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={{flexGrow:1}} >
         <View style={{ flex: 3 }}>
           {
             isLoading == false ?
@@ -112,8 +113,8 @@ function DrawerContainer(appConfig) {
                   <Image
                     source={profilepic == null ? require('../../../assets/icons/user.png') : { uri: profilepic }}
                     style={styles.cardImage} />
-                </View>
                 {profilepicfun()}
+                </View>
               </>
               :
               <ActivityIndicator size="large" color="#000" />
@@ -191,7 +192,7 @@ function DrawerContainer(appConfig) {
             onPress={onLogout}
           />
         </View>
-      </View>
+      </ScrollView>
     );
   };
 }

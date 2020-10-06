@@ -19,6 +19,7 @@ const dynamicStyles = colorScheme => {
       flex: 4,
       justifyContent: "center",
       alignItems: "center",
+      height:150
 
     },
     cardImage: {
@@ -28,7 +29,7 @@ const dynamicStyles = colorScheme => {
     },
     editpic: {
       position: 'absolute',
-      top: 130,
+      bottom: 10,
       right: 100,
       width: 45,
       height: 45,

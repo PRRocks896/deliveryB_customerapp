@@ -32,12 +32,7 @@ function Profile(props) {
           onPress={() => onItemPress("SaveAddress", "Save Address")}
           iconSource={AppStyles.iconSet.saveAddress}
         />
-        <ProfileItem
-          title={"Settings"}
-          onPress={() => onItemPress("Settings")}
-          itemIconStyle={{ tintColor: "#a6a4b1" }}
-          iconSource={AppStyles.iconSet.settings}
-        />
+
         <ProfileItem
           title={"Contact Us"}
           onPress={() => onItemPress("Contact", "Contact Us")}

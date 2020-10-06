@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Button from "react-native-button";
-import { Text, View, Image } from "react-native";
+import { Text, View, Image, Alert } from "react-native";
 
 import TNActivityIndicator from "../../truly-native/TNActivityIndicator";
 import { IMLocalized } from "../../localization/IMLocalization";
@@ -9,9 +9,11 @@ import { useColorScheme } from "react-native-appearance";
 import { setUserData } from "../redux/auth";
 import { connect } from "react-redux";
 import authManager from "../utils/authManager";
+import NetInfo from '@react-native-community/netinfo';
 
 const WelcomeScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
+  const [netInfo, setNetInfo] = useState(false);
   const appStyles =
     props.navigation.state.params.appStyles ||
     props.navigation.getParam("appStyles");
@@ -23,7 +25,19 @@ const WelcomeScreen = props => {
 
   useEffect(() => {
     tryToLoginFirst();
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      console.log("state.isConnected", state.isConnected)
+      setNetInfo(state.isConnected);
+    });
+
+    return () => {
+      // Unsubscribe to network state updates
+      unsubscribe();
+    };
   }, []);
+
+
+
 
   const tryToLoginFirst = async () => {
     setIsLoading(true);
@@ -50,49 +64,57 @@ const WelcomeScreen = props => {
     return <TNActivityIndicator appStyles={appStyles} />;
   }
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.logo}>
-        <Image style={{width:'100%', height:'100%'}} source={appStyles.imageSet.logoapp} />
+  if (netInfo == false) {
+    return (<View style={styles.container}>
+      <View style={styles.offlineContainer}>
+        <Text style={styles.offlineText}>{'No Internet Connection'}</Text>
       </View>
-      <Text style={styles.title}>
-        {'Welcome to Tribata App'}
-      </Text>
-      <Text style={[styles.caption,{fontSize:20}]}>
-        {"Shop - Travel - Eat"}
-      </Text>
-      <Button
-        containerStyle={styles.loginContainer}
-        style={styles.loginText}
-        onPress={() => {
-          appConfig.isSMSAuthEnabled
-            ? props.navigation.navigate("Sms", {
-              isSigningUp: false,
-              appStyles,
-              appConfig
-            })
-            : props.navigation.navigate("Login", { appStyles, appConfig });
-        }}
-      >
-        {IMLocalized("Log In")}
-      </Button>
-      <Button
-        containerStyle={styles.signupContainer}
-        style={styles.signupText}
-        onPress={() => {
-          appConfig.isSMSAuthEnabled
-            ? props.navigation.navigate("Sms", {
-              isSigningUp: true,
-              appStyles,
-              appConfig
-            })
-            : props.navigation.navigate("Signup", { appStyles, appConfig });
-        }}
-      >
-        {IMLocalized("Sign Up")}
-      </Button>
-    </View>
-  );
+    </View>)
+  } else {
+    return (
+      <View style={styles.container}>
+        <View style={styles.logo}>
+          <Image style={{ width: '100%', height: '100%' }} source={appStyles.imageSet.logoapp} />
+        </View>
+        <Text style={styles.title}>
+          {'Welcome to Tribata App'}
+        </Text>
+        <Text style={[styles.caption, { fontSize: 20 }]}>
+          {"Shop - Travel - Eat"}
+        </Text>
+        <Button
+          containerStyle={styles.loginContainer}
+          style={styles.loginText}
+          onPress={() => {
+            appConfig.isSMSAuthEnabled
+              ? props.navigation.navigate("Sms", {
+                isSigningUp: false,
+                appStyles,
+                appConfig
+              })
+              : props.navigation.navigate("Login", { appStyles, appConfig });
+          }}
+        >
+          {IMLocalized("Log In")}
+        </Button>
+        <Button
+          containerStyle={styles.signupContainer}
+          style={styles.signupText}
+          onPress={() => {
+            appConfig.isSMSAuthEnabled
+              ? props.navigation.navigate("Sms", {
+                isSigningUp: true,
+                appStyles,
+                appConfig
+              })
+              : props.navigation.navigate("Signup", { appStyles, appConfig });
+          }}
+        >
+          {IMLocalized("Sign Up")}
+        </Button>
+      </View>
+    );
+  }
 };
 
 const mapStateToProps = ({ auth }) => {

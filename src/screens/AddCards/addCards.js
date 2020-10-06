@@ -13,6 +13,7 @@ import customerCharges from '../../services/StripeApi/customerCharges'
 import addamountwallet from '../../services/Wallet/addamountwallet';
 import { EventRegister } from 'react-native-event-listeners'
 import getamountWallet from '../../services/Wallet/getamountWallet';
+import getwallettransactions from '../../services/Wallet/getwalletTransaction';
 
 export default class AddCards extends Component {
     constructor(props) {
@@ -198,12 +199,13 @@ export default class AddCards extends Component {
         let body = JSON.stringify({
             amount: total
         })
+        console.log("body", body, total)
         const data = await addamountwallet(body, phoneNo)
         console.log("amount=======in api",data)
         if(data.success){
             Alert.alert(
               "",
-              "Success",
+              "Successfully Added in your wallet.",
               [
                 { text: "Ok", onPress: () => this.reDirectToWallet() },
               ],
@@ -219,7 +221,7 @@ export default class AddCards extends Component {
             })
             Alert.alert(
                 "",
-                data.messageCode,
+                data.message,
                 [
                   { text: "Ok", },
                 ],
@@ -248,6 +250,19 @@ export default class AddCards extends Component {
     const data = await getamountWallet(phoneno)
     if (data.success) {
         EventRegister.emit('WalletRefresh', data.data.balance)
+        let body = JSON.stringify({
+            "where": {
+
+            },
+            "pagination": {
+                "sortBy": "createdAt",
+                "descending": true,
+                "rowsPerPage": 50,
+                "page": 1
+            }
+        })
+        const transctions = await getwallettransactions(phoneno, body)
+        EventRegister.emit('WalletRefreshTransaction', transctions.data.list)
         this.props.navigation.navigate("MyWallet")
     }
   }

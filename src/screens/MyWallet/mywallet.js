@@ -1,6 +1,6 @@
 "use strict";
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, TextInput, BackHandler } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, RefreshControl,FlatList, TextInput, BackHandler } from 'react-native';
 import AppStyles from '../../AppStyles'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Dialog } from 'react-native-simple-dialogs';
@@ -21,7 +21,9 @@ export default class MyWallet extends Component {
             isLoading: false,
             walleteamount: '',
             transctionslist: [],
-            dataRefresh: false
+            dataRefresh: false,
+            amountError:'', 
+             refreshing : false
         };
         this.props.navigation.addListener(
             'didFocus',
@@ -46,6 +48,7 @@ export default class MyWallet extends Component {
     componentDidMount = async () => {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         EventRegister.addEventListener('WalletRefresh', (data) => this.setState({ walleteamount: data }))
+        EventRegister.addEventListener('WalletRefreshTransaction', (data) => this.setState({ transctionslist: data }))
         console.log("re call this")
         let mobile = await AsyncStorage.getItem('CurrentUser')
         let mobileParsed = JSON.parse(mobile)
@@ -72,10 +75,13 @@ export default class MyWallet extends Component {
 
     }
     orderDetails = () => {
-        const { transctionslist } = this.state
+        const { transctionslist, refreshing } = this.state
         return (
             <FlatList
                 data={transctionslist}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
+                    this.componentDidMount()
+                }} />}
                 renderItem={({ item, index }) => {
                     const date = moment(item.createdAt).format('DD/MM/YYYY HH:mm')
 
@@ -139,15 +145,37 @@ export default class MyWallet extends Component {
                             style={styles.cvvinput}
                             onChangeText={(text) => this.setState({ amount: text })}
                         />
-                        <View style={styles.addbtnContainer}>
-                            <TouchableOpacity style={styles.addcvvbutton} onPress={() => this.props.navigation.navigate('AddCards', { amount: amount })}>
-                                {
-                                    isLoading ?
-                                        <ActivityIndicator color={'#000'} size="small" />
-                                        :
-                                        <Text style={styles.addtext}>Add</Text>
-                                }
-                            </TouchableOpacity>
+                        {
+                            this.state.amountError !== '' ?
+                            <View> 
+                                <Text style={styles.errortxt}>{this.state.amountError}</Text>
+                                </View>
+                                : null
+                        }
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={{ flex: 6 }}>
+
+                                <View style={styles.addbtnContainer}>
+                                    <TouchableOpacity style={[styles.addcvvbutton,{width:'50%'}]} onPress={() => this.setState({dialogVisible: false, amountError:''})}>
+                                      
+                                                <Text style={styles.addtext}>Cancel</Text>
+                                      
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            <View style={{ flex: 6 }}>
+
+                                <View style={styles.addbtnContainer}>
+                                    <TouchableOpacity style={styles.addcvvbutton} onPress={() => amount.length !== 0 ? this.props.navigation.navigate('AddCards', { amount: amount }): this.setState({amountError:'Please add amount'})}>
+                                        {
+                                            isLoading ?
+                                                <ActivityIndicator color={'#000'} size="small" />
+                                                :
+                                                <Text style={styles.addtext}>Add</Text>
+                                        }
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </View>
                     </View>
 
@@ -243,5 +271,7 @@ const styles = StyleSheet.create({
         width: 25,
         height: 25,
         marginTop: 3
+    },errortxt:{
+        color:'red'
     }
 });

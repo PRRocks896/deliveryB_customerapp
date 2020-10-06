@@ -84,7 +84,7 @@ class SaveAddressScreen extends Component {
         let id = this.props.navigation.state.params.mainAddressId
         const { country, address_line_1, address_line_2, district, pinCode, state, name, mobile, addressLength } = this.state
         // console.log(address_line_1, address_line_2, district, pinCode, state, mobile, country)
-        if (address_line_1 != '' && address_line_2 != '' && district != '' && pinCode != '' && state != '' && mobile != '' && country != '') {
+        if (address_line_1 != ''  && district != '' && pinCode != '' && state != '' && mobile != '' && country != '') {
             if (addressLength == 0) {
                 // console.log("in if call")
                 let body = JSON.stringify({
@@ -108,7 +108,7 @@ class SaveAddressScreen extends Component {
                 if (data.success) {
                     this.props.navigation.goBack()
                 } else {
-                    Alert.alert(data.messageCode);
+                    Alert.alert(data.message);
                     this.props.navigation.goBack()
                 }
             } else {
@@ -136,7 +136,7 @@ class SaveAddressScreen extends Component {
                 if (data.success) {
                     this.props.navigation.goBack()
                 } else {
-                    Alert.alert(data.messageCode);
+                    Alert.alert(data.message);
                     this.props.navigation.goBack()
                 }
             }
@@ -168,7 +168,7 @@ class SaveAddressScreen extends Component {
             // console.log(appendaddress.length, "finalAddressArray", appendaddress)
         }
 
-        if (address_line_1 != '' && address_line_2 != '' && district != '' && pinCode != '' && state != '' && mobile != '' && country != '') {
+        if (address_line_1 != '' && district != '' && pinCode != '' && state != '' && mobile != '' && country != '') {
             let body = JSON.stringify({
                 user_id: userId,
                 address: [
@@ -226,6 +226,14 @@ class SaveAddressScreen extends Component {
                         placeholder="Enter Address 2"
                         onChangeText={(text) => this.setState({ address_line_2: text })}
                     />
+                        <TextInput
+                            style={styles.InputContainer}
+                            keyboardType='number-pad'
+                            autoCapitalize='none'
+                            value={pinCode}
+                            placeholder="Zip code"
+                            onChangeText={(text) => this.setState({ pinCode: text })}
+                        />
                     <TextInput
                         style={styles.InputContainer}
                         keyboardType='default'
@@ -233,14 +241,6 @@ class SaveAddressScreen extends Component {
                         value={district}
                         placeholder="City"
                         onChangeText={(text) => this.setState({ district: text })}
-                    />
-                    <TextInput
-                        style={styles.InputContainer}
-                        keyboardType='number-pad'
-                        autoCapitalize='none'
-                        value={pinCode}
-                        placeholder="Zip code"
-                        onChangeText={(text) => this.setState({ pinCode: text })}
                     />
                     <TextInput
                         style={styles.InputContainer}

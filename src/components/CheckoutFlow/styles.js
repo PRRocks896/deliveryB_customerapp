@@ -279,6 +279,16 @@ const dynamicStyles = colorScheme => {
       borderBottomWidth: 1,
       borderBottomColor: '#a3a3a3'
     },
+    amounttxt:{
+      fontFamily: AppStyles.fontFamily.regularFont,
+      marginLeft:10,
+      color:'green'
+    },
+    errortxt:{
+      fontSize:15,
+      color:'red',
+      marginLeft:20
+    }
   });
 };
 

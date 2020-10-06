@@ -22,7 +22,8 @@ import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
 import { ScrollView } from "react-native-gesture-handler";
 import getbagproduct from "../../../services/AddToBag/getbagProduct";
-
+import RNFetchBlob from "react-native-fetch-blob";
+import RNFS from "react-native-fs";
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height;
 
@@ -54,13 +55,30 @@ function ProductDetailModal(props) {
   };
 
   const onShare = async () => {
-    console.log("item.name", item.name, item.productImage)
+    const fs = RNFetchBlob.fs;
+    console.log("item.name", item.name, item.productImage, productDetails.price)
+      let base64img;
+      let imagePath = null;
+    RNFetchBlob.config({
+      fileCache: true
+    })
+      .fetch("GET", item.productImage)
+      .then(resp => {
+        imagePath = resp.path();
+        return resp.readFile("base64");
+      }).then(base64Data => {
+        // console.log("base64 img>>>>>>>>>>>>>>>>>>>>>>>>>>>",base64Data);
+      base64img = base64Data
+        // remove the file from storage
+        return fs.unlink(imagePath);
+      });
     try {
       await Share.share({
         title: "Shopertino Product",
         dialogTitle: `Shopertino Product: ${item.name}`,
-        message: item.description,
-        url: item.productImage
+        message: item.name +  item.description   + productDetails.price,
+        image:item.productImage
+
       });
     } catch (error) {
       alert(error.message);

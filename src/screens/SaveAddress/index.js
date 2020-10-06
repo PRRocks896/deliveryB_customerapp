@@ -22,7 +22,7 @@ import { Dialog } from 'react-native-simple-dialogs';
 import AsyncStorage from "@react-native-community/async-storage";
 import getAddressviaUSer from "../../services/SavedAddress/getAddressviaUser";
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { RadioButton } from 'react-native-paper';
+import { ActivityIndicator, RadioButton } from 'react-native-paper';
 import updateAddress from "../../services/SavedAddress/updateAddress";
 
 
@@ -41,7 +41,8 @@ class SaveAddress extends Component {
             address: [],
             addressid: '',
             radiovalue: '',
-            value: ''
+            value: '',
+            isLoading: false
 
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
@@ -64,18 +65,21 @@ class SaveAddress extends Component {
     }
     componentDidMount = async () => {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-
+        this.setState({isLoading: true})
         let userid = await AsyncStorage.getItem('userId')
         // get address via user
         const data = await getAddressviaUSer(userid);
+        console.log("Address====", data)
         if (data.data) {
-            this.setState({ address: data.data.address, addressid: data.data._id })
+            this.setState({ address: data.data.address, addressid: data.data._id , isLoading: false})
             console.log("address id ", data.data._id)
             AsyncStorage.setItem("AddressId", data.data._id)
             this.state.address.map((item) => {
                 console.log(item.isDefault)
                 if (item.isDefault == true) this.setState({ value: item._id })
             })
+        }else{
+            this.setState({isLoading:false})
         }
     }
     /**
@@ -139,9 +143,13 @@ class SaveAddress extends Component {
         return (
             <View style={{ flex: 1 }}>
                 <ProcedureImage source={AppStyles.imageSet.box} />
+                {
+                    this.state.isLoading ? <ActivityIndicator size={'small'} color={'#000'}  />
+                    :
                 <View >
                     {this.getAddress()}
                 </View>
+                }
                 <TouchableOpacity style={styles.footerbtn} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { addressLength: this.state.address.length, mainAddressId: this.state.addressid, address: this.state.address })}>
                     <Image style={styles.addicon} source={AppStyles.iconSet.plus} />
                 </TouchableOpacity>

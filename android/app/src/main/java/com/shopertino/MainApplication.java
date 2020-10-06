@@ -11,6 +11,7 @@ import org.unimodules.adapters.react.ReactModuleRegistryProvider;
 import org.unimodules.core.interfaces.SingletonModule;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;

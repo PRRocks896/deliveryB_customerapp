@@ -26,6 +26,7 @@ import getProfileDetails from '../../../services/Profile/getProfile';
 import deviceStorage from '../../../utils/deviceStorage';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import getAddressviaUSer from '../../../services/SavedAddress/getAddressviaUser';
+import Toast from 'react-native-simple-toast';
 function SmsAuthenticationScreen(props) {
   // console.log("props,", props.navigation.state.params.isSigningUp, props)
   const appConfig =
@@ -91,12 +92,8 @@ function SmsAuthenticationScreen(props) {
       AsyncStorage.setItem("useridSignup", data.data._id)
     } else {
       setLoading(false);
-      Alert.alert(
-        '',
-        data.message,
-        [{ text: IMLocalized('OK') }],
-        { cancelable: false },
-      );
+      Toast.show(data.message, Toast.LONG);
+     
     }
   };
 
@@ -118,12 +115,7 @@ function SmsAuthenticationScreen(props) {
       props.navigation.navigate('AddProfileScreen');
     } else {
       setLoading(false);
-      Alert.alert(
-        '',
-        data.message,
-        [{ text: IMLocalized('OK') }],
-        { cancelable: false },
-      );
+      Toast.show(data.message, Toast.LONG);
     }
   };
 
@@ -140,14 +132,8 @@ function SmsAuthenticationScreen(props) {
         signInWithPhoneNumber(userValidPhoneNumber);
       }
     } else {
-      Alert.alert(
-        '',
-        IMLocalized('Please enter a valid phone number.'),
-        [{ text: IMLocalized('OK') }],
-        {
-          cancelable: false,
-        },
-      );
+      Toast.show('Please enter a valid phone number.', Toast.LONG);
+     
     }
   };
 
@@ -245,22 +231,16 @@ function SmsAuthenticationScreen(props) {
    * For user Login 
    */
   const loginfun = async () => {
-    setLoading(true)
     let userId = await AsyncStorage.getItem('userId')
     let mobileNo = phoneRef.current.getValue()
     if (mobileNo != '' && password != '') {
-      console.log("login------------------------",mobileNo.length)
+      setLoading(true)
+      console.log("login------------------------",mobileNo)
       if(mobileNo.length < 13 || mobileNo.length > 13){
         setLoading(false)
         console.log("mobile in validation",mobile)
-        Alert.alert(
-          '',
-          IMLocalized('Please enter a valid phone number.'),
-          [{ text: IMLocalized('OK') }],
-          {
-            cancelable: false,
-          },
-        );
+        Toast.show('Please enter a valid phone number.', Toast.LONG);
+      
       }else{
 
         let body = JSON.stringify({
@@ -274,14 +254,8 @@ function SmsAuthenticationScreen(props) {
         if (data.success == false) {
           setLoading(false)
           console.log(data.message)
-          Alert.alert(
-            '',
-            data.message,
-            [{ text: IMLocalized('OK') }],
-            {
-              cancelable: false,
-            },
-          );
+          Toast.show(data.message, Toast.LONG);
+         
         } else {
           setLoading(false)
           getCurrentProfileDetails()
@@ -292,14 +266,10 @@ function SmsAuthenticationScreen(props) {
 
     } else {
       setLoading(false)
-      Alert.alert(
-        '',
-        IMLocalized('Please enter a details.'),
-        [{ text: IMLocalized('OK') }],
-        {
-          cancelable: false,
-        },
-      );
+      console.log("call else")
+      Toast.show('Please enter a details.', Toast.LONG);
+     
+   
     }
 
   }

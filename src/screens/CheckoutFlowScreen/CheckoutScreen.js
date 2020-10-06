@@ -55,6 +55,226 @@ class CheckoutScreen extends Component {
 
 
   }
+  /**
+   * payment methody wallet
+   * @param {any} uniqshopsid uniqe shop id array
+   */
+  placeorderfromWallet = async (uniqshopsid) => {
+    console.log("uniqshopsid=====Foe Wallet fun", uniqshopsid)
+    let paramdata = this.props.navigation.state.params
+    let bagData = paramdata.bagproduct
+    let mobile = await AsyncStorage.getItem('CurrentUser')
+    let mobileParsed = JSON.parse(mobile)
+    let phoneno = mobileParsed.data.mobile
+    let filterProduct = []
+
+    console.log("CALL WALLET", uniqshopsid, paramdata.totalammount)
+    uniqshopsid.map(async (item) => {
+      console.log("id shop>>>>>>>>>>>>>>>>>>>>>>", item)
+      // For get shop details from shop id
+      const shopDetailsres = await shopdetails(item)
+      console.log("for shop details", shopDetailsres)
+      if (shopDetailsres.success) {
+        console.log("shopDetailsres.data.mobile", JSON.stringify(shopDetailsres.data.mobile))
+        let shopMobile = shopDetailsres.data.mobile.includes('+91') ? shopDetailsres.data.mobile.replace('+91', '') : shopDetailsres.data.mobile
+
+        let body = JSON.stringify({
+          shop_mobile: shopMobile,
+          amount: paramdata.totalammount
+        })
+        console.log("Body=====PAY FROM WALLET", body)
+        //For Pay amount from wallet
+        const paydata = await payfromwallet(body, phoneno)
+        console.log("Pay from wallet", paydata)
+        if (paydata.statusCode == 200) {
+          console.log("for wallte", paydata.data.transaction_id)
+
+          //make data for place order
+          bagData.map((productsdata) => {
+            if (item == productsdata.products[0].product_id.shop_id) {
+              console.log("FOR WALLET CALL IN IF", item, productsdata.products[0].product_id.shop_id)
+              filterProduct.push({
+                'customer_id': paramdata.customerID,
+                'shop_id': item,
+                'transaction_id': paydata.data.transaction_id,
+                'payment_method': paramdata.payment_method,
+                'amount': paramdata.totalammount,
+                'order_number': paramdata.order_number.toString(),
+                'deliveryType': this.state.radioValue,
+                'products': []
+              })
+            }
+          })
+          console.log("filterProduct===================For wallet", filterProduct)
+          console.log("result", result)
+          // Make unique result 
+          var result = filterProduct.reduce((unique, o) => {
+            if (!unique.some(obj => obj.shop_id === o.shop_id)) {
+              unique.push(o);
+            }
+            return unique;
+          }, []);
+          console.log(" unique result", result)
+          result.map((item, indexOfResult) => {
+            let obj = [];
+            bagData.map((productitem, indexOfBagdata) => {
+              if (item.shop_id == productitem.products[0].product_id.shop_id) {
+                obj.push({
+                  product_id: productitem.products[0].product_id._id,
+                  price: productitem.products[0].price,
+                  quantity: productitem.products[0].quantity
+                })
+              }
+            })
+            result[indexOfResult].products = obj
+          })
+
+
+          console.log("JSON.stringify(result)", JSON.stringify(result))
+          //Call Place order api
+          const placeorderresponse = await placeOrder(JSON.stringify(result));
+          console.log("==============placeorderresponse===", placeorderresponse)
+          if (placeorderresponse.statusCode == 200) {
+            this.setState({ dialogVisible: false, isLoading: false })
+            console.log("=====================================place order", bagData, placeorderresponse)
+            bagData.map(async (item) => {
+              console.log("item._id", item._id, item)
+              // After place order make statis true for placed products
+              const cartStatus = await changeCartStatus(item._id)
+              console.log("calll cartStatus", cartStatus)
+              if (cartStatus.statusCode == 200) {
+                console.log("calllllll :::::::::::::::::::::::::::::::::::::")
+                this.props.navigation.navigate("Order", { appConfig: this.appConfig });
+              } else {
+                this.setState({ dialogVisible: false, isLoading: false })
+                Alert.alert(
+                  "",
+                  cartStatus.messageCode,
+                  [
+                    { text: "OK" }
+                  ],
+                  { cancelable: true }
+                );
+              }
+            })
+          } else {
+            this.setState({ dialogVisible: false, isLoading: false })
+            Alert.alert(
+              "",
+              placeorderresponse.messageCode,
+              [
+                { text: "OK" }
+              ],
+              { cancelable: true }
+            );
+          }
+        } else {
+          Alert.alert(
+            "",
+            paydata.message,
+            [
+              { text: "Ok", },
+            ],
+          );
+        }
+      }
+    })
+  }
+
+  /**
+   * payment method cod or card
+   * @param {any} uniqshopsid unique shop array 
+   */
+  placeorderwithoutWallet = async (uniqshopsid) => {
+    console.log("call other process ============", uniqshopsid)
+    let paramdata = this.props.navigation.state.params
+    let bagData = paramdata.bagproduct
+    let mobile = await AsyncStorage.getItem('CurrentUser')
+    let mobileParsed = JSON.parse(mobile)
+    let phoneno = mobileParsed.data.mobile
+    let filterProduct = []
+
+    console.log("CALL ELSE IN PLACE ORDER")
+    uniqshopsid.map(item => {
+      bagData.map((productsdata) => {
+        if (item == productsdata.products[0].product_id.shop_id) {
+          filterProduct.push({
+            'customer_id': paramdata.customerID,
+            'shop_id': item,
+            'transaction_id': paramdata.transactionid,
+            'payment_method': paramdata.payment_method,
+            'amount': paramdata.totalammount,
+            'order_number': paramdata.order_number.toString(),
+            'deliveryType': this.state.radioValue,
+            'products': []
+          })
+        }
+      })
+    })
+
+    console.log("result", result)
+    // Make unique result 
+    var result = filterProduct.reduce((unique, o) => {
+      if (!unique.some(obj => obj.shop_id === o.shop_id)) {
+        unique.push(o);
+      }
+      return unique;
+    }, []);
+    console.log(" unique result", result)
+    result.map((item, indexOfResult) => {
+      let obj = [];
+      bagData.map((productitem, indexOfBagdata) => {
+        if (item.shop_id == productitem.products[0].product_id.shop_id) {
+          obj.push({
+            product_id: productitem.products[0].product_id._id,
+            price: productitem.products[0].price,
+            quantity: productitem.products[0].quantity
+          })
+        }
+      })
+      result[indexOfResult].products = obj
+    })
+
+
+    console.log("JSON.stringify(result)", JSON.stringify(result))
+    //Call Place order api
+    const placeorderresponse = await placeOrder(JSON.stringify(result));
+    console.log("==============placeorderresponse===", placeorderresponse)
+    if (placeorderresponse.statusCode == 200) {
+      this.setState({ dialogVisible: false, isLoading: false })
+      console.log("=====================================place order", bagData, placeorderresponse)
+      bagData.map(async (item) => {
+        console.log("item._id", item._id, item)
+        // After place order make statis true for placed products
+        const cartStatus = await changeCartStatus(item._id)
+        console.log("calll cartStatus", cartStatus)
+        if (cartStatus.statusCode == 200) {
+          console.log("calllllll :::::::::::::::::::::::::::::::::::::")
+          this.props.navigation.navigate("Order", { appConfig: this.appConfig });
+        } else {
+          this.setState({ dialogVisible: false, isLoading: false })
+          Alert.alert(
+            "",
+            cartStatus.message,
+            [
+              { text: "OK" }
+            ],
+            { cancelable: true }
+          );
+        }
+      })
+    } else {
+      this.setState({ dialogVisible: false, isLoading: false })
+      Alert.alert(
+        "",
+        placeorderresponse.message,
+        [
+          { text: "OK" }
+        ],
+        { cancelable: true }
+      );
+    }
+  }
 
   onFooterPress = async () => {
     this.setState({ isLoading: true })
@@ -80,135 +300,13 @@ class CheckoutScreen extends Component {
     let filterProduct = []
 
     console.log("uniqshopsid", uniqshopsid)
-    // for wallet 
+
     if (paramdata.payment_method == 'WALLET') {
-      console.log("CALL WALLET", paramdata.totalammount)
-      uniqshopsid.map(async (item) => {
-
-        // For get shop details from shop id
-        const shopDetailsres = await shopdetails(item)
-        console.log("for shop details", shopDetailsres)
-        if (shopDetailsres.success) {
-          console.log("shopDetailsres.data.mobile", JSON.stringify(shopDetailsres.data.mobile))
-          let body = JSON.stringify({
-            shop_mobile: shopDetailsres.data.mobile,
-            amount: paramdata.totalammount
-          })
-          //For Pay amount from wallet
-          const paydata = await payfromwallet(body, phoneno)
-          console.log("Pay from wallet", paydata)
-          if (paydata.statusCode == 200) {
-            console.log("for wallte", paydata.data.transaction_id)
-
-            //make data for place order
-            bagData.map((productsdata) => {
-              if (item == productsdata.products[0].product_id.shop_id) {
-                filterProduct.push({
-                  'customer_id': paramdata.customerID,
-                  'shop_id': item,
-                  'transaction_id': paydata.data.transaction_id,
-                  'payment_method': paramdata.payment_method,
-                  'amount': paramdata.totalammount,
-                  'order_number': paramdata.order_number.toString(),
-                  'deliveryType': this.state.radioValue,
-                  'products': []
-                })
-              }
-            })
-
-          } else {
-            Alert.alert(
-              "",
-              paydata.message,
-              [
-                { text: "Ok", },
-              ],
-            );
-          }
-        }
-      })
+      this.placeorderfromWallet(uniqshopsid)
     } else {
-      //  For Payment method COD and card 
-      console.log("CALL ELSE IN PLACE ORDER")
-      uniqshopsid.map(item => {
-        bagData.map((productsdata) => {
-          if (item == productsdata.products[0].product_id.shop_id) {
-            filterProduct.push({
-              'customer_id': paramdata.customerID,
-              'shop_id': item,
-              'transaction_id': paramdata.transactionid,
-              'payment_method': paramdata.payment_method,
-              'amount': paramdata.totalammount,
-              'order_number': paramdata.order_number.toString(),
-              'deliveryType': this.state.radioValue,
-              'products': []
-            })
-          }
-        })
-      })
-
+      this.placeorderwithoutWallet(uniqshopsid)
     }
-    // Make unique result 
-    var result = filterProduct.reduce((unique, o) => {
-      if (!unique.some(obj => obj.shop_id === o.shop_id)) {
-        unique.push(o);
-      }
-      return unique;
-    }, []);
 
-    result.map((item, indexOfResult) => {
-      let obj = [];
-      bagData.map((productitem, indexOfBagdata) => {
-        if (item.shop_id == productitem.products[0].product_id.shop_id) {
-          obj.push({
-            product_id: productitem.products[0].product_id._id,
-            price: productitem.products[0].price,
-            quantity: productitem.products[0].quantity
-          })
-        }
-      })
-      result[indexOfResult].products = obj
-    })
-
-
-
-    // console.log("=================", JSON.stringify(result))
-    //Call Place order api
-    const placeorderresponse = await placeOrder(JSON.stringify(result));
-    if (placeorderresponse.statusCode == 200) {
-      this.setState({ dialogVisible: false, isLoading: false })
-      console.log("=====================================place order", bagData, placeorderresponse)
-      bagData.map(async (item) => {
-        console.log("item._id", item._id, item)
-        // After place order make statis true for placed products
-        const cartStatus = await changeCartStatus(item._id)
-        console.log("calll cartStatus", cartStatus)
-        if (cartStatus.statusCode == 200) {
-          console.log("calllllll :::::::::::::::::::::::::::::::::::::")
-          this.props.navigation.navigate("Order", { appConfig: this.appConfig });
-        } else {
-          this.setState({ dialogVisible: false, isLoading: false })
-          Alert.alert(
-            "",
-            cartStatus.messageCode,
-            [
-              { text: "OK" }
-            ],
-            { cancelable: true }
-          );
-        }
-      })
-    } else {
-      this.setState({ dialogVisible: false, isLoading: false })
-      Alert.alert(
-        "",
-        placeorderresponse.messageCode,
-        [
-          { text: "OK" }
-        ],
-        { cancelable: true }
-      );
-    }
   };
 
   render() {
@@ -256,15 +354,27 @@ class CheckoutScreen extends Component {
               <RadioButton.Item label="Delivery in 4 hours" value="4_HOURS" />
               <RadioButton.Item label="Self Pickup" value="SELF_PICKED" />
             </RadioButton.Group>
-            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-              <TouchableOpacity style={styles.adddeviverybtn} onPress={() => this.onFooterPress()}>
-                {
-                  !this.state.isLoading ?
-                    <Text style={[styles.text, { fontSize: 18 }]}>Ok</Text>
-                    :
-                    <ActivityIndicator color={'#000'} size="small" />
-                }
-              </TouchableOpacity>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ flex: 6 ,justifyContent:'center',alignItems:'center'}}>
+               
+                  <TouchableOpacity style={[styles.adddeviverybtn, { width: '50%' }]} onPress={() => this.setState({ dialogVisible: false })}>
+
+                    <Text style={styles.addtext}>Cancel</Text>
+
+                  </TouchableOpacity>
+               
+              </View>
+              <View style={{ flex: 6,justifyContent:'center', alignItems:'center' }}>
+                <TouchableOpacity style={styles.adddeviverybtn} onPress={() => this.onFooterPress()}>
+                  {
+                    !this.state.isLoading ?
+                      <Text style={[styles.text, { fontSize: 18 }]}>Ok</Text>
+                      :
+                      <ActivityIndicator color={'#000'} size="small" />
+                  }
+                </TouchableOpacity>
+
+              </View>
             </View>
           </View>
         </Dialog>

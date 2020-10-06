@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { ScrollView, View, BackHandler, Alert } from "react-native";
+import { ScrollView, View, BackHandler, Alert, RefreshControl, Text } from "react-native";
 import { useColorScheme } from "react-native-appearance";
 import Categories from "./Categories";
 import NewArrivals from "./NewArrivals";
@@ -12,6 +12,7 @@ import AppStyles from "../../AppStyles";
 import getCategory from "../../services/Products/getCategory";
 import getProducts from "../../services/Products/getproducts";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import NetInfo from '@react-native-community/netinfo';
 
 function Home(props) {
   const colorScheme = useColorScheme();
@@ -19,7 +20,8 @@ function Home(props) {
   const [products, setProducts] = useState([])
   const [isLoadingcategory, setisLoadingcategory] = useState(true)
   const [isLoadingProduct, setisLoadingProduct] = useState(true)
-
+  const [refreshing, setrefreshing] = useState(false)
+  const [netInfo, setNetInfo] = useState(false);
 
   const styles = dynamicStyles(colorScheme);
   const {
@@ -36,6 +38,7 @@ function Home(props) {
   } = props;
 
   useEffect(() => {
+
     const backAction = () => {
       Alert.alert("Hold on!", "Are you sure you want to go back?", [
         {
@@ -51,10 +54,15 @@ function Home(props) {
       "hardwareBackPress",
       backAction
     );
+    
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      console.log("state.isConnected", state.isConnected)
+      setNetInfo(state.isConnected);
+    });
 
     getCategoryProducts() // For get categories
     getFeaturedProducts() // For get products
-    return () => backHandler.remove();
+    return () => [backHandler.remove(),  unsubscribe()]
   }, []);
 
   const getCategoryProducts = async () => {
@@ -71,8 +79,15 @@ function Home(props) {
       setProducts(data.data)
     }
   }
+  if (netInfo == false) {
+    return (<View style={styles.container}>
+      <View style={styles.offlineContainer}>
+        <Text style={styles.offlineText}>{'No Internet Connection'}</Text>
+      </View>
+    </View>)
+  } else {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} > 
       {
         isLoadingcategory == true ?
           <SkeletonPlaceholder>
@@ -208,6 +223,7 @@ function Home(props) {
       />
     </ScrollView>
   );
+    }
 }
 
 Home.propTypes = {
