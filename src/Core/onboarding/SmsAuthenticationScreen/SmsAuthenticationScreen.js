@@ -359,7 +359,7 @@ function SmsAuthenticationScreen(props) {
       </TouchableOpacity>
       {isSigningUp ? renderAsSignUpState() : renderAsLoginState()}
       {isSigningUp && (
-        <TermsOfUseView tosLink={appConfig.tosLink} style={styles.tos} />
+        <TermsOfUseView tosLink={'https://www.tribataholidays.co.in/terms.html'} style={styles.tos} />
       )}
       {loading && <TNActivityIndicator appStyles={appStyles} />}
     </View>

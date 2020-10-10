@@ -143,7 +143,7 @@ function EditProfile(props) {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container,{backgroundColor:'#fff'}]}>
       <View style={styles.body}>
         <View style={styles.labelView}>
           <Text style={styles.label}>PUBLIC PROFILE</Text>

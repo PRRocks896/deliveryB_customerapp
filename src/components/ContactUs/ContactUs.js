@@ -14,23 +14,30 @@ function ContactUs(props) {
   const styles = dynamicStyles(colorScheme);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{backgroundColor:'#fff'}]}>
       <ScrollView style={styles.body}>
         <View style={styles.labelView}>
           <Text style={styles.label}>CONTACT</Text>
         </View>
         <View style={styles.contentView}>
-          <View style={styles.addressView}>
-            <Text style={styles.text}>Our address</Text>
-            <Text style={styles.textcaption}>
-              1412 Steiner Street, San Francisco, CA, 94115
+
+        <TouchableOpacity style={styles.addressView}>
+            <Text style={styles.text}>Address</Text>
+            <Text style={[styles.textcaption,{fontSize:16}]}>
+            {"Tribata Holidays PVT LTD, city center, BM Road, Kushalnager Coorg, Karnataka 571234, India"}
             </Text>
-          </View>
-          <View style={styles.itemView}>
+          </TouchableOpacity>
+          <TouchableOpacity  onPress={() => Linking.openURL('mailto:tribataholidays@gmail.com')} style={styles.addressView}>
             <Text style={styles.text}>E-mail us</Text>
-            <TouchableOpacity onPress={() => Linking.openURL('mailto:support@example.com?subject=sendmail&body=details')}>
+            <Text style={[styles.textcaption,{fontSize:16}]}>
+            {"tribataholidays@gmail.com"}
+            </Text>
+          </TouchableOpacity>
+          <View style={styles.itemView}>
+            <Text style={styles.text}>Mobile</Text>
+            <TouchableOpacity>
               <Text style={styles.placeholderText}>
-                {"office@shopertino.com >"}
+                {"+91 9035865441"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -42,7 +49,7 @@ function ContactUs(props) {
         </View>
         <View style={styles.contentView}>
           <TouchableOpacity
-            onPress={() => Linking.openURL(`tel:${11234567890}`)}
+            onPress={() => Linking.openURL(`tel:${+919035865441}`)}
             style={styles.itemButton}
           >
             <Text style={[styles.text, { color: "#384c8d" }]}>Call Us</Text>

@@ -88,7 +88,7 @@ class OrdersScreen extends Component {
           this.getOrders()
       }} />}
         renderItem={(item, index) => {
-          const date = moment(item.updatedAt).format('DD/MM/YYYY')
+          const orderdate = moment(item.item.createdAt).format('DD/MM/YYYY HH:mm')
           return (
             <View style={styles.card}>
               <View style={styles.row}>
@@ -106,7 +106,7 @@ class OrdersScreen extends Component {
               </View>
 
               <View style={[styles.row, { position: 'absolute', right: 10, bottom: 10, marginTop: 10 }]}>
-                <Text style={styles.timedate}>{date}</Text>
+                <Text style={styles.timedate}>{orderdate}</Text>
               </View>
 
               <View>
