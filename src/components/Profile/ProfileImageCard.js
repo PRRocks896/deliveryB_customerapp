@@ -20,15 +20,17 @@ function ProfileImageCard(props) {
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(colorScheme);
   const [imagepath, setImagePath] = useState(null)
+  const [profile, setprofile] = useState(null)
 
   const { user } = props;
   const lastName = user.lastName ? user.lastName : "";
   const fullName = `${user.firstName} ${lastName}`;
-  const profile = user.profilePicture ? user.profilePicture : null
+  // const profile = user.profilePicture ? user.profilePicture : null
 
   useEffect(() => {
-    EventRegister.addEventListener('profileImage', (data) => { setImagePath(data) })
-    setImagePath(profile)
+    EventRegister.addEventListener('profileImage', (data) => { setprofile(data) })
+    setImagePath(user.profilePicture)
+
   })
   const imagePicker = () => {
     ImagePicker.showImagePicker(options, (response) => {
@@ -39,10 +41,10 @@ function ProfileImageCard(props) {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        setImagePath(response.uri)
+        setprofile(response.uri)
         console.log("image", response.uri, response.path)
         uploadProfileImage(response.path, response.type, response.fileName)
-        profilepic()
+   
 
       }
     })
@@ -64,27 +66,29 @@ function ProfileImageCard(props) {
       console.log("Resp", data.data.profilePhoto)
       EventRegister.emit('profileImage', data.data.profilePhoto)
       AsyncStorage.setItem("Profilepic", data.data.profilePhoto)
-      setImagePath(data.data.profilePhoto)
-      profilepic()
+      setprofile(data.data.profilePhoto)
+     
 
     }).catch((err) => {
       console.log("Error", err)
     })
   }
-  const profilepic = () => {
-    console.log("in function", imagepath)
-    return (
-      <TouchableOpacity style={styles.cardImageContainer} onPress={() => imagePicker()}>
-        <Image
-          source={imagepath != null ? { uri: imagepath } : require('../../../assets/icons/user.png')}
-          style={styles.cardImage} />
-      </TouchableOpacity>
-    )
-  }
+  
   // console.log("=======", imagepath, profile)
   return (
     <View style={styles.cardContainer}>
-      {profilepic()}
+      <TouchableOpacity style={styles.cardImageContainer} onPress={() => imagePicker()}>
+        {
+          profile == null ? 
+          <Image
+            source={imagepath == null  ? require('../../../assets/icons/user.png') :  { uri: imagepath }}
+            style={styles.cardImage} />
+            :
+            <Image
+            source={{ uri: profile }}
+            style={styles.cardImage} />
+        }
+      </TouchableOpacity>
       <View style={styles.cardNameContainer}>
         <Text style={styles.cardName}>{user.name}</Text>
       </View>

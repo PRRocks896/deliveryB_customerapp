@@ -13,6 +13,8 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl } from 'react-native'
 import Appstyle from '../../AppStyles'
 import moment from "moment";
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+
 class OrdersScreen extends Component {
   constructor(props) {
     super(props);
@@ -24,7 +26,8 @@ class OrdersScreen extends Component {
     this.state = {
       orderHistory: [],
       isShowData: true,
-      refreshing : false
+      refreshing : false, 
+      isLoadingorder: true,
     }
     this.props.navigation.addListener(
       'didFocus',
@@ -67,11 +70,11 @@ class OrdersScreen extends Component {
     console.log("addressid",addressid)
     const data = await getOrder(addressid, body)
       console.log("=====================order id", data)
+      if (data.success) {
+        this.setState({ orderHistory: data.data, isLoadingorder: false })
+      }
     if (data.data.length !== 0) this.setState({ isShowData: true })
     else if (data.data.length == 0 || data.data.length == undefined) this.setState({ isShowData: false })
-    if (data.success) {
-      this.setState({ orderHistory: data.data })
-    }
   }
 
 
@@ -85,7 +88,7 @@ class OrdersScreen extends Component {
           this.getOrders()
       }} />}
         renderItem={(item, index) => {
-          const date = moment(item.createdAt).format('DD/MM/YYYY HH:mm')
+          const date = moment(item.updatedAt).format('DD/MM/YYYY')
           return (
             <View style={styles.card}>
               <View style={styles.row}>
@@ -120,11 +123,30 @@ class OrdersScreen extends Component {
 
   render() {
     if (this.state.isShowData == true) {
-      return (
-        <>
-          {this.getOrderList()}
-        </>
-      );
+      if(this.state.isLoadingcategory == true){
+        return (
+          <SkeletonPlaceholder>
+             <View style={styles.shopmainSkeleton}>
+              <View style={styles.shopCategorySkeleton} />
+            </View>
+            <View style={styles.shopmainSkeleton}>
+              <View style={styles.shopCategorySkeleton} />
+            </View>
+            <View style={styles.shopmainSkeleton}>
+              <View style={styles.shopCategorySkeleton} />
+            </View>
+            <View style={styles.shopmainSkeleton}>
+              <View style={styles.shopCategorySkeleton} />
+            </View>
+          </SkeletonPlaceholder>
+        )
+      }else{
+        return (
+          <>
+            {this.getOrderList()}
+          </>
+        );
+      }
     } else {
       return (
         <View style={styles.emptyView}>
@@ -222,5 +244,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#fff',
     textAlignVertical: 'center'
+  },
+  shopCategorySkeleton: {
+    width: 350,
+    height: 80,
+    margin: 20,
+    borderRadius: 10
+  },
+  shopmainSkeleton:{
+    flexDirection: "row", alignItems: "center"
   }
 })

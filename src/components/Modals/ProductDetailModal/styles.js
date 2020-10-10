@@ -23,7 +23,7 @@ const dynamicStyles = colorScheme => {
     swiperContainer: {
       // alignItems: "center",
       justifyContent: "center",
-      flex: 9
+      flex: 8
     },
     imageBackgroundContainer: {
       flex: 1.9,
@@ -155,9 +155,13 @@ const dynamicStyles = colorScheme => {
     },
     addToBagContainerStyle: {
       backgroundColor: AppStyles.colorSet[colorScheme].mainThemeForegroundColor,
-      flex: 2.5,
-      height: "40%",
-      alignSelf: "flex-end",
+      // flex: 2.5,
+      height:50,
+      marginLeft:20,
+      marginRight:20,
+      justifyContent:'center',
+      alignItems:'center'
+      // alignSelf: "flex-end",
 
     },
     buttonSpace: {

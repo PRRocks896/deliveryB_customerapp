@@ -35,7 +35,7 @@ function CarouselProductView(props) {
       </Text>
       <Text
         style={styles.carouselProductViewPrice}
-      >{`${appConfig.currency}${price}`}</Text>
+      >₹ {price}</Text>
     </TouchableOpacity>
   );
 }

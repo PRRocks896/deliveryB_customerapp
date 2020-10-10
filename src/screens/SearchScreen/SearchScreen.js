@@ -8,8 +8,8 @@ import {
   setShoppingBag,
   setProductPricesBYQty
 } from "../../redux/";
-import { View } from "react-native";
-import { Searchbar } from 'react-native-paper';
+import { View ,Keyboard, TouchableWithoutFeedback} from "react-native";
+import { Searchbar } from 'react-native-paper'
 import searchproducts from '../../services/Search/index'
 import addToBagProduct from "../../components/AddTobagProduct/addbagproduct";
 
@@ -21,7 +21,7 @@ class SearchScreen extends Component {
       product: {},
       searchQuery: '',
       searchResultProducts: [],
-      alreadyAddecart:false
+      alreadyAddecart: false
     };
     this.appConfig =
       props.navigation.state.params.appConfig ||
@@ -50,12 +50,12 @@ class SearchScreen extends Component {
    * @param {any} item product  add to bag
    */
   onAddToBag = async (item) => {
-    this.setState({isProductDetailVisible : false})
-    const {alreadyAddecart} = this.state
+    this.setState({ isProductDetailVisible: false })
+    const { alreadyAddecart } = this.state
 
     //add to bag product call from component
     addToBagProduct(item, alreadyAddecart)
-   
+
   };
 
   onModalCancel = () => {
@@ -78,12 +78,13 @@ class SearchScreen extends Component {
 
     return (
       <>
-        <View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{marginLeft:10,marginRight:10,marginTop:10}}>
+       
           <Searchbar
             placeholder="Search"
             onChangeText={(query) => this.onChangeSearch(query)}
           />
-        </View>
+        </TouchableWithoutFeedback >
         <Search
           // products={this.props.searchResultProducts}
           products={this.state.searchResultProducts}

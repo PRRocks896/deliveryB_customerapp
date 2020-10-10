@@ -142,22 +142,23 @@ function PaymentOptions(props) {
     let total = totalprice
     let body = `amount=${total}&currency=usd&customer=${customerID}&description=Tribata Shopping`
     // call stripe charge api
-    const data = await customerCharges(body);
-    setTransactionId(data.id)
-    setChargeConfirm(data.status)
-    if (data.status == 'succeeded') {
-      Alert.alert(
-        "",
-        "Now you can able to click next",
-        [
-          { text: "Ok", },
-        ],
-      );
-      setisLoading(false)
-      setdialogVisible(false)
-      EventRegister.emit('confirm', data.status)
-      EventRegister.emit('transactionid', data.id)
-    }
+      const data = await customerCharges(body);
+      setTransactionId(data.id)
+      setChargeConfirm(data.status)
+      if (data.status == 'succeeded') {
+        Alert.alert(
+          "",
+          "Now you can able to click next",
+          [
+            { text: "Ok", },
+          ],
+        );
+        setisLoading(false)
+        setdialogVisible(false)
+        EventRegister.emit('confirm', data.status)
+        EventRegister.emit('transactionid', data.id)
+      }
+    
   }
 
   /**
@@ -281,7 +282,7 @@ function PaymentOptions(props) {
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={onmywalletpress}
+        onPress={  walleterror == '' ?  onmywalletpress : null}
         style={styles.addNewCardContainer}
       >
         <View style={styles.addNewCardIconContainer}>

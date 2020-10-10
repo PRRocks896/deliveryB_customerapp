@@ -5,7 +5,7 @@ import {
   StatusBar,
   Dimensions,
   Share,
-  Platform,
+  TouchableOpacity,
   Image,
   AsyncStorage
 } from "react-native";
@@ -45,7 +45,7 @@ function ProductDetailModal(props) {
     }
   }
 
-  const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, alreadyAddecart,navigation } = props;
+  const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, alreadyAddecart, navigation } = props;
   const onSizeSelected = index => {
     props.item.selectedSizeIndex = index;
   };
@@ -57,8 +57,8 @@ function ProductDetailModal(props) {
   const onShare = async () => {
     const fs = RNFetchBlob.fs;
     console.log("item.name", item.name, item.productImage, productDetails.price)
-      let base64img;
-      let imagePath = null;
+    let base64img;
+    let imagePath = null;
     RNFetchBlob.config({
       fileCache: true
     })
@@ -68,7 +68,7 @@ function ProductDetailModal(props) {
         return resp.readFile("base64");
       }).then(base64Data => {
         // console.log("base64 img>>>>>>>>>>>>>>>>>>>>>>>>>>>",base64Data);
-      base64img = base64Data
+        base64img = base64Data
         // remove the file from storage
         return fs.unlink(imagePath);
       });
@@ -76,8 +76,8 @@ function ProductDetailModal(props) {
       await Share.share({
         title: "Shopertino Product",
         dialogTitle: `Shopertino Product: ${item.name}`,
-        message: item.name +  item.description   + productDetails.price,
-        image:item.productImage
+        message: item.name + item.description + productDetails.price,
+        image: item.productImage
 
       });
     } catch (error) {
@@ -104,9 +104,9 @@ function ProductDetailModal(props) {
       onBackButtonPress={onCancelPress}
     >
 
-      <View style={styles.transparentContainer}>
-        <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
 
+      <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
+      <View style={styles.transparentContainer}>
         <View style={styles.viewContainer}>
           <Swiper
             loop={false}
@@ -120,48 +120,37 @@ function ProductDetailModal(props) {
               />
             </View>
           </Swiper>
+
+
           <Header
             onCancelPress={onCancelPress}
             headerContainerStyle={styles.headerContainerStyle}
             onSharePress={onShare}
           />
-          <ProductOptions
-            item={item}
-            onSizeSelected={onSizeSelected}
-            onColorSelected={onColorSelected}
-            optionContainerStyle={styles.optionContainerStyle}
-          />
-          {/* <Favourite
-            onPress={() => props.onFavouritePress(item)}
-            isFavourite={item.isFavourite}
-            favouriteContainerStyle={styles.favouriteContainerStyle}
-          /> */}
-          <View style={styles.descriptionContainer}>
+
+          <ScrollView style={styles.descriptionContainer}>
             <Text style={styles.title}>{item.name}</Text>
             <Text style={[styles.title, { paddingTop: 5, fontSize: 15 }]}>{item.description}</Text>
             {
               productDetails ?
                 <Text
                   style={styles.price}
-                >{`${appConfig.currency}${productDetails.price}`}</Text>
+                >₹ {productDetails.price}</Text>
                 :
                 <Text
                   style={styles.price}
-                >{`${appConfig.currency}${item.productDetail ? item.productDetail.price : null}`}</Text>
+                >₹ {item.productDetail ? item.productDetail.price : null}</Text>
             }
             <View style={styles.borderLine} />
-          </View>
-          <View style={styles.footerContainer}>
-            <FooterButton
+
+            <TouchableOpacity
               onPress={() => onAddToBag(item)}
-              footerContainerStyle={styles.addToBagContainerStyle}
-              footerTitleStyle={{
-                color: "white",
-                fontFamily: AppStyles.fontFamily.regularFont
-              }}
-              title={alreadyAddecart == true || alreadyaddecart == true ? "Added in Bag" : "ADD TO BAG"}
-            />
-          </View>
+              style={styles.addToBagContainerStyle}>
+              <Text style={{ color: '#fff', fontSize: 20 }}>{alreadyAddecart == true || alreadyaddecart == true ? "Added in Bag" : "ADD TO BAG"}</Text>
+            </TouchableOpacity>
+          </ScrollView>
+
+
         </View>
       </View>
 

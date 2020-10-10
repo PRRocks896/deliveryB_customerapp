@@ -125,7 +125,7 @@ class PaymentMethodScreen extends Component {
     else {
       Alert.alert(
         "Incomplete Process",
-        "Kindly add your card proper.",
+        "Kindly add your Payment method.",
         [
           {
             text: "OK"

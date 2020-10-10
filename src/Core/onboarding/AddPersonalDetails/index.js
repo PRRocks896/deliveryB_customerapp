@@ -23,42 +23,46 @@ const AddProfileScreen = props => {
         let phoneno = await AsyncStorage.getItem('userSignupData')
         let parsedphonNo = JSON.parse(phoneno)
         console.log("userid========================add details",userId, parsedphonNo.data.mobile)
-        setisLoading(true)
         if (name != '' && email != '', password != '') {
-
-            let body = JSON.stringify({
-                id: userId,
-                username: name,
-                email: email,
-                role: 'Customer',
-                password: password,
-                deliverytype: "0"
-            })
-            const data = await addProfile(body);
-            AsyncStorage.setItem('username', name);
-            AsyncStorage.setItem('email', email);
-            setisLoading(false)
-            if (data.statusCode == 200) {
+            if(password.length < 6){
+                setpasswordError("Enter password minimum 6 character")
+            }else{
+                setisLoading(true)
+                
                 let body = JSON.stringify({
-                    user_mobile:parsedphonNo.data.mobile,
-                    name:name
+                    id: userId,
+                    username: name,
+                    email: email,
+                    role: 'Customer',
+                    password: password,
+                    deliverytype: "0"
                 })
-                const datawallet = await createWallet(body)
-                console.log("data ", datawallet)
-                if(datawallet.statusCode == 200){
-                    setisLoading(false)
-                    props.navigation.popToTop('AuthStackNavigator')
-                }else{
-                    console.log("wallet error",datawallet)
-                    setisLoading(false)
-                    setApiError(datawallet.message)
-                }
-            } else {
-                console.log("add error",data)
+                const data = await addProfile(body);
+                AsyncStorage.setItem('username', name);
+                AsyncStorage.setItem('email', email);
                 setisLoading(false)
-                setApiError(data.message)
+                if (data.statusCode == 200) {
+                    let body = JSON.stringify({
+                        user_mobile:parsedphonNo.data.mobile,
+                        name:name
+                    })
+                    const datawallet = await createWallet(body)
+                    console.log("data ", datawallet)
+                    if(datawallet.statusCode == 200){
+                        setisLoading(false)
+                        props.navigation.popToTop('AuthStackNavigator')
+                    }else{
+                        console.log("wallet error",datawallet)
+                        setisLoading(false)
+                        setApiError(datawallet.message)
+                    }
+                } else {
+                    console.log("add error",data)
+                    setisLoading(false)
+                    setApiError(data.message)
+                }
+                setisLoading(false)
             }
-            setisLoading(false)
 
         } else {
             setisLoading(false)

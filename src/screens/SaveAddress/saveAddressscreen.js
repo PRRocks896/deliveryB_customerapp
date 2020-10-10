@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import addAddress from '../../services/SavedAddress/addAddress'
 import getAddress from "../../services/SavedAddress/getAddress";
 import updateAddress from "../../services/SavedAddress/updateAddress";
+import { ScrollView } from "react-native-gesture-handler";
 
 class SaveAddressScreen extends Component {
     constructor(props) {
@@ -201,8 +202,8 @@ class SaveAddressScreen extends Component {
     render() {
         const { name, address_line_1, address_line_2, mobile, district, pinCode, state, country, isParamsData } = this.state
         return (
-            <View style={styles.container}>
-                <View>
+            <ScrollView contentContainerStyle={{flexGrow:1}}>
+                <View style={{marginLeft:10,marginRightL:10}}>
                     <TextInput
                         style={styles.InputContainer}
                         keyboardType='number-pad'
@@ -281,7 +282,7 @@ class SaveAddressScreen extends Component {
                     </View>
                 </View>
 
-            </View>
+            </ScrollView>
         );
     }
 }

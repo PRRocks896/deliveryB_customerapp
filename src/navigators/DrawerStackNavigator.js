@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StatusBar } from "react-native";
+import { View, StatusBar, Keyboard } from "react-native";
 import { connect } from "react-redux";
 import { createDrawerNavigator } from "react-navigation-drawer";
 import SearchBar from "react-native-search-box";
@@ -62,6 +62,7 @@ const DrawerNavigator = createDrawerNavigator(
           <MenuButton
             onPress={() => {
               navigation.toggleDrawer()
+              Keyboard.dismiss()
               // navigation.openDrawer();
             }}
           />

@@ -215,7 +215,7 @@ class ShoppingBagScreen extends Component {
               </View>
               <View style={{ flex: 5, padding: 10 }}>
                 <Text style={styles.text}>{item.item.products[0].name}</Text>
-                <Text style={styles.text}>{item.item.amount}</Text>
+                <Text style={styles.text}> ₹ {item.item.amount}</Text>
                 <View style={{ flexDirection: 'row', marginTop: 10 }}>
                   <TouchableOpacity
                     onPress={() => this.incrementItem(item.index)}
@@ -282,21 +282,21 @@ class ShoppingBagScreen extends Component {
                       <Text style={[styles.text, { fontSize: 20 }]}>Bill Details</Text>
                       <View style={{ flexDirection: 'row', paddingTop: 5 }}>
                         <Text style={styles.text}>Item Total</Text>
-                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>{totalPayamount}</Text>
+                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ {totalPayamount}</Text>
                       </View>
                       <View style={{ flexDirection: 'row', paddingTop: 5 }}>
                         <Text style={styles.text}>Delivery partner fee</Text>
-                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>$ 0</Text>
+                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ 0</Text>
                       </View>
                     </View>
                     <View style={{ flexDirection: 'row', paddingBottom: 10 }}>
                       <Text style={styles.text}>Texes and Charges</Text>
-                      <Text style={[styles.text, { position: 'absolute', right: 20 }]}>$ 0</Text>
+                      <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ 0</Text>
                     </View>
                     <View style={styles.dashboarder} />
                     <View style={{ flexDirection: 'row' }}>
                       <Text style={[styles.text, { fontSize: 18 }]}>To Pay</Text>
-                      <Text style={[styles.text, { position: 'absolute', right: 20, fontSize: 18 }]}>{totalPayamount}</Text>
+                      <Text style={[styles.text, { position: 'absolute', right: 20, fontSize: 18 }]}>₹ {totalPayamount}</Text>
                     </View>
                   </View>
                 </View>

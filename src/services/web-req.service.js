@@ -14,7 +14,7 @@ const WebReq = {
                 } :
                     Headers
 
-
+                // console.log("get web rew", url)
             const res = await fetch(url, { headers: headers, method: 'GET' });
             // console.log("get WEB REQ FILE", res)
             if (res && res.status === 200) {

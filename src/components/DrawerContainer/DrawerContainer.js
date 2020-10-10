@@ -14,6 +14,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import api from '../../services/url.service'
 import { EventRegister } from 'react-native-event-listeners'
 import { ScrollView } from "react-native-gesture-handler";
+import getProfileDetails from "../../services/Profile/getProfile";
 const options = {
   title: 'Select Profile',
   storageOptions: {
@@ -46,11 +47,18 @@ function DrawerContainer(appConfig) {
       getimg()
     }, [])
     const getimg = async () => {
+
+      let loginData = await AsyncStorage.getItem('LoginData')
+      let details = JSON.parse(loginData)
+      let body = JSON.stringify({
+        id: details.userId,
+        reqToken: details.reqToken,
+      })
+      const data = await getProfileDetails(body);
+      console.log("Profile",data.data.profilePicture)
+      setProfilepic(data.data.profilePicture)
       EventRegister.addEventListener('profileImage', (data) => { setProfilepic(data) })
-      let profiledetails = await AsyncStorage.getItem('CurrentUser')
-      let parsedprofile = JSON.parse(profiledetails)
-      console.log("parsedprofile.data.profilePicture", parsedprofile.data.profilePicture)
-      setProfilepic(parsedprofile.data.profilePicture)
+     
     }
 
     const imagePicker = () => {

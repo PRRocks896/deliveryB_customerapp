@@ -27,6 +27,9 @@ import deviceStorage from '../../../utils/deviceStorage';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import getAddressviaUSer from '../../../services/SavedAddress/getAddressviaUser';
 import Toast from 'react-native-simple-toast';
+
+import IntlPhoneInput from 'react-native-intl-phone-input';
+
 function SmsAuthenticationScreen(props) {
   // console.log("props,", props.navigation.state.params.isSigningUp, props)
   const appConfig =
@@ -54,7 +57,7 @@ function SmsAuthenticationScreen(props) {
 
   const { isSigningUp } = props.navigation.state.params;
   const [otpcode, setOtpCode] = useState('')
-
+  const [dialcode, setdialcode] = useState('')
   useEffect(() => {
     if (phoneRef && phoneRef.current) {
       setCountriesPickerData(phoneRef.current.getPickerData());
@@ -74,12 +77,12 @@ function SmsAuthenticationScreen(props) {
    * @param {number} userValidPhoneNumber user phone no
    * for Sign up user
    */
-  const signInWithPhoneNumber = async (userValidPhoneNumber) => {
-    console.log("For Sign up", userValidPhoneNumber)
+  const signInWithPhoneNumber = async () => {
+    console.log("For Sign up", dialcode+mobile)
     setLoading(true);
-    let body = JSON.stringify({ mobile: userValidPhoneNumber })
+    let body = JSON.stringify({ mobile:  dialcode+mobile})
     const data = await signup(body);
-    // console.log("Data in smsAuth screen", data)
+    console.log("Data in smsAuth screen", data)
     if (data.success) {
       props.setUserData({
         user: data.data,
@@ -121,20 +124,20 @@ function SmsAuthenticationScreen(props) {
 
   const onPressSend = () => {
 
-    if (phoneRef.current.isValidNumber()) {
-      const userValidPhoneNumber = phoneRef.current.getValue();
-      setLoading(true);
-      setPhoneNumber(userValidPhoneNumber);
-      console.log("in onPressSend", isSigningUp, userValidPhoneNumber)
+    // if (phoneRef.current.isValidNumber()) {
+    //   const userValidPhoneNumber = phoneRef.current.getValue();
+    //   setLoading(true);
+    //   setPhoneNumber(userValidPhoneNumber);
+    //   console.log("in onPressSend", isSigningUp, userValidPhoneNumber)
       if (!isSigningUp) {
       } else {
         // Sign up user
-        signInWithPhoneNumber(userValidPhoneNumber);
+        signInWithPhoneNumber();
       }
-    } else {
-      Toast.show('Please enter a valid phone number.', Toast.LONG);
+    // } else {
+    //   Toast.show('Please enter a valid phone number.', Toast.LONG);
      
-    }
+    // }
   };
 
   const onPressFlag = () => {
@@ -157,37 +160,20 @@ function SmsAuthenticationScreen(props) {
       signUpWithPhoneNumber(newCode);
     } else {
     }
-  };
+  }; 
+   const onChangeText = ({ dialCode, unmaskedPhoneNumber, phoneNumber, isVerified }) => {
+    setMobile(unmaskedPhoneNumber)
+    setdialcode(dialCode)
+};
 
   const phoneInputRender = () => {
     return (
       <>
-        <PhoneInput
-          style={styles.InputContainer}
-          flagStyle={styles.flagStyle}
-          textStyle={styles.phoneInputTextStyle}
-          ref={phoneRef}
-          initialCountry='in'
-          onPressFlag={onPressFlag}
-          offset={10}
-          allowZeroAfterCountryCode
-          textProps={{
-            placeholder: IMLocalized('Phone number'),
-            placeholderTextColor: '#aaaaaa',
-          }}
-        />
-        {countriesPickerData && (
-          <CountriesModalPicker
-            data={countriesPickerData}
-            appStyles={appStyles}
-            onChange={country => {
-              selectCountry(country);
-            }}
-            cancelText={IMLocalized('Cancel')}
-            visible={countryModalVisible}
-            onCancel={onPressCancelContryModalPicker}
-          />
-        )}
+      <View style={styles.InputContainer}>
+
+        <IntlPhoneInput onChangeText={onChangeText} defaultCountry="IN" />
+      </View>
+       
         <Button
           containerStyle={styles.sendContainer}
           style={styles.sendText}
@@ -232,19 +218,20 @@ function SmsAuthenticationScreen(props) {
    */
   const loginfun = async () => {
     let userId = await AsyncStorage.getItem('userId')
-    let mobileNo = phoneRef.current.getValue()
-    if (mobileNo != '' && password != '') {
+    // let mobileNo = phoneRef.current.getValue()
+    if (mobile != '' && password != '') {
       setLoading(true)
-      console.log("login------------------------",mobileNo)
-      if(mobileNo.length < 13 || mobileNo.length > 13){
+      console.log("login------------------------",mobile)
+      if(mobile.length < 10 || mobile.length > 10){
         setLoading(false)
         console.log("mobile in validation",mobile)
         Toast.show('Please enter a valid phone number.', Toast.LONG);
       
-      }else{
+      }
+      else{
 
         let body = JSON.stringify({
-          mobile: mobileNo,
+          mobile: dialcode +  mobile,
           password: password,
         })
         const data = await signin(body);
@@ -280,8 +267,10 @@ function SmsAuthenticationScreen(props) {
    */
   const getAddressid = async () => {
     let userid = await AsyncStorage.getItem('userId')
+    console.log("userid", userid)
     // get address via user
     const data = await getAddressviaUSer(userid);
+    console.log("data.data._id>>>>>>>>", data)
     if (data.data) {
       console.log("address id ", data.data._id)
       AsyncStorage.setItem("AddressId", data.data._id)
@@ -312,7 +301,10 @@ function SmsAuthenticationScreen(props) {
       let profile = await AsyncStorage.getItem('CurrentUser')
     }
   }
-
+  const onChangeTextlogin = ({ dialCode, unmaskedPhoneNumber, phoneNumber, isVerified }) => {
+    setMobile(unmaskedPhoneNumber)
+    setdialcode(dialCode)
+};
   /**
    * For Display Login Screen
    */
@@ -321,32 +313,11 @@ function SmsAuthenticationScreen(props) {
     return (
       <>
         <Text style={styles.title}>{IMLocalized('Sign In')}</Text>
-        <PhoneInput
-          style={styles.InputContainer}
-          flagStyle={styles.flagStyle}
-          textStyle={styles.phoneInputTextStyle}
-          ref={phoneRef}
-          onPressFlag={onPressFlag}
-          offset={10}
-          initialCountry='in'
-          allowZeroAfterCountryCode
-          textProps={{
-            placeholder: IMLocalized('Phone number'),
-            placeholderTextColor: '#aaaaaa',
-          }}
-        />
-        {countriesPickerData && (
-          <CountriesModalPicker
-            data={countriesPickerData}
-            appStyles={appStyles}
-            onChange={country => {
-              selectCountry(country);
-            }}
-            cancelText={IMLocalized('Cancel')}
-            visible={countryModalVisible}
-            onCancel={onPressCancelContryModalPicker}
-          />
-        )}
+        <View style={styles.InputContainer}>
+
+        <IntlPhoneInput onChangeText={onChangeTextlogin} defaultCountry="IN" />
+       </View>
+       
         <View style={[styles.InputContainer, { flexDirection: 'row' }]}>
           <TextInput
             style={{ flex: 8 }}
@@ -356,7 +327,7 @@ function SmsAuthenticationScreen(props) {
             placeholderTextColor='#aaaaaa'
             onChangeText={(text) => setPassword(text)}
           />
-          <TouchableOpacity style={{ flex: 1 }} onPress={() => checkVisibility()}>
+          <TouchableOpacity style={{ flex: 1,justifyContent:'center' }} onPress={() => checkVisibility()}>
             {
               visibility ?
                 <Icon name={'visibility'} size={20} color={'#000'} />

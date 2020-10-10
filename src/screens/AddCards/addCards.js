@@ -1,6 +1,6 @@
 "use strict";
 import React, { Component } from 'react';
-import { View, Text, Alert, ActivityIndicator,TextInput, TouchableOpacity, StyleSheet, FlatList, StatusBar, Keyboard } from 'react-native';
+import { View, Text, Alert, ActivityIndicator, TextInput, TouchableOpacity, StyleSheet, FlatList, StatusBar, Keyboard } from 'react-native';
 import AppStyles from '../../AppStyles'
 import { Dialog } from 'react-native-simple-dialogs';
 import { CreditCardInput } from 'react-native-credit-card-input';
@@ -25,15 +25,15 @@ export default class AddCards extends Component {
             valueradio: '',
             getcards: [],
             cvvdialogVisible: false,
-            cvv:'',
+            cvv: '',
             isLoading: false,
-            tokenid:'',
-            customerid:''
+            tokenid: '',
+            customerid: ''
         };
     }
-/**
- * get cards from async storage
- */
+    /**
+     * get cards from async storage
+     */
     componentDidMount = async () => {
         console.log("amount========", this.props.navigation.state.params.amount)
         let cards = await AsyncStorage.getItem('CardData')
@@ -123,162 +123,174 @@ export default class AddCards extends Component {
         let data = this.state.getcards
         data.splice(index, 1)
         AsyncStorage.setItem('CardData', JSON.stringify(data))
-        this.componentDidMount() 
+        this.componentDidMount()
     }
-  /**
-   * 
-   * @param {any} data clicked card details
-   */
-   paymentGetToken = (data) => {
-    if (this.state.cvv !== '') {
-      this.setState({isLoading:true})
-      //For get Token for stripe
-      this.getStripetoken(data, this.state.cvv)
-    }else{
-        Alert.alert(
-            "",
-            "Please add amount from My Wallet",
-            [
-              { text: "Ok", },
-            ],
-          ); 
-    }
-  }
-/**
-   * 
-   * @param {any} cardData card Details
-   * @param {any} cvv cvv number
-   * get stripe Token 
-   */
-   getStripetoken = async (cardData, cvv) => {
-    const card = {
-      'card[number]': cardData['card[number]'],
-      'card[exp_month]': cardData['card[exp_month]'],
-      'card[exp_year]': cardData['card[exp_year]'],
-      'card[cvc]': cvv
-    };
-    let body = Object.keys(card)
-      .map(key => key + '=' + card[key])
-      .join('&')
-
-    //call api for get stripe token
-    const data = await getStripeToken(body);
-    this.createCustomer(data.id)
-  }
-
-  /**
-   * 
-   * @param {any} tokenID stripe token id
-   * create stripe customer 
-   */
-   createCustomer = async (tokenID) => {
-    let userdata = await AsyncStorage.getItem('CurrentUser')
-    let userParseData = JSON.parse(userdata)
-    let email = userParseData.data.email
-    let body = `email=${email}&source=${tokenID}&description=Tribata Shopping`
-    // call api for create customer
-    const data = await createStripeCustomer(body);
-    this.stripeCharges(data.id)
-  }
-
-  /**
-   * 
-   * @param {any} customerID stripe customer id
-   * create stripe charge 
-   */
-   stripeCharges = async (customerID) => {
-       let mobile = await AsyncStorage.getItem('CurrentUser')
-       let mobileParsed= JSON.parse(mobile)
-       console.log("mobile", mobileParsed.data.mobile)
-    let total = parseFloat(this.props.navigation.state.params.amount)
-    let body = `amount=${total}&currency=usd&customer=${customerID}&description=Tribata Shopping`
-    // call stripe charge api
-    const data = await customerCharges(body);
-    if (data.status == 'succeeded') {
-        let phoneNo = mobileParsed.data.mobile
-        let body = JSON.stringify({
-            amount: total
-        })
-        console.log("body", body, total)
-        const data = await addamountwallet(body, phoneNo)
-        console.log("amount=======in api",data)
-        if(data.success){
-            Alert.alert(
-              "",
-              "Successfully Added in your wallet.",
-              [
-                { text: "Ok", onPress: () => this.reDirectToWallet() },
-              ],
-            );
-            this.setState({
-                isLoading:false,
-                cvvdialogVisible:false
-            })
-        }else{
-            this.setState({
-                isLoading:false,
-                cvvdialogVisible:false
-            })
+    /**
+     * 
+     * @param {any} data clicked card details
+     */
+    paymentGetToken = (data) => {
+        if (this.state.cvv !== '') {
+            this.setState({ isLoading: true })
+            //For get Token for stripe
+            this.getStripetoken(data, this.state.cvv)
+        } else {
             Alert.alert(
                 "",
-                data.message,
+                "Please add amount from My Wallet",
                 [
-                  { text: "Ok", },
+                    { text: "Ok", },
                 ],
-              ); 
+            );
         }
-    }else{
-        this.setState({
-            isLoading:false,
-            cvvdialogVisible:false
-        })
-        Alert.alert(
-            "",
-            data.error.code,
-            [
-              { text: "Ok", },
-            ],
-          ); 
     }
-  }
+    /**
+       * 
+       * @param {any} cardData card Details
+       * @param {any} cvv cvv number
+       * get stripe Token 
+       */
+    getStripetoken = async (cardData, cvv) => {
+        const card = {
+            'card[number]': cardData['card[number]'],
+            'card[exp_month]': cardData['card[exp_month]'],
+            'card[exp_year]': cardData['card[exp_year]'],
+            'card[cvc]': cvv
+        };
+        let body = Object.keys(card)
+            .map(key => key + '=' + card[key])
+            .join('&')
 
-  reDirectToWallet = async () => {
-    let mobile = await AsyncStorage.getItem('CurrentUser')
-    let mobileParsed = JSON.parse(mobile)
-    let phoneno = mobileParsed.data.mobile
-    console.log("mobile", phoneno)
-    const data = await getamountWallet(phoneno)
-    if (data.success) {
-        EventRegister.emit('WalletRefresh', data.data.balance)
-        let body = JSON.stringify({
-            "where": {
+        //call api for get stripe token
+        const data = await getStripeToken(body);
+        this.createCustomer(data.id)
+    }
 
-            },
-            "pagination": {
-                "sortBy": "createdAt",
-                "descending": true,
-                "rowsPerPage": 50,
-                "page": 1
+    /**
+     * 
+     * @param {any} tokenID stripe token id
+     * create stripe customer 
+     */
+    createCustomer = async (tokenID) => {
+        let userdata = await AsyncStorage.getItem('CurrentUser')
+        let userParseData = JSON.parse(userdata)
+        let email = userParseData.data.email
+        let body = `email=${email}&source=${tokenID}&description=Tribata Shopping`
+        // call api for create customer
+        const data = await createStripeCustomer(body);
+        this.stripeCharges(data.id)
+    }
+
+    /**
+     * 
+     * @param {any} customerID stripe customer id
+     * create stripe charge 
+     */
+    stripeCharges = async (customerID) => {
+
+        let mobile = await AsyncStorage.getItem('CurrentUser')
+        let mobileParsed = JSON.parse(mobile)
+        console.log("mobile", mobileParsed.data.mobile)
+        let total = parseFloat(this.props.navigation.state.params.amount)
+        if (total < 50000) {
+
+            let body = `amount=${total}&currency=usd&customer=${customerID}&description=Tribata Shopping`
+            // call stripe charge api
+            const data = await customerCharges(body);
+            if (data.status == 'succeeded') {
+                let phoneNo = mobileParsed.data.mobile
+                let body = JSON.stringify({
+                    amount: total
+                })
+                console.log("body", body, total)
+                const data = await addamountwallet(body, phoneNo)
+                console.log("amount=======in api", data)
+                if (data.success) {
+                    Alert.alert(
+                        "",
+                        "Successfully Added in your wallet.",
+                        [
+                            { text: "Ok", onPress: () => this.reDirectToWallet() },
+                        ],
+                    );
+                    this.setState({
+                        isLoading: false,
+                        cvvdialogVisible: false
+                    })
+                } else {
+                    this.setState({
+                        isLoading: false,
+                        cvvdialogVisible: false
+                    })
+                    Alert.alert(
+                        "",
+                        data.message,
+                        [
+                            { text: "Ok", },
+                        ],
+                    );
+                }
+            } else {
+                this.setState({
+                    isLoading: false,
+                    cvvdialogVisible: false
+                })
+                Alert.alert(
+                    "",
+                    data.error.code,
+                    [
+                        { text: "Ok", },
+                    ],
+                );
             }
-        })
-        const transctions = await getwallettransactions(phoneno, body)
-        EventRegister.emit('WalletRefreshTransaction', transctions.data.list)
-        this.props.navigation.navigate("MyWallet")
+        }else{
+            Alert.alert(
+                "",
+                "You can not add more then 50,000",
+                [
+                    { text: "Ok", },
+                ],
+            );
+        }
     }
-  }
-  /**
-   * check amount or not for add money to wallet
-   */
-  checkamountvalue = () => {
-      if(this.props.navigation.state.params.amount !== undefined){
-          this.setState({cvvdialogVisible: true})
-      }
-  }
-/**
- * Show all Save cards
- */
+
+    reDirectToWallet = async () => {
+        let mobile = await AsyncStorage.getItem('CurrentUser')
+        let mobileParsed = JSON.parse(mobile)
+        let phoneno = mobileParsed.data.mobile
+        console.log("mobile", phoneno)
+        const data = await getamountWallet(phoneno)
+        if (data.success) {
+            EventRegister.emit('WalletRefresh', data.data.balance)
+            let body = JSON.stringify({
+                "where": {
+
+                },
+                "pagination": {
+                    "sortBy": "createdAt",
+                    "descending": true,
+                    "rowsPerPage": 50,
+                    "page": 1
+                }
+            })
+            const transctions = await getwallettransactions(phoneno, body)
+            EventRegister.emit('WalletRefreshTransaction', transctions.data.list)
+            this.props.navigation.navigate("MyWallet")
+        }
+    }
+    /**
+     * check amount or not for add money to wallet
+     */
+    checkamountvalue = () => {
+        if (this.props.navigation.state.params.amount !== undefined) {
+            this.setState({ cvvdialogVisible: true })
+        }
+    }
+    /**
+     * Show all Save cards
+     */
     showSavedCards = () => {
-        const { valueradio, getcards,cvvdialogVisible,isLoading } = this.state
+        const { valueradio, getcards, cvvdialogVisible, isLoading } = this.state
         return (
             <>
                 <FlatList
@@ -299,7 +311,7 @@ export default class AddCards extends Component {
                             <Dialog
                                 visible={cvvdialogVisible}
                                 title="Add your cvv number"
-                                onTouchOutside={() => this.setState({cvvdialogVisible: false})}>
+                                onTouchOutside={() => this.setState({ cvvdialogVisible: false })}>
                                 <View>
                                     <TextInput
                                         keyboardType='number-pad'
@@ -308,7 +320,7 @@ export default class AddCards extends Component {
                                         placeholder='Add cvv'
                                         maxLength={3}
                                         style={styles.cvvinput}
-                                        onChangeText={(text) => this.setState({cvv: text})}
+                                        onChangeText={(text) => this.setState({ cvv: text })}
                                     />
                                     <View style={styles.addbtnContainer}>
                                         <TouchableOpacity style={styles.addcvvbutton} onPress={() => this.paymentGetToken(item.item)}>
@@ -417,8 +429,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10
-      },
-      addcvvbutton: {
+    },
+    addcvvbutton: {
         borderColor: '#a3a3a3',
         borderRadius: 5,
         width: '40%',
@@ -426,5 +438,5 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         alignItems: 'center',
         justifyContent: 'center'
-      },
+    },
 });

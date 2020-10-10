@@ -32,16 +32,18 @@ const dynamicStyles = (appStyles, colorScheme) => {
       color: '#ffffff',
     },
     InputContainer: {
-      height: 42,
+      height: 60,
       borderWidth: 1,
-      borderColor: appStyles.colorSet[colorScheme].grey3,
-      paddingLeft: 10,
-      color: appStyles.colorSet[colorScheme].mainTextColor,
-      width: '80%',
-      alignSelf: 'center',
+      borderColor: '#a3a3a3',
+      paddingLeft: 3,
+      color: '#000',
+      width: '95%',
+      // alignSelf: 'center',
       marginTop: 20,
-      alignItems: 'center',
-      borderRadius: 25,
+      // alignItems: 'center',
+      borderRadius: 5,
+      marginLeft:10,
+      marginRight:10
     },
 
     flagStyle: {

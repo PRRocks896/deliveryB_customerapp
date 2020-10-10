@@ -55,7 +55,10 @@ class CategoryProductGridScreen extends Component {
   }
 
   getCategoryProducts = async (name) => {
+
+    console.log("Get category name=======", name)
     const data = await getProductsbyID(name);
+    console.log("Category resp", data)
     if (data.success) {
       this.setState({ categoryProducts: data.data, isLoadingProduct: false })
     }
@@ -92,11 +95,13 @@ class CategoryProductGridScreen extends Component {
     addToBagProduct(item, alreadyAddecart)
   };
   render() {
-    const { product, isLoadingProduct } = this.state
+    const { product, isLoadingProduct,categoryProducts } = this.state
     const { extraData } = this.props;
 
     return (
       <>
+      {
+        categoryProducts.length ? 
         <View style={styles.container}>
 
           {
@@ -153,6 +158,11 @@ class CategoryProductGridScreen extends Component {
             appConfig={this.appConfig}
           />
         </View>
+        :
+        <View style={{flex:1,justifyContent:'center', alignItems:'center'}}>
+          <Text>{'No Product Found'}</Text>
+        </View>
+      }
       </>
     );
   }

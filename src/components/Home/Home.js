@@ -34,8 +34,12 @@ function Home(props) {
     product,
     appConfig,
     productDetails,
-    alreadyAddecart
+    alreadyAddecart,
+
+    categoryproducts,
+    featuredproduct
   } = props;
+
 
   useEffect(() => {
 
@@ -60,12 +64,17 @@ function Home(props) {
       setNetInfo(state.isConnected);
     });
 
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>main page", featuredproduct.length)
+    setCategory(categoryproducts)
+    setProducts(featuredproduct)
     getCategoryProducts() // For get categories
     getFeaturedProducts() // For get products
     return () => [backHandler.remove(),  unsubscribe()]
   }, []);
 
   const getCategoryProducts = async () => {
+
+    
     const data = await getCategory();
     if (data.success) {
       setisLoadingcategory(false)
@@ -87,7 +96,12 @@ function Home(props) {
     </View>)
   } else {
   return (
-    <ScrollView style={styles.container} > 
+    <ScrollView 
+    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
+      getCategoryProducts() // For get categories
+      getFeaturedProducts() //
+  }} />}
+    style={styles.container} > 
       {
         isLoadingcategory == true ?
           <SkeletonPlaceholder>

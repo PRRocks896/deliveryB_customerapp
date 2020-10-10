@@ -22,7 +22,7 @@ function CategoryCard(props) {
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={onCategoryPress}
-      style={[styles.categoryTextContainerView, styles.categoryImageContainer, imageContainerStyle]}
+      style={[styles.categoryTextContainerView, styles.categoryImageContainer, imageContainerStyle,{paddingLeft:10,paddingRight:10,width:'auto'}]}
     >
       <Text style={styles.categoryText}>{item.name.toUpperCase()}</Text>
     </TouchableOpacity>

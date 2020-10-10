@@ -76,7 +76,7 @@ class CheckoutScreen extends Component {
       console.log("for shop details", shopDetailsres)
       if (shopDetailsres.success) {
         console.log("shopDetailsres.data.mobile", JSON.stringify(shopDetailsres.data.mobile))
-        let shopMobile = shopDetailsres.data.mobile.includes('+91') ? shopDetailsres.data.mobile.replace('+91', '') : shopDetailsres.data.mobile
+        let shopMobile = shopDetailsres.data.mobile
 
         let body = JSON.stringify({
           shop_mobile: shopMobile,

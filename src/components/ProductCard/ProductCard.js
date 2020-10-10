@@ -24,10 +24,10 @@ function ProductCard(props) {
         productDetails ?
           <Text
             style={styles.productCardPrice}
-          >${productDetails.price}</Text>
+          >₹ {productDetails.price}</Text>
           : <Text
             style={styles.productCardPrice}
-          >${price}</Text>
+          > ₹ {price}</Text>
       }
       <Text style={styles.productCardDescription} numberOfLines={1}>
         {item.name}
