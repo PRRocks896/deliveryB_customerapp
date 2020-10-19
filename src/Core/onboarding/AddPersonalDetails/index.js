@@ -22,7 +22,7 @@ const AddProfileScreen = props => {
         let userId = await AsyncStorage.getItem('useridSignup')
         let phoneno = await AsyncStorage.getItem('userSignupData')
         let parsedphonNo = JSON.parse(phoneno)
-        console.log("userid========================add details",userId, parsedphonNo.data.mobile)
+       
         if (name != '' && email != '', password != '') {
             if(password.length < 6){
                 setpasswordError("Enter password minimum 6 character")
@@ -47,17 +47,17 @@ const AddProfileScreen = props => {
                         name:name
                     })
                     const datawallet = await createWallet(body)
-                    console.log("data ", datawallet)
+                   
                     if(datawallet.statusCode == 200){
                         setisLoading(false)
                         props.navigation.popToTop('AuthStackNavigator')
                     }else{
-                        console.log("wallet error",datawallet)
+                       
                         setisLoading(false)
                         setApiError(datawallet.message)
                     }
                 } else {
-                    console.log("add error",data)
+                   
                     setisLoading(false)
                     setApiError(data.message)
                 }
@@ -89,18 +89,7 @@ const AddProfileScreen = props => {
 
         // this.props.navigation.navigate('PersonalDocument')
     }
-    const onChangeEmail = () => {
-        let emailreg = '/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/'
-        if (email == '') {
-            setemailError('Please enter email address...',)
-        }
-        else if (emailreg.test(email) === false) {
-            setemailError('Email not correct...')
-        }
-        else {
-            setemailError('')
-        }
-    }
+
 
     return (
         <SafeAreaView style={styles.container}>

@@ -81,7 +81,6 @@ class ShoppingBagScreen extends Component {
     console.log("userid", userid)
     this.setState({isDataLoading:true})
     const getdata = await getbagproduct(userid)
-    console.log("=================",getdata)
     if(getdata.statusCode == 200) {
       this.setState({isDataLoading: false})
       this.setState({ allShoppingBag: getdata.data })
@@ -102,8 +101,7 @@ class ShoppingBagScreen extends Component {
   onContinuePress = async () => {
     this.setState({ isLoading: true })
     let userid = await AsyncStorage.getItem('userId')
-    console.log("userid", userid)
-    this.props.setSubtotalPrice(Number(this.props.totalShoppinBagPrice));
+    // this.props.setSubtotalPrice(Number(this.props.totalShoppinBagPrice));
     this.state.allShoppingBag.length &&
       this.props.navigation.navigate("PaymentMethod", {
         appConfig: this.appConfig,
@@ -127,13 +125,13 @@ class ShoppingBagScreen extends Component {
         allShoppingBag[index].products[0].quantity = allShoppingBag[index].products[0].quantity + 1
         allShoppingBag[index].amount = allShoppingBag[index].products[0].price * allShoppingBag[index].products[0].quantity
         this.setState({ count: allShoppingBag[index].products[0].quantity })
-        // console.log("===increment ========", allShoppingBag[index].amount)
+       
 
         const total = allShoppingBag.map(item => item.amount).reduce((prev, next) => prev + next);
         this.setState({ totalPayamount: total })
         let body = JSON.stringify(item)
         const data = await itemQuentity(item._id, body)
-        // console.log("==========after change api response=", data)
+        
       }
     })
   }
@@ -193,7 +191,6 @@ class ShoppingBagScreen extends Component {
     let userid = await AsyncStorage.getItem('userId')
     const getdata = await getbagproduct(userid)
     if (getdata.success) {
-      console.log("when remove item", getdata.data.length)
       EventRegister.emit('cartlength', getdata.data.length)
     }
 

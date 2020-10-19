@@ -38,7 +38,7 @@ function ShoppingBagCard(props) {
   };
 
   const setObjForProps = () => {
-    console.log("total", props.item.productDetail.price)
+   
     const obj = {
       id: props.item.shoppingBagId,
       qty: itemQty,

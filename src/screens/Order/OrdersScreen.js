@@ -14,6 +14,7 @@ import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, Refres
 import Appstyle from '../../AppStyles'
 import moment from "moment";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { ActivityIndicator } from "react-native-paper";
 
 class OrdersScreen extends Component {
   constructor(props) {
@@ -28,14 +29,17 @@ class OrdersScreen extends Component {
       isShowData: true,
       refreshing : false, 
       isLoadingorder: true,
+      fetchingStatus: false,
+      setOnLoad: false,
+      isLoading: true,
     }
+    this.page = 0
     this.props.navigation.addListener(
       'didFocus',
       payload => {
         this.componentDidMount()
 
       });
-
   }
 
   componentDidMount() {
@@ -55,6 +59,8 @@ class OrdersScreen extends Component {
 
   }
   getOrders = async () => {
+    var that = this;
+    that.page = that.page + 1;
     let addressid = await AsyncStorage.getItem('AddressId')
     let body = JSON.stringify({
       "where": {
@@ -63,15 +69,16 @@ class OrdersScreen extends Component {
       "pagination": {
         "sortBy": "createdAt",
         "descending": true,
-        "rowsPerPage": 30,
+        "rowsPerPage": 200,
         "page": 1
       }
     })
-    console.log("addressid",addressid)
+
     const data = await getOrder(addressid, body)
-      console.log("=====================order id", data)
+     
       if (data.success) {
-        this.setState({ orderHistory: data.data, isLoadingorder: false })
+        this.setState({ orderHistory: data.data})
+        // that.setState({ orderHistory:  that.page == 1 ? data.data : [...this.state.orderHistory, ...data.data], isLoadingorder: false , isLoading: false, setOnLoad: true})
       }
     if (data.data.length !== 0) this.setState({ isShowData: true })
     else if (data.data.length == 0 || data.data.length == undefined) this.setState({ isShowData: false })
@@ -115,12 +122,30 @@ class OrdersScreen extends Component {
             </View>
           )
         }}
-  
+        onEndReachedThreshold={0.8}
+        onEndReached={({ distanceFromEnd }) => {
+            console.log(" ***************** " + distanceFromEnd);
+            this.getOrders();
+
+        }}
+        ListFooterComponent={this.BottomView()}
 
       />
     )
   }
-
+  BottomView = () => {
+    return (
+        <View>
+            {
+                (this.state.fetchingStatus)
+                    ?
+                    <ActivityIndicator size="large" color="#000" style={{ marginLeft: 6 }} />
+                    :
+                    null
+            }
+        </View>
+    )
+}
   render() {
     if (this.state.isShowData == true) {
       if(this.state.isLoadingcategory == true){

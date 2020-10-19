@@ -21,12 +21,7 @@ class EditProfileScreen extends Component {
           typeof navigation.state.params.title === "undefined"
           ? "Edit Profile"
           : navigation.state.params.title,
-      // headerTintColor: AppStyles.navThemeConstants.light.fontColor,
-      // headerStyle: {
-      //   backgroundColor: AppStyles.navThemeConstants.light.backgroundColor,
-      //   borderBottomWidth: 0,
-      //   paddingTop: Platform.OS === "ios" ? 0 : 0
-      // },
+     
       headerRight: (
         <HeaderButton
           onPress={navigation.state.params.onDonePress}
@@ -34,15 +29,7 @@ class EditProfileScreen extends Component {
           title={"Done"}
         />
       ),
-      // headerLeft: (
-      //   <HeaderButton
-      //     onPress={() => {
-      //       navigation.goBack();
-      //     }}
-      //     buttonContainerStyle={{ marginLeft: 10 }}
-      //     title={"Cancel"}
-      //   />
-      // )
+     
     };
   };
 
@@ -75,7 +62,7 @@ class EditProfileScreen extends Component {
   }
 
   onDonePress = async () => {
-    // console.log("Call Done", this.state.userData)
+   
     const { userData } = this.state
     let userId = await AsyncStorage.getItem('userId')
     let body = JSON.stringify({
@@ -86,10 +73,10 @@ class EditProfileScreen extends Component {
       role: "Customer",
       deliverytype: 0
     })
-    console.log("username", userId, body)
+   
 
     const data = await addProfile(body)
-    console.log("data in edit profile", data)
+  
     if (data.success) {
       this.props.navigation.goBack();
       this.getCurrentUserData()
@@ -103,7 +90,7 @@ class EditProfileScreen extends Component {
   };
 
   render() {
-    // console.log("this.state.user", this.state.user)
+    
     return (
       <EditProfile
         user={this.state.user}

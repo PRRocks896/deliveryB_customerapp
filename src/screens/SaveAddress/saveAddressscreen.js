@@ -30,7 +30,16 @@ class SaveAddressScreen extends Component {
             name: 'Home',
             mobile: '',
             isParamsData: false,
-            addressLength: this.props.navigation.state.params.addressLength
+            addressLength: this.props.navigation.state.params.addressLength,
+
+            mobilenoError: '',
+            address1Error: '',
+            address2Error: '',
+            pincodeError: '',
+            cityError: '',
+            stateError: '',
+            countryError: '',
+
 
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
@@ -84,10 +93,10 @@ class SaveAddressScreen extends Component {
         let userId = await AsyncStorage.getItem('userId')
         let id = this.props.navigation.state.params.mainAddressId
         const { country, address_line_1, address_line_2, district, pinCode, state, name, mobile, addressLength } = this.state
-        // console.log(address_line_1, address_line_2, district, pinCode, state, mobile, country)
-        if (address_line_1 != ''  && district != '' && pinCode != '' && state != '' && mobile != '' && country != '') {
+        
+        if (address_line_1 != '' && district != '' && pinCode != '' && state != '' && mobile != '' && country != '') {
             if (addressLength == 0) {
-                // console.log("in if call")
+              
                 let body = JSON.stringify({
                     user_id: userId,
                     address: [
@@ -105,7 +114,7 @@ class SaveAddressScreen extends Component {
                 })
                 // add address from here, call api
                 const data = await addAddress(body);
-                // console.log("Add Address", data)
+               
                 if (data.success) {
                     this.props.navigation.goBack()
                 } else {
@@ -114,7 +123,7 @@ class SaveAddressScreen extends Component {
                 }
             } else {
                 //  if address already available then append address from here
-                // console.log("call else in address", this.props.navigation.state.params.address)
+                
                 let body = JSON.stringify({
                     user_id: userId,
                     address: [
@@ -131,9 +140,9 @@ class SaveAddressScreen extends Component {
                         }
                     ]
                 })
-                // console.log("body", body)
+               
                 const data = await updateAddress(body, id)
-                // console.log("Final update address", data)
+                
                 if (data.success) {
                     this.props.navigation.goBack()
                 } else {
@@ -143,8 +152,15 @@ class SaveAddressScreen extends Component {
             }
 
         } else {
-            // console.log("call else")
-            Alert.alert("Please fill all details");
+           
+        
+            if (mobile == '') this.setState({ mobilenoError: 'Please Enter Mobile No.' })
+            if (address_line_1 == '') this.setState({ address1Error: "Please Enter Address line 1" })
+            if (address_line_2 == '') this.setState({ address2Error: "Please Enter Address line 2" })
+            if (pinCode == '') this.setState({ pincodeError: "Please Enter Pin Code" })
+            if (state == '') this.setState({ stateError: "Please Enter State" })
+            if (country == '') this.setState({ countryError: "Please Enter Country" })
+            if (district == '') this.setState({ cityError: "Please Enter City" })
 
         }
     }
@@ -153,20 +169,19 @@ class SaveAddressScreen extends Component {
      */
     updateAddress = async () => {
         let userId = await AsyncStorage.getItem('userId')
-        // console.log("Update", this.props.navigation.state.params.mainAddressId,    this.props.navigation.state.params.address,)
+       
         let id = this.props.navigation.state.params.mainAddressId
         const { country, address_line_1, address_line_2, district, pinCode, state, name, mobile } = this.state
         let appendaddress = this.props.navigation.state.params.address
         let clickedaddressid = this.props.navigation.state.params.obclickaddressid
-        // console.log("For only update", appendaddress, clickedaddressid)
+        
 
         let found = appendaddress.some(i => i._id == clickedaddressid)
-        // console.log("Found", found)
+      
         if (found == true) {
             let index = appendaddress.findIndex(i => i._id == clickedaddressid)
-            // console.log("index", index)
             appendaddress.splice(index, 1)
-            // console.log(appendaddress.length, "finalAddressArray", appendaddress)
+           
         }
 
         if (address_line_1 != '' && district != '' && pinCode != '' && state != '' && mobile != '' && country != '') {
@@ -187,7 +202,6 @@ class SaveAddressScreen extends Component {
                 ]
             })
             const data = await updateAddress(body, id)
-            console.log("Final update address", data)
             if (data.success) {
                 this.props.navigation.goBack()
             } else {
@@ -195,71 +209,134 @@ class SaveAddressScreen extends Component {
                 this.props.navigation.goBack()
             }
         } else {
-            // console.log("call else")
-            Alert.alert("Please fill all details");
+            if (mobile == '') this.setState({ mobilenoError: 'Please Enter Mobile No.' })
+            if (address_line_1 == '') this.setState({ address1Error: "Please Enter Address line 1" })
+            if (address_line_2 == '') this.setState({ address2Error: "Please Enter Address line 2" })
+            if (pinCode == '') this.setState({ pincodeError: "Please Enter Pin Code" })
+            if (state == '') this.setState({ stateError: "Please Enter State" })
+            if (country == '') this.setState({ countryError: "Please Enter Country" })
+            if (district == '') this.setState({ cityError: "Please Enter City" })
         }
     }
     render() {
-        const { name, address_line_1, address_line_2, mobile, district, pinCode, state, country, isParamsData } = this.state
+        const { name, address_line_1, address_line_2, mobile, district, pinCode, state, country, isParamsData,
+            mobilenoError, address1Error, address2Error, pincodeError, cityError, stateError, countryError } = this.state
         return (
-            <ScrollView contentContainerStyle={{flexGrow:1}}>
-                <View style={{marginLeft:10,marginRightL:10}}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={{ marginLeft: 10, marginRightL: 10 }}>
                     <TextInput
                         style={styles.InputContainer}
                         keyboardType='number-pad'
                         placeholder="Mobile No."
+                        maxLength={10}
                         value={mobile}
                         onChangeText={(text) => this.setState({ mobile: text })}
                     />
+                    {
+                        mobilenoError !== '' ?
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'red', textAlign: 'center' }}>{mobilenoError}</Text>
+                            </View>
+                            : null
+                    }
                     <TextInput
                         style={styles.InputContainer}
                         keyboardType='default'
                         autoCapitalize='none'
                         value={address_line_1}
+                        maxLength={100}
                         placeholder="Enter Address 1"
                         onChangeText={(text) => this.setState({ address_line_1: text })}
                     />
+
+                    {
+                        address1Error !== '' ?
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'red', textAlign: 'center' }}>{address1Error}</Text>
+                            </View>
+                            : null
+                    }
                     <TextInput
                         style={styles.InputContainer}
                         keyboardType='default'
                         autoCapitalize='none'
                         value={address_line_2}
                         placeholder="Enter Address 2"
+                        maxLength={100}
                         onChangeText={(text) => this.setState({ address_line_2: text })}
                     />
-                        <TextInput
-                            style={styles.InputContainer}
-                            keyboardType='number-pad'
-                            autoCapitalize='none'
-                            value={pinCode}
-                            placeholder="Zip code"
-                            onChangeText={(text) => this.setState({ pinCode: text })}
-                        />
+                    {
+                        address2Error !== '' ?
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'red', textAlign: 'center' }}>{address2Error}</Text>
+                            </View>
+                            : null
+                    }
+                    <TextInput
+                        style={styles.InputContainer}
+                        keyboardType='number-pad'
+                        autoCapitalize='none'
+                        value={pinCode}
+                        placeholder="Pin code"
+                        maxLength={6}
+                        onChangeText={(text) => this.setState({ pinCode: text })}
+                    />
+                    {
+                        pincodeError !== '' ?
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'red', textAlign: 'center' }}>{pincodeError}</Text>
+                            </View>
+                            : null
+                    }
                     <TextInput
                         style={styles.InputContainer}
                         keyboardType='default'
                         autoCapitalize='none'
                         value={district}
                         placeholder="City"
+                        maxLength={50}
                         onChangeText={(text) => this.setState({ district: text })}
                     />
+                    {
+                        cityError !== '' ?
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'red', textAlign: 'center' }}>{cityError}</Text>
+                            </View>
+                            : null
+                    }
+
                     <TextInput
                         style={styles.InputContainer}
                         keyboardType='default'
                         autoCapitalize='none'
                         value={state}
                         placeholder="State"
+                        maxLength={50}
                         onChangeText={(text) => this.setState({ state: text })}
                     />
+                    {
+                        stateError !== '' ?
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'red', textAlign: 'center' }}>{stateError}</Text>
+                            </View>
+                            : null
+                    }
                     <TextInput
                         style={styles.InputContainer}
                         keyboardType='default'
                         autoCapitalize='none'
                         value={country}
                         placeholder="Country"
+                        maxLength={50}
                         onChangeText={(text) => this.setState({ country: text })}
                     />
-
+                    {
+                        countryError !== '' ?
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'red', textAlign: 'center' }}>{countryError}</Text>
+                            </View>
+                            : null
+                    }
                     <Picker
                         selectedValue={name}
                         style={styles.picker}

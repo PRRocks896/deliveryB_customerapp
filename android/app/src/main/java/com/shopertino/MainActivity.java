@@ -1,4 +1,4 @@
-package com.shopertino;
+package com.redtron.tribata.customer;
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;

@@ -4,28 +4,21 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
-  Image,
-  FlatList,
   Alert
 } from "react-native";
 import { connect } from "react-redux";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import PropTypes from "prop-types";
 import {
   Header,
   ProcedureImage,
-  ShippingDetails,
   HeaderButton
 } from "../../components";
-import { firebaseDataManager } from "../../apis";
 import { setShippingAddress, setTotalPrice, setUserData } from "../../redux/";
 import AppStyles from "../../AppStyles";
-import AppConfig from "../../ShopertinoConfig";
 import getAddressviaUSer from "../../services/SavedAddress/getAddressviaUser";
 import AsyncStorage from "@react-native-community/async-storage";
 import Icon from 'react-native-vector-icons/FontAwesome'
-import styles from "react-native-icon-badge/style";
+
 
 
 
@@ -80,14 +73,14 @@ class ShippingAddressScreen extends Component {
   }
 
   componentDidMount = async () => {
-    // console.log("in address screen", this.props.navigation.state.params)
+    
     this.props.navigation.setParams({
       navigateUser: this.navigateUser
     });
 
     let userid = await AsyncStorage.getItem('userId')
     const data = await getAddressviaUSer(userid);
-    console.log("id=================", data.data._id)
+ 
     this.setState({ currentAddressId: data.data._id })
     if (data.data.address) {
       data.data.address.filter(item => {
@@ -104,10 +97,10 @@ class ShippingAddressScreen extends Component {
 
   handleUserNavigation = async () => {
     let data = this.props.navigation.state.params
-    console.log(this.state.currentAddressId)
+   
     if (this.state.currentAddressId !== '') {
 
-      console.log("in shipping addresss",data.bagproduct)
+     
       this.props.navigation.replace("Checkout", {
         appConfig: this.appConfig,
         transactionid: data.transactionid,

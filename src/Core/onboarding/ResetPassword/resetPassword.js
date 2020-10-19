@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Alert, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Keyboard, Picker, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import addProfile from '../../../services/Profile';
-import { EventRegister } from 'react-native-event-listeners'
 import resetPassword from '../../../services/ResetPassword';
 
 function ResetPasswordScreen({ route, navigation }) {
@@ -11,8 +9,7 @@ function ResetPasswordScreen({ route, navigation }) {
     const [password, setpassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [isLoading, setisLoading] = useState(false)
-    const [reqToken, setreqToken] = useState('')
-    const [userid, setuserid] = useState('')
+   
 
 
 
@@ -21,7 +18,7 @@ function ResetPasswordScreen({ route, navigation }) {
         let id = await AsyncStorage.getItem('ResetUserid')
         let token = await AsyncStorage.getItem('ResetreqToken')
 
-        console.log("userid====================", id, token)
+        
         if (password != '' && confirmPassword != '') {
             setisLoading(true)
             let body = JSON.stringify({
@@ -30,10 +27,10 @@ function ResetPasswordScreen({ route, navigation }) {
                 reqToken: token
             })
             const data = await resetPassword(body)
-            console.log("resetpassword", data)
+          
             if (data.success) {
                 setisLoading(false)
-                console.log(navigation)
+               
                 navigation.popToTop('AuthStackNavigator')
 
             }

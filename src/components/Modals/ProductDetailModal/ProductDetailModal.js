@@ -12,18 +12,12 @@ import {
 import PropTypes from "prop-types";
 import Modal from "react-native-modal";
 import Swiper from "react-native-swiper";
-import stripe from "tipsi-stripe";
 import Header from "./Header";
-import ProductOptions from "./ProductOptions";
-import Favourite from "./Favourite";
-import FooterButton from "../../FooterButton/FooterButton";
-import AppStyles from "../../../AppStyles";
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
 import { ScrollView } from "react-native-gesture-handler";
 import getbagproduct from "../../../services/AddToBag/getbagProduct";
 import RNFetchBlob from "react-native-fetch-blob";
-import RNFS from "react-native-fs";
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height;
 
@@ -39,24 +33,17 @@ function ProductDetailModal(props) {
     let userid = await AsyncStorage.getItem('userId')
     const getdata = await getbagproduct(userid)
     let found = getdata.data.some(i => i.products[0].product_id.productMasterId == item._id)
-    // console.log("Found", found)
+    
     if (found == true) {
       setalreadyaddecart(true)
     }
   }
 
   const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, alreadyAddecart, navigation } = props;
-  const onSizeSelected = index => {
-    props.item.selectedSizeIndex = index;
-  };
-
-  const onColorSelected = index => {
-    props.item.selectedColorIndex = index;
-  };
 
   const onShare = async () => {
     const fs = RNFetchBlob.fs;
-    console.log("item.name", item.name, item.productImage, productDetails.price)
+   
     let base64img;
     let imagePath = null;
     RNFetchBlob.config({
@@ -67,9 +54,9 @@ function ProductDetailModal(props) {
         imagePath = resp.path();
         return resp.readFile("base64");
       }).then(base64Data => {
-        // console.log("base64 img>>>>>>>>>>>>>>>>>>>>>>>>>>>",base64Data);
+      
         base64img = base64Data
-        // remove the file from storage
+     
         return fs.unlink(imagePath);
       });
     try {

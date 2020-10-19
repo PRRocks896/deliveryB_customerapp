@@ -2,8 +2,8 @@ import { StyleSheet } from "react-native";
 import { createStackNavigator } from "react-navigation-stack";
 import {
   WelcomeScreen,
-  LoginScreen,
-  SignupScreen,
+  // LoginScreen,
+  // SignupScreen,
   SmsAuthenticationScreen
 } from "../Core/onboarding";
 import AppStyles from "../AppStyles";
@@ -17,18 +17,18 @@ const AuthStackNavigator = createStackNavigator(
       screen: WelcomeScreen,
       navigationOptions: { header: null }
     },
-    Login: {
-      screen: LoginScreen,
-      navigationOptions: () => ({
-        headerStyle: styles.headerStyle
-      })
-    },
-    Signup: {
-      screen: SignupScreen,
-      navigationOptions: () => ({
-        headerStyle: styles.headerStyle
-      })
-    },
+    // Login: {
+    //   screen: LoginScreen,
+    //   navigationOptions: () => ({
+    //     headerStyle: styles.headerStyle
+    //   })
+    // },
+    // Signup: {
+    //   screen: SignupScreen,
+    //   navigationOptions: () => ({
+    //     headerStyle: styles.headerStyle
+    //   })
+    // },
     Sms: {
       screen: SmsAuthenticationScreen,
       navigationOptions: () => ({

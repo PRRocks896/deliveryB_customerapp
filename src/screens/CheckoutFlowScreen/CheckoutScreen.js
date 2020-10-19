@@ -35,7 +35,9 @@ class CheckoutScreen extends Component {
       paymentethod: this.props.navigation.state.params.payment_method,
       dialogVisible: false,
       radioValue: '',
-      isLoading: false
+      isLoading: false,
+
+      clickOk: false
     };
     this.appConfig =
       props.navigation.state.params.appConfig ||
@@ -60,7 +62,7 @@ class CheckoutScreen extends Component {
    * @param {any} uniqshopsid uniqe shop id array
    */
   placeorderfromWallet = async (uniqshopsid) => {
-    console.log("uniqshopsid=====Foe Wallet fun", uniqshopsid)
+   
     let paramdata = this.props.navigation.state.params
     let bagData = paramdata.bagproduct
     let mobile = await AsyncStorage.getItem('CurrentUser')
@@ -68,31 +70,31 @@ class CheckoutScreen extends Component {
     let phoneno = mobileParsed.data.mobile
     let filterProduct = []
 
-    console.log("CALL WALLET", uniqshopsid, paramdata.totalammount)
+  
     uniqshopsid.map(async (item) => {
-      console.log("id shop>>>>>>>>>>>>>>>>>>>>>>", item)
+     
       // For get shop details from shop id
       const shopDetailsres = await shopdetails(item)
-      console.log("for shop details", shopDetailsres)
+      
       if (shopDetailsres.success) {
-        console.log("shopDetailsres.data.mobile", JSON.stringify(shopDetailsres.data.mobile))
+      
         let shopMobile = shopDetailsres.data.mobile
 
         let body = JSON.stringify({
           shop_mobile: shopMobile,
           amount: paramdata.totalammount
         })
-        console.log("Body=====PAY FROM WALLET", body)
+       
         //For Pay amount from wallet
         const paydata = await payfromwallet(body, phoneno)
-        console.log("Pay from wallet", paydata)
+        
         if (paydata.statusCode == 200) {
-          console.log("for wallte", paydata.data.transaction_id)
+        
 
           //make data for place order
           bagData.map((productsdata) => {
             if (item == productsdata.products[0].product_id.shop_id) {
-              console.log("FOR WALLET CALL IN IF", item, productsdata.products[0].product_id.shop_id)
+            
               filterProduct.push({
                 'customer_id': paramdata.customerID,
                 'shop_id': item,
@@ -105,8 +107,7 @@ class CheckoutScreen extends Component {
               })
             }
           })
-          console.log("filterProduct===================For wallet", filterProduct)
-          console.log("result", result)
+         
           // Make unique result 
           var result = filterProduct.reduce((unique, o) => {
             if (!unique.some(obj => obj.shop_id === o.shop_id)) {
@@ -114,7 +115,7 @@ class CheckoutScreen extends Component {
             }
             return unique;
           }, []);
-          console.log(" unique result", result)
+         
           result.map((item, indexOfResult) => {
             let obj = [];
             bagData.map((productitem, indexOfBagdata) => {
@@ -130,20 +131,32 @@ class CheckoutScreen extends Component {
           })
 
 
-          console.log("JSON.stringify(result)", JSON.stringify(result))
+         
           //Call Place order api
           const placeorderresponse = await placeOrder(JSON.stringify(result));
-          console.log("==============placeorderresponse===", placeorderresponse)
-          if (placeorderresponse.statusCode == 200) {
+         
+
+          if(placeorderresponse == undefined){
             this.setState({ dialogVisible: false, isLoading: false })
-            console.log("=====================================place order", bagData, placeorderresponse)
+            Alert.alert(
+              "",
+             "Internal Server Error",
+              [
+                { text: "OK" }
+              ],
+              { cancelable: true }
+            );
+          }
+         else if (placeorderresponse.statusCode == 200) {
+            this.setState({ dialogVisible: false, isLoading: false })
+           
             bagData.map(async (item) => {
-              console.log("item._id", item._id, item)
+             
               // After place order make statis true for placed products
               const cartStatus = await changeCartStatus(item._id)
-              console.log("calll cartStatus", cartStatus)
+              
               if (cartStatus.statusCode == 200) {
-                console.log("calllllll :::::::::::::::::::::::::::::::::::::")
+              
                 this.props.navigation.navigate("Order", { appConfig: this.appConfig });
               } else {
                 this.setState({ dialogVisible: false, isLoading: false })
@@ -186,7 +199,7 @@ class CheckoutScreen extends Component {
    * @param {any} uniqshopsid unique shop array 
    */
   placeorderwithoutWallet = async (uniqshopsid) => {
-    console.log("call other process ============", uniqshopsid)
+   
     let paramdata = this.props.navigation.state.params
     let bagData = paramdata.bagproduct
     let mobile = await AsyncStorage.getItem('CurrentUser')
@@ -194,7 +207,7 @@ class CheckoutScreen extends Component {
     let phoneno = mobileParsed.data.mobile
     let filterProduct = []
 
-    console.log("CALL ELSE IN PLACE ORDER")
+    
     uniqshopsid.map(item => {
       bagData.map((productsdata) => {
         if (item == productsdata.products[0].product_id.shop_id) {
@@ -212,7 +225,7 @@ class CheckoutScreen extends Component {
       })
     })
 
-    console.log("result", result)
+    
     // Make unique result 
     var result = filterProduct.reduce((unique, o) => {
       if (!unique.some(obj => obj.shop_id === o.shop_id)) {
@@ -220,7 +233,7 @@ class CheckoutScreen extends Component {
       }
       return unique;
     }, []);
-    console.log(" unique result", result)
+   
     result.map((item, indexOfResult) => {
       let obj = [];
       bagData.map((productitem, indexOfBagdata) => {
@@ -236,20 +249,31 @@ class CheckoutScreen extends Component {
     })
 
 
-    console.log("JSON.stringify(result)", JSON.stringify(result))
+    
     //Call Place order api
     const placeorderresponse = await placeOrder(JSON.stringify(result));
-    console.log("==============placeorderresponse===", placeorderresponse)
-    if (placeorderresponse.statusCode == 200) {
+    
+    if(placeorderresponse == undefined){
       this.setState({ dialogVisible: false, isLoading: false })
-      console.log("=====================================place order", bagData, placeorderresponse)
+      Alert.alert(
+        "",
+       "Internal Server Error",
+        [
+          { text: "OK" }
+        ],
+        { cancelable: true }
+      );
+    }
+    else if (placeorderresponse.statusCode == 200) {
+      this.setState({ dialogVisible: false, isLoading: false })
+      
       bagData.map(async (item) => {
-        console.log("item._id", item._id, item)
+      
         // After place order make statis true for placed products
         const cartStatus = await changeCartStatus(item._id)
-        console.log("calll cartStatus", cartStatus)
+       
         if (cartStatus.statusCode == 200) {
-          console.log("calllllll :::::::::::::::::::::::::::::::::::::")
+         
           this.props.navigation.navigate("Order", { appConfig: this.appConfig });
         } else {
           this.setState({ dialogVisible: false, isLoading: false })
@@ -286,8 +310,7 @@ class CheckoutScreen extends Component {
     let mobileParsed = JSON.parse(mobile)
     let phoneno = mobileParsed.data.mobile
 
-    console.log("bagData", bagData)
-
+    
     //For shopid array
     bagData.map((item) => {
       shopsid.push(item.products[0].product_id.shop_id);
@@ -299,7 +322,7 @@ class CheckoutScreen extends Component {
     });
     let filterProduct = []
 
-    console.log("uniqshopsid", uniqshopsid)
+   
 
     if (paramdata.payment_method == 'WALLET') {
       this.placeorderfromWallet(uniqshopsid)
@@ -350,14 +373,14 @@ class CheckoutScreen extends Component {
           onTouchOutside={() => this.setState({ dialogVisible: false })} >
           <View>
             <RadioButton.Group onValueChange={value => this.setState({ radioValue: value })} value={this.state.radioValue}>
-              <RadioButton.Item label="Delivery in 2 hours" value="2_HOURS" />
-              <RadioButton.Item label="Delivery in 4 hours" value="4_HOURS" />
-              <RadioButton.Item label="Self Pickup" value="SELF_PICKED" />
+              <RadioButton.Item label="Delivery in 2 hours" value="2_HOURS" disabled={this.state.clickOk} />
+              <RadioButton.Item label="Delivery in 4 hours" value="4_HOURS" disabled={this.state.clickOk}/>
+              <RadioButton.Item label="Self Pickup" value="SELF_PICKED" disabled={this.state.clickOk}/>
             </RadioButton.Group>
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 6 ,justifyContent:'center',alignItems:'center'}}>
                
-                  <TouchableOpacity style={[styles.adddeviverybtn, { width: '50%' }]} onPress={() => this.setState({ dialogVisible: false })}>
+                  <TouchableOpacity style={[styles.adddeviverybtn, { width: '50%' }]} onPress={() => this.setState({ dialogVisible: false, clickOk: false })}>
 
                     <Text style={styles.addtext}>Cancel</Text>
 
@@ -365,7 +388,7 @@ class CheckoutScreen extends Component {
                
               </View>
               <View style={{ flex: 6,justifyContent:'center', alignItems:'center' }}>
-                <TouchableOpacity style={styles.adddeviverybtn} onPress={() => this.onFooterPress()}>
+                <TouchableOpacity style={styles.adddeviverybtn} onPress={() => [this.onFooterPress(), this.setState({clickOk: true})]}>
                   {
                     !this.state.isLoading ?
                       <Text style={[styles.text, { fontSize: 18 }]}>Ok</Text>

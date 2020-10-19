@@ -13,7 +13,7 @@ const addToBagProduct = async(item, alreadyAddecart) => {
     const getdata = await getbagproduct(userid)
     if (getdata.data !== null) {
       found = getdata.data.some(i => i.products[0].product_id.id == item.productDetail._id)
-      console.log("Found", found)
+  
 
       if (found == false) {
         products.push({
@@ -60,7 +60,7 @@ const addToBagProduct = async(item, alreadyAddecart) => {
         products: products
       }
       const data = await addtobag(JSON.stringify(body))
-      console.log("when null ", data)
+     
       const getdata = await getbagproduct(userid)
       if (getdata.success && getdata.data !== null) {
         EventRegister.emit('cartlength', getdata.data.length)

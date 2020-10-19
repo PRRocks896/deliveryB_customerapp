@@ -23,7 +23,7 @@ function EditProfileItemField(props) {
       <TextInput
         keyboardType={keyboardType}
         underlineColorAndroid="transparent"
-        style={styles.text}
+        style= { title == "Mobile" ? [styles.text,{marginLeft:8}]  :styles.text}
         editable={isEditable}
         placeholderTextColor={AppStyles.colorSet[colorScheme].hairlineColor}
         placeholder={placeholder}

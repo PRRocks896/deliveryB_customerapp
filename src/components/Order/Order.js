@@ -9,7 +9,7 @@ function Order(props) {
   const { extraData, orderHistory, appConfig } = props;
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(colorScheme);
-  // console.log("orderHistory", orderHistory.data)
+ 
 
   const renderItem = ({ item, index }) => (
     <OrderCard

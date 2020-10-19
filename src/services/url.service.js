@@ -1,5 +1,5 @@
 import Config from '../config'
-import config from '../config';
+
 const api = {
     signup: {
         singUP: Config.getURL + 'shared/app-signup'

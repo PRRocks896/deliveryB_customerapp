@@ -11,10 +11,7 @@ import {
 } from "../../redux/";
 import styles from "./styles";
 import getProductsbyID from "../../services/Products/getProductsbyid";
-import getbagproduct from "../../services/AddToBag/getbagProduct";
-import addtobag from "../../services/AddToBag";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-import { EventRegister } from 'react-native-event-listeners'
 import addToBagProduct from "../../components/AddTobagProduct/addbagproduct";
 
 class CategoryProductGridScreen extends Component {
@@ -55,10 +52,7 @@ class CategoryProductGridScreen extends Component {
   }
 
   getCategoryProducts = async (name) => {
-
-    console.log("Get category name=======", name)
     const data = await getProductsbyID(name);
-    console.log("Category resp", data)
     if (data.success) {
       this.setState({ categoryProducts: data.data, isLoadingProduct: false })
     }

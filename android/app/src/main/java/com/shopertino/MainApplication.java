@@ -1,6 +1,6 @@
-package com.shopertino;
+package com.redtron.tribata.customer;
 
-import com.shopertino.generated.BasePackageList;
+import com.redtron.tribata.customer.generated.BasePackageList;
 
 import android.app.Application;
 import android.content.Context;

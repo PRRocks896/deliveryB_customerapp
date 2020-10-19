@@ -1,17 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, Alert, BackHandler, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Keyboard, Picker, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Alert, BackHandler, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import addProfile from '../../../services/Profile';
 import forgotpassword from '../../../services/ForgotPassword';
 import OTP from '../SmsAuthenticationScreen/otpInput'
 import verifyOTP from '../../../services/OTPVerification';
-import { EventRegister } from 'react-native-event-listeners'
-import PhoneInput from 'react-native-phone-input';
-import CountriesModalPicker from '../../truly-native/CountriesModalPicker/CountriesModalPicker'
-import { IMLocalized } from '../../localization/IMLocalization';
-import appStyles from '../../../AppStyles'
 import IntlPhoneInput from 'react-native-intl-phone-input';
-import Toast from 'react-native-simple-toast';
+
 
 function ForgotPasswordScreen({ navigation }) {
 
@@ -24,6 +18,8 @@ function ForgotPasswordScreen({ navigation }) {
     const [countryModalVisible, setCountryModalVisible] = useState(false);
     const [countriesPickerData, setCountriesPickerData] = useState(null);
     const [dialcode, setdialcode] = useState('')
+
+    const [mobileError, setmobileError] = useState('')
     useEffect(() => {
         if (phoneRef && phoneRef.current) {
             setCountriesPickerData(phoneRef.current.getPickerData());
@@ -43,45 +39,48 @@ function ForgotPasswordScreen({ navigation }) {
 
     const submit = async () => {
         if (mobile != '') {
-            if(mobile.length > 10 || mobile.length < 10){
-                Toast.show('Please Enter Valid number', Toast.LONG);
-            }else{
+            if (mobile.length > 10 || mobile.length < 10) {
+                // Toast.show('Please Enter Valid number', Toast.LONG);
+                setmobileError("Please Enter Valid No.")
+            } else {
                 setisLoading(true)
-    
+
                 let body = JSON.stringify({
-                    mobile: dialcode + mobile
+                    mobile: dialcode + mobile,
+                    role: 'Customer'
                 })
-                console.log("body", body)
+              
                 const data = await forgotpassword(body)
-                console.log('forgot password screen res', data)
+              
                 if (data.success) {
                     setisLoading(false)
                     setuserid(data.data.userId)
-                    console.log("data.data.userId", data.data.userId)
+                    
                     setisshowOtpScreen(true)
-                }else{
+                } else {
                     setisLoading(false)
-                    Toast.show(data.message, Toast.LONG);
-
+                    // Toast.show(data.message, Toast.LONG);
+                    setmobileError(data.message)
                 }
 
             }
         } else {
-            Toast.show( "Please add number ", Toast.LONG);
-           
+            // Toast.show( "Please add number ", Toast.LONG);
+            setmobileError("Please Enter Mobile No.")
+
         }
     }
     const onFinishCheckingCode = async (code) => {
         if (code != '') {
             setisLoading(true)
-            console.log("userid", userid)
+            
             let body = JSON.stringify({ id: userid, otp: code })
-            console.log("body in screen", body)
+           
             const data = await verifyOTP(body);
-            console.log("verify otp screen res", data)
+           
             if (data.success) {
                 setisLoading(false)
-                console.log(data.data.reqToken, data.data.userId)
+               
                 AsyncStorage.setItem("ResetreqToken", data.data.reqToken)
                 AsyncStorage.setItem("ResetUserid", data.data.userId)
                 navigation.navigate('ResetPasswordScreen');
@@ -102,13 +101,7 @@ function ForgotPasswordScreen({ navigation }) {
         setMobile(unmaskedPhoneNumber)
         setdialcode(dialCode)
     };
-    const onPressFlag = () => {
-        setCountryModalVisible(true);
-    };
-
-    const onPressCancelContryModalPicker = () => {
-        setCountryModalVisible(false);
-    };
+  
     return (
         <SafeAreaView style={styles.container}>
 
@@ -123,6 +116,13 @@ function ForgotPasswordScreen({ navigation }) {
 
                                 <IntlPhoneInput onChangeText={onChangeText} defaultCountry="IN" />
                             </View>
+                            {
+                                mobileError !== '' ?
+                                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: 'red', textAlign: 'center' }}>{mobileError}</Text>
+                                    </View>
+                                    : null
+                            }
 
                             {/* Submit Button */}
                             <TouchableOpacity disabled={isLoading} onPress={() => submit()} style={styles.buttonView}>

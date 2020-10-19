@@ -15,7 +15,7 @@ function Categories(props) {
 
   useEffect(() => {
     const backAction = () => {
-      console.log("props.navigation", props.navigation)
+    
       props.navigation.pop("Home");
       return true;
     };

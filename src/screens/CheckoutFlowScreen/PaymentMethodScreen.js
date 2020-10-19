@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Alert, View, Text, TouchableOpacity } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import PropTypes from "prop-types";
 import { CreditCardInput } from 'react-native-credit-card-input';
 import {
@@ -10,30 +9,15 @@ import {
   PaymentOptions,
   HeaderButton
 } from "../../components";
-import { firebaseDataManager, stripeDataManager } from "../../apis";
 import { updatePaymentMethods, setShippingMethods } from "../../redux";
 import AppStyles from "../../AppStyles";
 import { Dialog } from 'react-native-simple-dialogs';
 import styles from "react-native-icon-badge/style";
 import AsyncStorage from "@react-native-community/async-storage";
 import { EventRegister } from 'react-native-event-listeners'
-import payfromwallet from "../../services/Wallet/payfromwallet";
-import shopdetails from "../../services/ShopDetails/shopdetails";
 
-const options = {
-  requiredBillingAddressFields: "full",
-  prefilledInformation: {
-    billingAddress: {
-      name: "Marya Ken",
-      line1: "Canary Place",
-      line2: "3",
-      city: "Macon",
-      state: "Georgia",
-      country: "US",
-      postalCode: "31217"
-    }
-  }
-};
+
+
 
 class PaymentMethodScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
@@ -110,7 +94,7 @@ class PaymentMethodScreen extends Component {
     const { chargeConfirm, transactionid } = this.state
     let data = this.props.navigation.state.params
     let payamount = data.totalPrice
-    console.log("data =====in payment method", chargeConfirm)
+  
     if (chargeConfirm !== '') {
       this.props.navigation.replace("ShippingAddress", {
         appConfig: this.appConfig,

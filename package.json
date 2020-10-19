@@ -1,6 +1,6 @@
 {
   "name": "Shopertino",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -44,6 +44,7 @@
     "react-native-app-intro-slider": "^3.0.0",
     "react-native-appearance": "~0.3.1",
     "react-native-button": "^2.4.0",
+    "react-native-camera-kit": "^8.0.4",
     "react-native-confirmation-code-field": "^6.5.0",
     "react-native-credit-card-input": "^0.4.1",
     "react-native-dialog-input": "^1.0.8",

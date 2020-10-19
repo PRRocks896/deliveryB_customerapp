@@ -9,10 +9,10 @@ export { default as HomeScreen } from "./HomeScreen/HomeScreen";
 export { default as OrdersScreen } from "./Order/OrdersScreen";
 export { default as ProfileScreen } from "./ProfileScreen/ProfileScreen";
 export { default as SearchScreen } from "./SearchScreen/SearchScreen";
-export { default as SettingsScreen } from "./SettingsScreen/SettingsScreen";
+// export { default as SettingsScreen } from "./SettingsScreen/SettingsScreen";
 export { default as CategoryProductGridScreen } from "./Shop/CategoryProductGridScreen";
 export { default as ShopScreen } from "./Shop/ShopScreen";
 export { default as ShoppingBagScreen } from "./ShoppingBagScreen/ShoppingBagScreen";
-export { default as WishlistScreen } from "./WishlistScreen/WishlistScreen";
+// export { default as WishlistScreen } from "./WishlistScreen/WishlistScreen";
 export { default as SaveAddress } from "./SaveAddress/index"
 export { default as SaveAddressScreen } from "./SaveAddress/saveAddressscreen"

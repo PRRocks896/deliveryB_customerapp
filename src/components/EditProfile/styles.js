@@ -40,11 +40,12 @@ const dynamicStyles = colorScheme => {
     },
     labelText: {
       fontSize: 18,
-      flex: 3
+      flex: 3,
+      marginLeft:3
     },
     text: {
       fontSize: 18,
-      flex: 6,
+      flex: 7,
       justifyContent: 'flex-start'
     },
     label: {

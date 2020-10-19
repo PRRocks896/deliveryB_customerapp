@@ -31,7 +31,7 @@ import Toast from 'react-native-simple-toast';
 import IntlPhoneInput from 'react-native-intl-phone-input';
 
 function SmsAuthenticationScreen(props) {
-  // console.log("props,", props.navigation.state.params.isSigningUp, props)
+
   const appConfig =
     props.navigation.state.params.appConfig ||
     props.navigation.getParam('appConfig');
@@ -54,6 +54,9 @@ function SmsAuthenticationScreen(props) {
   const [mobile, setMobile] = useState('')
   const [visibility, setvisibility] = useState(false)
   const [useridsignup, setuseridsignup] = useState('')
+
+  const [mobileError, setmobileError] = useState('')
+  const [passwordError, setpasswordError] = useState('')
 
   const { isSigningUp } = props.navigation.state.params;
   const [otpcode, setOtpCode] = useState('')
@@ -78,25 +81,33 @@ function SmsAuthenticationScreen(props) {
    * for Sign up user
    */
   const signInWithPhoneNumber = async () => {
-    console.log("For Sign up", dialcode+mobile)
-    setLoading(true);
-    let body = JSON.stringify({ mobile:  dialcode+mobile})
-    const data = await signup(body);
-    console.log("Data in smsAuth screen", data)
-    if (data.success) {
-      props.setUserData({
-        user: data.data,
-      });
-      setLoading(false)
-      setIsPhoneVisible(false);
-      setVerificationId(data._id);
-      AsyncStorage.setItem("userSignupData", JSON.stringify(data))
-      setuseridsignup(data.data._id)
-      AsyncStorage.setItem("useridSignup", data.data._id)
-    } else {
-      setLoading(false);
-      Toast.show(data.message, Toast.LONG);
+  
+
+    if (mobile !== '') {
+      setLoading(true);
+      let body = JSON.stringify({ mobile: dialcode + mobile })
+
+      
+      const data = await signup(body);
      
+      if (data.success) {
+        props.setUserData({
+          user: data.data,
+        });
+        setLoading(false)
+        setIsPhoneVisible(false);
+        setVerificationId(data._id);
+        AsyncStorage.setItem("userSignupData", JSON.stringify(data))
+        setuseridsignup(data.data._id)
+        AsyncStorage.setItem("useridSignup", data.data._id)
+      } else {
+        setLoading(false);
+        // Toast.show(data.message, Toast.LONG);
+        setmobileError(data.message)
+
+      }
+    } else {
+      setmobileError("Please Enter Mobile No.")
     }
   };
 
@@ -106,11 +117,11 @@ function SmsAuthenticationScreen(props) {
    * For Otp verification
    */
   const signUpWithPhoneNumber = async (smsCode) => {
-    console.log("Call else for otp verification", useridsignup, smsCode)
+  
     // props.navigation.navigate('AddProfileScreen');
     let body = JSON.stringify({ id: useridsignup, otp: smsCode })
     const data = await verifyOTP(body);
-    console.log("Data in verify  screen", data)
+    
 
     AsyncStorage.setItem('reqToken', data.data.reqToken)
     if (data.success) {
@@ -124,29 +135,16 @@ function SmsAuthenticationScreen(props) {
 
   const onPressSend = () => {
 
-    // if (phoneRef.current.isValidNumber()) {
-    //   const userValidPhoneNumber = phoneRef.current.getValue();
-    //   setLoading(true);
-    //   setPhoneNumber(userValidPhoneNumber);
-    //   console.log("in onPressSend", isSigningUp, userValidPhoneNumber)
-      if (!isSigningUp) {
-      } else {
-        // Sign up user
-        signInWithPhoneNumber();
-      }
-    // } else {
-    //   Toast.show('Please enter a valid phone number.', Toast.LONG);
-     
-    // }
+   
+    if (!isSigningUp) {
+    } else {
+      // Sign up user
+      signInWithPhoneNumber();
+    }
+    
   };
 
-  const onPressFlag = () => {
-    setCountryModalVisible(true);
-  };
-
-  const onPressCancelContryModalPicker = () => {
-    setCountryModalVisible(false);
-  };
+ 
 
   /**
    * 
@@ -154,26 +152,33 @@ function SmsAuthenticationScreen(props) {
    * for otp verification check
    */
   const onFinishCheckingCode = async (newCode) => {
-    console.log("newCode", newCode, isSigningUp)
+   
     setLoading(true);
     if (isSigningUp) {
       signUpWithPhoneNumber(newCode);
     } else {
     }
-  }; 
-   const onChangeText = ({ dialCode, unmaskedPhoneNumber, phoneNumber, isVerified }) => {
+  };
+  const onChangeText = ({ dialCode, unmaskedPhoneNumber, phoneNumber, isVerified }) => {
     setMobile(unmaskedPhoneNumber)
     setdialcode(dialCode)
-};
+  };
 
   const phoneInputRender = () => {
     return (
       <>
-      <View style={styles.InputContainer}>
+        <View style={styles.InputContainer}>
 
-        <IntlPhoneInput onChangeText={onChangeText} defaultCountry="IN" />
-      </View>
-       
+          <IntlPhoneInput onChangeText={onChangeText} defaultCountry="IN" />
+        </View>
+        {
+          mobileError !== '' ?
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ color: 'red', textAlign: 'center' }}>{mobileError}</Text>
+            </View>
+            : null
+        }
+
         <Button
           containerStyle={styles.sendContainer}
           style={styles.sendText}
@@ -188,7 +193,7 @@ function SmsAuthenticationScreen(props) {
    * otp box open 
    */
   const codeInputRender = () => {
-    console.log("for otp scrren ")
+
     return (
       <>
         <OTP otp="9999" code={(code) => setOtpCode(code)} status={(a) => { a == '200' ? onFinishCheckingCode(otpcode) : null }} />
@@ -199,9 +204,7 @@ function SmsAuthenticationScreen(props) {
     );
   };
 
-  const selectCountry = country => {
-    phoneRef.current.selectCountry(country.iso2);
-  };
+  
 
   const renderAsSignUpState = () => {
     return (
@@ -221,28 +224,29 @@ function SmsAuthenticationScreen(props) {
     // let mobileNo = phoneRef.current.getValue()
     if (mobile != '' && password != '') {
       setLoading(true)
-      console.log("login------------------------",mobile)
-      if(mobile.length < 10 || mobile.length > 10){
-        setLoading(false)
-        console.log("mobile in validation",mobile)
-        Toast.show('Please enter a valid phone number.', Toast.LONG);
       
+      if (mobile.length < 10 || mobile.length > 10) {
+        setLoading(false)
+      
+        Toast.show('Please enter a valid phone number.', Toast.LONG);
+
       }
-      else{
+      else {
 
         let body = JSON.stringify({
-          mobile: dialcode +  mobile,
+          mobile: dialcode + mobile,
           password: password,
         })
         const data = await signin(body);
-        console.log("data in sign in ", data)
+       
         AsyncStorage.setItem("LoginData", JSON.stringify(data))
         AsyncStorage.setItem("userId", data.userId)
+        AsyncStorage.setItem("UserMobile", dialcode + mobile)
         if (data.success == false) {
           setLoading(false)
-          console.log(data.message)
+        
           Toast.show(data.message, Toast.LONG);
-         
+
         } else {
           setLoading(false)
           getCurrentProfileDetails()
@@ -253,10 +257,13 @@ function SmsAuthenticationScreen(props) {
 
     } else {
       setLoading(false)
-      console.log("call else")
-      Toast.show('Please enter a details.', Toast.LONG);
      
-   
+      // Toast.show('Please enter a details.', Toast.LONG);
+
+      if(mobile == '') setmobileError('Please Enter Mobile No.')
+      if(password == '') setpasswordError('Please Enter Password')
+
+
     }
 
   }
@@ -267,12 +274,12 @@ function SmsAuthenticationScreen(props) {
    */
   const getAddressid = async () => {
     let userid = await AsyncStorage.getItem('userId')
-    console.log("userid", userid)
+    
     // get address via user
     const data = await getAddressviaUSer(userid);
-    console.log("data.data._id>>>>>>>>", data)
+    
     if (data.data) {
-      console.log("address id ", data.data._id)
+    
       AsyncStorage.setItem("AddressId", data.data._id)
     }
   }
@@ -288,7 +295,7 @@ function SmsAuthenticationScreen(props) {
       reqToken: details.reqToken,
     })
     const data = await getProfileDetails(body);
-    console.log("user data", data)
+   
     if (data.success) {
 
       let user = data.data
@@ -304,7 +311,7 @@ function SmsAuthenticationScreen(props) {
   const onChangeTextlogin = ({ dialCode, unmaskedPhoneNumber, phoneNumber, isVerified }) => {
     setMobile(unmaskedPhoneNumber)
     setdialcode(dialCode)
-};
+  };
   /**
    * For Display Login Screen
    */
@@ -315,9 +322,15 @@ function SmsAuthenticationScreen(props) {
         <Text style={styles.title}>{IMLocalized('Sign In')}</Text>
         <View style={styles.InputContainer}>
 
-        <IntlPhoneInput onChangeText={onChangeTextlogin} defaultCountry="IN" />
-       </View>
-       
+          <IntlPhoneInput onChangeText={onChangeTextlogin} defaultCountry="IN" />
+        </View>
+        {
+            mobileError !== '' ?
+              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ color: 'red', textAlign: 'center' }}>{mobileError}</Text>
+              </View>
+              : null
+          }
         <View style={[styles.InputContainer, { flexDirection: 'row' }]}>
           <TextInput
             style={{ flex: 8 }}
@@ -327,7 +340,8 @@ function SmsAuthenticationScreen(props) {
             placeholderTextColor='#aaaaaa'
             onChangeText={(text) => setPassword(text)}
           />
-          <TouchableOpacity style={{ flex: 1,justifyContent:'center' }} onPress={() => checkVisibility()}>
+          
+          <TouchableOpacity style={{ flex: 1, justifyContent: 'center' }} onPress={() => checkVisibility()}>
             {
               visibility ?
                 <Icon name={'visibility'} size={20} color={'#000'} />
@@ -336,6 +350,13 @@ function SmsAuthenticationScreen(props) {
             }
           </TouchableOpacity>
         </View>
+          {
+            passwordError !== '' ?
+              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ color: 'red', textAlign: 'center' }}>{passwordError}</Text>
+              </View>
+              : null
+          }
         <TouchableOpacity style={styles.forgotview} onPress={() => props.navigation.navigate('ForgotPasswordScreen')}>
           <Text style={styles.forgottext}>Forgot Password ?</Text>
         </TouchableOpacity>

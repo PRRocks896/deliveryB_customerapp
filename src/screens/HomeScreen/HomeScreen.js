@@ -59,7 +59,7 @@ class HomeScreen extends Component {
     // this.getCaegory()
   }
    getCategoryProducts = async () => {
-    console.log("callHOME>>>>>>>>>>>>>>>>>>>")
+   
     const data = await getCategory();
    
     if (data.success) {
@@ -68,7 +68,7 @@ class HomeScreen extends Component {
   }
    getFeaturedProducts = async () => {
     const data = await getProducts();
-    console.log("res", data.data.length)
+    
     if (data.success) {
       this.setState({fetauredproducts: data.data})
     }
@@ -116,7 +116,7 @@ class HomeScreen extends Component {
    * on press category 
    */
   onCategoryPress = item => {
-    // console.log("category", item)
+  
     this.props.navigation.navigate("CategoryProductGrid", {
       title: item.name,
       categoryId: item._id,
@@ -143,7 +143,7 @@ class HomeScreen extends Component {
    * add to cart api call here
    */
   onAddToBag = async (item) => {
-    console.log("calllllllllllll",item)
+    
     this.setState({isProductDetailVisible : false})
     const {alreadyAddecart} = this.state
 

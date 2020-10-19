@@ -69,13 +69,10 @@ class SaveAddress extends Component {
         let userid = await AsyncStorage.getItem('userId')
         // get address via user
         const data = await getAddressviaUSer(userid);
-        console.log("Address====", data)
         if (data.data) {
             this.setState({ address: data.data.address, addressid: data.data._id , isLoading: false})
-            console.log("address id ", data.data._id)
             AsyncStorage.setItem("AddressId", data.data._id)
             this.state.address.map((item) => {
-                console.log(item.isDefault)
                 if (item.isDefault == true) this.setState({ value: item._id })
             })
         }else{
@@ -110,7 +107,6 @@ class SaveAddress extends Component {
             <FlatList
                 data={address}
                 renderItem={(item, indexofaddress) => {
-                    console.log("item.item", item.item)
                     return (
                         <TouchableOpacity style={[styles.row, styles.card]} >
                             <RadioButton.Group onValueChange={value => [this.updateaddress(item.index), this.setState({ value: value })]} value={value}>

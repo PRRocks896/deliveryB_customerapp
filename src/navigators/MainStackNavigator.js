@@ -4,7 +4,6 @@ import StackViewStyleInterpolator from "react-navigation-stack/src/views/StackVi
 import {
   ShoppingBagScreen,
   CategoryProductGridScreen,
-  SettingsScreen,
   ContactUsScreen,
   EditProfileScreen,
   ShippingAddressScreen,
@@ -22,7 +21,6 @@ const MainStackNavigator = createStackNavigator(
   {
     Drawer: { screen: DrawerStackNavigator },
     CategoryProductGrid: { screen: CategoryProductGridScreen },
-    Settings: { screen: SettingsScreen },
     Contact: { screen: ContactUsScreen },
     EditProfile: { screen: EditProfileScreen },
     ShippingAddress: { screen: ShippingAddressScreen },

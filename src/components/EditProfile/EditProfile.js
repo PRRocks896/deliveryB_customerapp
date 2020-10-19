@@ -25,6 +25,8 @@ function EditProfile(props) {
   const [respOtp, setRespOtp] = useState('')
   const [iseditemail, setiseditemail] = useState(false)
 
+  const [otpError,setotpError] = useState('')
+
 
   useEffect(() => {
     props.onProfileDataChange({ firstName, lastName, phone, email });
@@ -58,27 +60,32 @@ function EditProfile(props) {
     setPhone(userData.data.mobile)
   }
   const mobileReq = async () => {
-    console.log("call verify")
+    
     let userId = await AsyncStorage.getItem('userId')
     let body = JSON.stringify({
       id: userId
     })
     setdialogVisible(true)
     const data = await changeMobilereq(body)
-    console.log("change req", data)
+   
     if (data.success) {
       setRespOtp(data.data.otp)
-      console.log("change movbile req", data.data.otp)
+      
     }
   }
   const onFinishCheckingCode = async () => {
     setdialogVisible(true)
-    if (respOtp == otpCode) {
-      setiseditemail(true)
-      setdialogVisible(false)
-    } else {
-      setdialogVisible(false)
-      Alert.alert("Somthing went wrong")
+    if(otpCode.length){
+      if (respOtp == otpCode) {
+        setiseditemail(true)
+        setdialogVisible(false)
+      } else {
+        // setdialogVisible(false)
+        setotpError("Somthing went wrong")
+        // Alert.alert("Somthing went wrong")
+      }
+    }else{
+      setotpError("Please Enter Otp")
     }
   }
   const changemobilenumber = async () => {
@@ -146,7 +153,7 @@ function EditProfile(props) {
     <ScrollView style={[styles.container,{backgroundColor:'#fff'}]}>
       <View style={styles.body}>
         <View style={styles.labelView}>
-          <Text style={styles.label}>PUBLIC PROFILE</Text>
+          <Text style={[styles.label,{fontSize:17,fontWeight:'bold'}]}>YOUR PROFILE INFORMATION</Text>
         </View>
         <View style={styles.contentView}>
           <EditProfileItemField
@@ -161,33 +168,36 @@ function EditProfile(props) {
             onChange={onLastNamechange}
             value={lastName}
             title={"Last Name"}
-            placeholder={"Your last name"}
+            placeholder={"Your Last Name"}
             isEditable={true}
           />
-        </View>
-        <View style={styles.labelView}>
-          <Text style={styles.label}>PRIVATE DETAILS</Text>
-        </View>
-        <View style={styles.contentView}>
+        
+        <View style={styles.lineView} />
           <EditProfileItemField
             value={email}
-            title={"E-mail Address"}
-            placeholder={"Your email"}
+            title={"Email"}
+            placeholder={"Enter Email"}
             isEditable={true}
             onChange={onEmailchange}
           />
           <View style={styles.lineView} />
-          <View style={{ flexDirection: 'row' }}>
-            <View style={{ flex: 10 }}>
+          <View style={{flexDirection:'row'}}>
+
+            <View style={{flex:12}}>
+
+        
               <EditProfileItemField
                 onChange={onPhonechange}
                 value={phone}
-                title={"Phone Number"}
+                title={"Mobile"}
                 keyboardType={"numeric"}
-                placeholder={"Your phone number"}
+                placeholder={"Your Phone No."}
                 isEditable={iseditemail}
               />
             </View>
+            <View style={{flex:2}}>
+
+            
             {
               iseditemail == false ?
                 <TouchableOpacity
@@ -202,8 +212,9 @@ function EditProfile(props) {
                   <Text style={{ fontSize: 15 }}>Edit</Text>
                 </TouchableOpacity>
             }
-          </View>
         </View>
+          </View>
+          </View>
       </View>
       <Dialog
         visible={dialogVisible}
@@ -214,8 +225,8 @@ function EditProfile(props) {
           <OTP otp="9999" code={(code) => setOtpCode(code)} status={(a) => { a == '200' ? this.props.navigation.navigate('App') : null }} />
           <View style={{ justifyContent: 'center', alignItems: 'center' ,flexDirection:'row'}}>
            <View style={{flex:6}}>
-           <TouchableOpacity style={[styless.buttonView,{marginRight:10}]} onPress={() => setdialogVisible(false)}>
-                <Text style={styless.buttonText}>cancel</Text>
+           <TouchableOpacity style={[styless.buttonView,{marginRight:10}]} onPress={() =>[ setdialogVisible(false) ,setotpError('')]}>
+                <Text style={styless.buttonText}>Cancel</Text>
               </TouchableOpacity>
            </View>
            <View style={{flex:6}}>
@@ -228,6 +239,13 @@ function EditProfile(props) {
             }
            </View>
           </View>
+           {
+             otpError !== ''?
+             <View style={{justifyContent:'center', alignItems:'center'}}>
+               <Text style={{color:'red',textAlign:'center'}}>{otpError}</Text>
+               </View>
+               : null
+           }
         </View>
       </Dialog>
     </ScrollView>

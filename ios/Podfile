@@ -53,6 +53,9 @@ target 'Shopertino' do
 
   pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
 
+
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+
   target 'ShopertinoTests' do
     inherit! :search_paths
     # Pods for testing

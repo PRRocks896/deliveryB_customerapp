@@ -15,7 +15,6 @@ function OrderCard(props) {
   const styles = dynamicStyles(colorScheme);
 
   const { cardConainerStyle, order } = props;
-  // console.log("========props========", order)
   const renderProductItem = item => (
     <View style={styles.productContainer}>
       <View style={styles.productImageContainer}>

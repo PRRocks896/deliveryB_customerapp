@@ -1,6 +1,6 @@
 "use strict";
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, RefreshControl,FlatList, TextInput, BackHandler } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, RefreshControl, FlatList, TextInput, BackHandler, PermissionsAndroid } from 'react-native';
 import AppStyles from '../../AppStyles'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Dialog } from 'react-native-simple-dialogs';
@@ -10,7 +10,10 @@ import getwallettransactions from '../../services/Wallet/getwalletTransaction';
 import Appstyle from '../../AppStyles'
 import moment from "moment";
 import { EventRegister } from 'react-native-event-listeners'
-
+import { ActivityIndicator } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
+import { CameraKitCameraScreen, } from 'react-native-camera-kit';
+import payfromwallet from '../../services/Wallet/payfromwallet';
 export default class MyWallet extends Component {
     constructor(props) {
         super(props);
@@ -19,11 +22,20 @@ export default class MyWallet extends Component {
             dialogVisible: false,
             amount: '',
             isLoading: false,
-            walleteamount: '',
+            walleteamount: '0',
             transctionslist: [],
             dataRefresh: false,
-            amountError:'', 
-             refreshing : false
+            amountError: '',
+            refreshing: false,
+            fetchingStatus: false,
+            setOnLoad: false,
+
+            qrvalue: '',
+            opneScanner: false,
+            qrdialodvisible: false,
+            qramount: '',
+            qramountError: '',
+            qrLoading:false
         };
         this.props.navigation.addListener(
             'didFocus',
@@ -32,6 +44,53 @@ export default class MyWallet extends Component {
 
             });
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        this.page = 0
+    }
+    onOpenlink() {
+        //Function to open URL, If scanned 
+        Linking.openURL(this.state.qrvalue);
+        //Linking used to open the URL in any browser that you have installed
+    }
+    onBarcodeScan = async (qrvalue) => {
+       
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", qrvalue)
+
+        //called after te successful scanning of QRCode/Barcode
+        this.setState({ qrvalue: qrvalue });
+
+
+        this.setState({ opneScanner: false, qrdialodvisible: true });
+    }
+    onOpneScanner() {
+        var that = this;
+        //To Start Scanning
+        if (Platform.OS === 'android') {
+            async function requestCameraPermission() {
+                try {
+                    const granted = await PermissionsAndroid.request(
+                        PermissionsAndroid.PERMISSIONS.CAMERA, {
+                        'title': 'CameraExample App Camera Permission',
+                        'message': 'CameraExample App needs access to your camera '
+                    }
+                    )
+                    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                        //If CAMERA Permission is granted
+                        that.setState({ qrvalue: '' });
+                        that.setState({ opneScanner: true });
+                    } else {
+                        alert("CAMERA permission denied");
+                    }
+                } catch (err) {
+                    alert("Camera permission err", err);
+                    console.warn(err);
+                }
+            }
+            //Calling the camera permission function
+            requestCameraPermission();
+        } else {
+            that.setState({ qrvalue: '' });
+            that.setState({ opneScanner: true });
+        }
     }
 
     /**
@@ -49,14 +108,17 @@ export default class MyWallet extends Component {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         EventRegister.addEventListener('WalletRefresh', (data) => this.setState({ walleteamount: data }))
         EventRegister.addEventListener('WalletRefreshTransaction', (data) => this.setState({ transctionslist: data }))
-        console.log("re call this")
+
         let mobile = await AsyncStorage.getItem('CurrentUser')
         let mobileParsed = JSON.parse(mobile)
         let phoneno = mobileParsed.data.mobile
-        console.log("mobile", phoneno)
+
         const data = await getamountWallet(phoneno)
+        var that = this;
+        that.page = that.page + 1;
+
         if (data.success) {
-            console.log("data", data.data.balance)
+
             this.setState({ walleteamount: data.data.balance })
         }
         let body = JSON.stringify({
@@ -67,11 +129,11 @@ export default class MyWallet extends Component {
                 "sortBy": "createdAt",
                 "descending": true,
                 "rowsPerPage": 50,
-                "page": 1
+                "page": that.page
             }
         })
         const transctions = await getwallettransactions(phoneno, body)
-        this.setState({ transctionslist: transctions.data.list })
+        this.setState({ transctionslist: that.page === 1 ? transctions.data.list : [...this.state.transctionslist, ...transctions.data.list], setOnLoad: true })
 
     }
     orderDetails = () => {
@@ -112,76 +174,213 @@ export default class MyWallet extends Component {
                     )
                 }}
                 keyExtractor={(item) => item.id}
+                onEndReachedThreshold={0.5}
+                onEndReached={({ distanceFromEnd }) => {
+                    this.componentDidMount();
+
+                }}
+                ListFooterComponent={this.BottomView()}
             />
         )
     }
-    render() {
-        const { isLoading, amount, walleteamount } = this.state
+    BottomView = () => {
         return (
-            <View style={[styles.container, { backgroundColor: '#fff' }]}>
-                <View style={[styles.card, styles.row]}>
-                    <Image style={styles.imgrs} source={AppStyles.iconSet.rupee} />
-                    <Text style={styles.rstxt}>{walleteamount}</Text>
-                </View>
-                <View style={styles.mainView}>
-                    <Text style={{ fontSize: 18 }}>Payment History</Text>
-                    {this.orderDetails()}
-                </View>
-                <TouchableOpacity
-                    onPress={() => this.setState({ dialogVisible: true })}
-                    style={styles.fotterbtn}>
-                    <Icon name={'add'} size={35} color={'#fff'} />
-                </TouchableOpacity>
+            <View>
+                {
+                    (this.state.fetchingStatus)
+                        ?
+                        <ActivityIndicator size="large" color="#000" style={{ marginLeft: 6 }} />
+                        :
+                        null
+                }
+            </View>
+        )
+    }
+    addqramount = async() => {
+        let mobileno = await AsyncStorage.getItem('UserMobile')
+        // console.log("USer Mobile no", mobileno)
+        const {qramount, qramountError, qrdialodvisible, walleteamount, qrvalue} = this.state
+        // console.log("Add Qr amount", this.state.walleteamount, this.state.qramount)
+        if (qramount == '') {
+            this.setState({ qramountError: "Please Enter Amount" })
+        } else if (walleteamount < qramount) {
+            // console.log("Value=============", parseFloat(qramount) - parseFloat(walleteamount))
+            let money = parseFloat(qramount) - parseFloat(walleteamount)
+            this.setState({qramountError: `Insufficient Balance, Please add ${money} to your wallet`})
+        }else{
+            this.setState({qrLoading: true})
+            // console.log(">>>>>>>>>>>>>>>>>>",qramount,qrvalue,mobileno)
+            let body = JSON.stringify({
+                amount: parseFloat(qramount),
+                shop_mobile: qrvalue
+            })
+            const response  = await payfromwallet(body, mobileno)
+            // console.log("response", response)
+            if(response.statusCode == 200){
+                this.componentDidMount()
+                this.setState({qrdialodvisible: false ,qrLoading: false })
+            }else{
+                this.setState({qramountError: response.message, qrLoading: false})
+            }
+            
+        }
+    }
+    render() {
+        const { isLoading, amount, walleteamount, refreshing } = this.state
+        if (!this.state.opneScanner) {
+            return (
+                <View style={[styles.container, { backgroundColor: '#fff' }]}>
+                    <View style={[styles.card, styles.row]}>
+                        <Image style={styles.imgrs} source={AppStyles.iconSet.rupee} />
+                        <Text style={styles.rstxt}>{walleteamount}</Text>
+                    </View>
+                    <ScrollView
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
+                            this.componentDidMount()
+                        }} />}
+                        style={styles.mainView}>
+                        <Text style={{ fontSize: 18 }}>Payment History</Text>
+                        {this.orderDetails()}
+                    </ScrollView>
+                    <TouchableOpacity
+                        onPress={() => this.onOpneScanner()}
+                        style={[styles.fotterbtn, { bottom: 80 }]}>
+                       <Image source={require('../../../assets/images/qr-code.png')}  style={{width:25, height:25}}/>
+                    </TouchableOpacity>
 
-                <Dialog
-                    visible={this.state.dialogVisible}
-                    title="Add amount to your wallet"
-                    onTouchOutside={() => this.setState({ dialogVisible: false })}>
-                    <View>
-                        <TextInput
-                            keyboardType='number-pad'
-                            underlineColorAndroid="transparent"
-                            placeholder='Add amount'
-                            style={styles.cvvinput}
-                            onChangeText={(text) => this.setState({ amount: text })}
-                        />
-                        {
-                            this.state.amountError !== '' ?
-                            <View> 
-                                <Text style={styles.errortxt}>{this.state.amountError}</Text>
+                    <TouchableOpacity
+                        onPress={() => this.setState({ dialogVisible: true })}
+                        style={styles.fotterbtn}>
+                        <Icon name={'add'} size={35} color={'#fff'} />
+                    </TouchableOpacity>
+
+
+
+                    <Dialog
+                        visible={this.state.dialogVisible}
+                        title="Add amount to your wallet"
+                        onTouchOutside={() => this.setState({ dialogVisible: false })}>
+                        <View>
+                            <TextInput
+                                keyboardType='number-pad'
+                                underlineColorAndroid="transparent"
+                                placeholder='Enter Amount'
+                                style={styles.cvvinput}
+                                maxLength={5}
+                                onChangeText={(text) => this.setState({ amount: text })}
+                            />
+                            {
+                                this.state.amountError !== '' ?
+                                    <View>
+                                        <Text style={styles.errortxt}>{this.state.amountError}</Text>
+                                    </View>
+                                    : null
+                            }
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flex: 6 }}>
+
+                                    <View style={styles.addbtnContainer}>
+                                        <TouchableOpacity style={[styles.addcvvbutton, { width: '50%' }]} onPress={() => this.setState({ dialogVisible: false, amountError: '' })}>
+
+                                            <Text style={styles.addtext}>Cancel</Text>
+
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                                : null
-                        }
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={{ flex: 6 }}>
+                                <View style={{ flex: 6 }}>
 
-                                <View style={styles.addbtnContainer}>
-                                    <TouchableOpacity style={[styles.addcvvbutton,{width:'50%'}]} onPress={() => this.setState({dialogVisible: false, amountError:''})}>
-                                      
-                                                <Text style={styles.addtext}>Cancel</Text>
-                                      
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                            <View style={{ flex: 6 }}>
-
-                                <View style={styles.addbtnContainer}>
-                                    <TouchableOpacity style={styles.addcvvbutton} onPress={() => amount.length !== 0 ? this.props.navigation.navigate('AddCards', { amount: amount }): this.setState({amountError:'Please add amount'})}>
-                                        {
-                                            isLoading ?
-                                                <ActivityIndicator color={'#000'} size="small" />
-                                                :
-                                                <Text style={styles.addtext}>Add</Text>
-                                        }
-                                    </TouchableOpacity>
+                                    <View style={styles.addbtnContainer}>
+                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => amount.length !== 0 ? this.props.navigation.navigate('AddCards', { amount: amount }) : this.setState({ amountError: 'Please Enter Amount' })}>
+                                            {
+                                                isLoading ?
+                                                    <ActivityIndicator color={'#000'} size="small" />
+                                                    :
+                                                    <Text style={styles.addtext}>Add</Text>
+                                            }
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
 
-                </Dialog>
-            </View>
+                    </Dialog>
+
+                    <Dialog
+                        visible={this.state.qrdialodvisible}
+                        title="Enter Amount"
+                        onTouchOutside={() => this.setState({ qrdialodvisible: false })}>
+                        <View>
+                            <TextInput
+                                keyboardType='number-pad'
+                                underlineColorAndroid="transparent"
+                                placeholder='Enter Amount'
+                                style={styles.cvvinput}
+                                maxLength={5}
+                                onChangeText={(text) => this.setState({ qramount: text })}
+                            />
+                            {
+                                this.state.qramountError !== '' ?
+                                    <View>
+                                        <Text style={styles.errortxt}>{this.state.qramountError}</Text>
+                                    </View>
+                                    : null
+                            }
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flex: 6 }}>
+
+                                    <View style={styles.addbtnContainer}>
+                                        <TouchableOpacity style={[styles.addcvvbutton, { width: '50%' }]} onPress={() => this.setState({ qrdialodvisible: false, qramountError: '' })}>
+
+                                            <Text style={styles.addtext}>Cancel</Text>
+
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <View style={{ flex: 6 }}>
+
+                                    <View style={styles.addbtnContainer}>
+                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => this.addqramount()}>
+                                            {
+                                                this.state.qrLoading ?
+                                                    <ActivityIndicator color={'#000'} size="small" />
+                                                    :
+                                                    <Text style={styles.addtext}>Add</Text>
+                                            }
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+
+                    </Dialog>
+                </View>
+            )
+        }
+
+        return (
+            <>
+                <View style={{ flex: 1 }}>
+                    <CameraKitCameraScreen
+                        showFrame={false}
+                        //Show/hide scan frame
+                        scanBarcode={true}
+                        //Can restrict for the QR Code only
+                        laserColor={'blue'}
+                        //Color can be of your choice
+                        frameColor={'yellow'}
+                        //If frame is visible then frame color
+                        colorForScannerFrame={'black'}
+                        //Scanner Frame color
+                        onReadCode={event =>
+                            this.onBarcodeScan(event.nativeEvent.codeStringValue)
+                        }
+                    />
+                </View>
+
+
+            </>
         )
+
     }
 }
 
@@ -271,7 +470,7 @@ const styles = StyleSheet.create({
         width: 25,
         height: 25,
         marginTop: 3
-    },errortxt:{
-        color:'red'
+    }, errortxt: {
+        color: 'red'
     }
 });

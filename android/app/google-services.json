@@ -262,7 +262,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:706061484183:android:04ca3e87be98515a",
         "android_client_info": {
-          "package_name": "com.shopertino"
+          "package_name": "com.redtron.tribata.customer"
         }
       },
       "oauth_client": [
@@ -270,7 +270,7 @@
           "client_id": "706061484183-0ojr05f63iqjhf5dn09tajc7nq4st3ak.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.shopertino",
+            "package_name": "com.redtron.tribata.customer",
             "certificate_hash": "18a14331585f9e7bd65a0e6128a49588d767d084"
           }
         },

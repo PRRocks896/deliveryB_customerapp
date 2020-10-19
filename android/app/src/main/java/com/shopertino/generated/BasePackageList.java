@@ -1,4 +1,4 @@
-package com.shopertino.generated;
+package com.redtron.tribata.customer.generated;
 
 import java.util.Arrays;
 import java.util.List;

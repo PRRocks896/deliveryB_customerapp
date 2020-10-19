@@ -1,6 +1,6 @@
 "use strict";
 import React, { Component } from 'react';
-import { View, Text, Alert, ActivityIndicator, TextInput, TouchableOpacity, StyleSheet, FlatList, StatusBar, Keyboard } from 'react-native';
+import { View, Text, Alert, ActivityIndicator, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import AppStyles from '../../AppStyles'
 import { Dialog } from 'react-native-simple-dialogs';
 import { CreditCardInput } from 'react-native-credit-card-input';
@@ -28,29 +28,31 @@ export default class AddCards extends Component {
             cvv: '',
             isLoading: false,
             tokenid: '',
-            customerid: ''
+            customerid: '',
+
+            cardError: ''
         };
     }
     /**
      * get cards from async storage
      */
     componentDidMount = async () => {
-        console.log("amount========", this.props.navigation.state.params.amount)
+       
         let cards = await AsyncStorage.getItem('CardData')
         let cardParsed = JSON.parse(cards)
-        console.log("All Cards", cardParsed)
         this.setState({ getcards: cardParsed })
     }
     /**
      * add cards from here
      */
     addcardDetails = async () => {
-        this.setState({ dialogVisible: false })
         const { cardData } = this.state
         if (cardData.valid) {
+            this.setState({ dialogVisible: false })
             this.storecards(cardData)
         } else {
-            Alert.alert("Invalid Data")
+            this.setState({ cardError: 'Invalid Data' })
+            // Alert.alert("Invalid Data")
         }
 
     }
@@ -190,7 +192,7 @@ export default class AddCards extends Component {
 
         let mobile = await AsyncStorage.getItem('CurrentUser')
         let mobileParsed = JSON.parse(mobile)
-        console.log("mobile", mobileParsed.data.mobile)
+       
         let total = parseFloat(this.props.navigation.state.params.amount)
         if (total < 50000) {
 
@@ -202,9 +204,9 @@ export default class AddCards extends Component {
                 let body = JSON.stringify({
                     amount: total
                 })
-                console.log("body", body, total)
+              
                 const data = await addamountwallet(body, phoneNo)
-                console.log("amount=======in api", data)
+                
                 if (data.success) {
                     Alert.alert(
                         "",
@@ -243,7 +245,7 @@ export default class AddCards extends Component {
                     ],
                 );
             }
-        }else{
+        } else {
             Alert.alert(
                 "",
                 "You can not add more then 50,000",
@@ -258,7 +260,7 @@ export default class AddCards extends Component {
         let mobile = await AsyncStorage.getItem('CurrentUser')
         let mobileParsed = JSON.parse(mobile)
         let phoneno = mobileParsed.data.mobile
-        console.log("mobile", phoneno)
+       
         const data = await getamountWallet(phoneno)
         if (data.success) {
             EventRegister.emit('WalletRefresh', data.data.balance)
@@ -364,13 +366,20 @@ export default class AddCards extends Component {
                     <View>
                         <CreditCardInput requiresName onChange={(cardData) => this.setState({ cardData })} />
                         <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity onPress={() => this.setState({ dialogVisible: false })} style={{ marginTop: 10, position: 'absolute', right: 0 }}>
+                            <TouchableOpacity onPress={() => this.setState({ dialogVisible: false ,cardError: ''})} style={{ marginTop: 10, position: 'absolute', right: 0 }}>
                                 <Text style={[styles.text, { fontSize: 18 }]}>Cancel</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.addcardDetails()} style={{ marginTop: 10, marginLeft: 10 }}>
                                 <Text style={[styles.text, { fontSize: 18 }]}>Add Card</Text>
                             </TouchableOpacity>
                         </View>
+                            {
+                                this.state.cardError !== '' ?
+                                    <View style={{justifyContent:'center',alignItems:'center'}}>
+                                        <Text style={{color:'red', fontSize:15}}>{'Add Proper Card Details'}</Text>
+                                    </View>
+                                    : null
+                            }
                     </View>
                 </Dialog>
 

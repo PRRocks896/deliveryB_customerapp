@@ -55,7 +55,7 @@ function DrawerContainer(appConfig) {
         reqToken: details.reqToken,
       })
       const data = await getProfileDetails(body);
-      console.log("Profile",data.data.profilePicture)
+     
       setProfilepic(data.data.profilePicture)
       EventRegister.addEventListener('profileImage', (data) => { setProfilepic(data) })
      
@@ -64,15 +64,14 @@ function DrawerContainer(appConfig) {
     const imagePicker = () => {
       ImagePicker.showImagePicker(options, (response) => {
         if (response.didCancel) {
-          // console.log('User cancelled image picker');
+        
         } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
+         
         } else if (response.customButton) {
-          console.log('User tapped custom button: ', response.customButton);
+        
         } else {
           setProfilepic(response.path)
           profilepicfun()
-          console.log("image", response.uri, response.path)
           uploadProfileImage(response.path, response.type, response.fileName)
         }
       })
@@ -93,7 +92,7 @@ function DrawerContainer(appConfig) {
         { name: 'profile', filename: fileName, type: Imagetype, data: RNFetchBlob.wrap(Imagepath) },
       ]).then((resp) => {
         let data = resp.json()
-        console.log("Resp", data.data.profilePhoto)
+      
         setIsloading(false)
         EventRegister.emit('profileImage', data.data.profilePhoto)
         AsyncStorage.setItem("Profilepic", data.data.profilePhoto)
@@ -101,7 +100,7 @@ function DrawerContainer(appConfig) {
         profilepicfun()
 
       }).catch((err) => {
-        console.log("Error", err)
+        
       })
     }
     const profilepicfun = () => {

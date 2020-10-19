@@ -38,7 +38,7 @@ function PaymentOptions(props) {
 
 
   useEffect(() => {
-    props.setSelectedPaymentMethod(props.paymentMethods[0]);
+    // props.setSelectedPaymentMethod(props.paymentMethods[0]);
     EventRegister.addEventListener('CODdata', (data) => {
       if (data == "COD") {
         setvalueRadio('')
@@ -50,7 +50,6 @@ function PaymentOptions(props) {
       }
     })
     EventRegister.addEventListener('SavedCards', (data) => {
-      console.log("cardsssss", data)
       setGetCards(data)
     })
     getSavedCards()
@@ -60,10 +59,10 @@ function PaymentOptions(props) {
     let mobile = await AsyncStorage.getItem('CurrentUser')
     let mobileParsed = JSON.parse(mobile)
     let phoneno = mobileParsed.data.mobile
-    // console.log("mobile", phoneno)
+  
     const data = await getamountWallet(phoneno)
     if (data.success) {
-      // console.log("data", data.data.balance)
+     
       setwalleteamount(data.data.balance)
       // this.setState({ walleteamount: data.data.balance })
       if (totalprice > data.data.balance) {
@@ -142,23 +141,23 @@ function PaymentOptions(props) {
     let total = totalprice
     let body = `amount=${total}&currency=usd&customer=${customerID}&description=Tribata Shopping`
     // call stripe charge api
-      const data = await customerCharges(body);
-      setTransactionId(data.id)
-      setChargeConfirm(data.status)
-      if (data.status == 'succeeded') {
-        Alert.alert(
-          "",
-          "Now you can able to click next",
-          [
-            { text: "Ok", },
-          ],
-        );
-        setisLoading(false)
-        setdialogVisible(false)
-        EventRegister.emit('confirm', data.status)
-        EventRegister.emit('transactionid', data.id)
-      }
-    
+    const data = await customerCharges(body);
+    setTransactionId(data.id)
+    setChargeConfirm(data.status)
+    if (data.status == 'succeeded') {
+      Alert.alert(
+        "",
+        "Now you can able to click next",
+        [
+          { text: "Ok", },
+        ],
+      );
+      setisLoading(false)
+      setdialogVisible(false)
+      EventRegister.emit('confirm', data.status)
+      EventRegister.emit('transactionid', data.id)
+    }
+
   }
 
   /**
@@ -228,30 +227,30 @@ function PaymentOptions(props) {
                       style={styles.cvvinput}
                       onChangeText={(text) => setcvv(text)}
                     />
-                     <View style={{ flexDirection: 'row' }}>
-                     <View style={{ flex: 6 }}>
-                     <View style={styles.addbtnContainer}>
-                                    <TouchableOpacity style={[styles.addcvvbutton,{width:'50%'}]} onPress={() => setdialogVisible(false)}>
-                                      
-                                                <Text style={styles.addtext}>Cancel</Text>
-                                      
-                                    </TouchableOpacity>
-                                </View>
-                     </View>
-                     <View style={{ flex: 6 }}>
-                     <View style={styles.addbtnContainer}>
-                      <TouchableOpacity style={styles.addcvvbutton} onPress={() => paymentGetToken(item.item)}>
-                        {
-                          isLoading ?
-                            <ActivityIndicator color={'#000'} size="small" />
-                            :
-                            <Text style={styles.addtext}>Add</Text>
-                        }
-                      </TouchableOpacity>
+                    <View style={{ flexDirection: 'row' }}>
+                      <View style={{ flex: 6 }}>
+                        <View style={styles.addbtnContainer}>
+                          <TouchableOpacity style={[styles.addcvvbutton, { width: '50%' }]} onPress={() => setdialogVisible(false)}>
+
+                            <Text style={styles.addtext}>Cancel</Text>
+
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                      <View style={{ flex: 6 }}>
+                        <View style={styles.addbtnContainer}>
+                          <TouchableOpacity style={styles.addcvvbutton} onPress={() => paymentGetToken(item.item)}>
+                            {
+                              isLoading ?
+                                <ActivityIndicator color={'#000'} size="small" />
+                                :
+                                <Text style={styles.addtext}>Add</Text>
+                            }
+                          </TouchableOpacity>
+                        </View>
+                      </View>
                     </View>
-                     </View>
-                     </View>
-                   
+
                   </View>
 
                 </Dialog>
@@ -276,29 +275,29 @@ function PaymentOptions(props) {
         <View style={styles.addNewCardIconContainer}>
           <Icon name={'payment'} size={25} />
         </View>
-        <View style={styles.addNewCardTitleContainer}>
-          <Text style={[styles.addNewCardTitle, { color: isSelect == 'COD' ? '#008080' : '#000' }]}>{"Cod"}</Text>
+        <View style={{ backgroundColor: isSelect == 'COD' ? '#a3a3a3' : '#fff', flexDirection: 'row', flex: 6, padding: 10 }}>
+          <Text style={[styles.addNewCardTitle, { color: isSelect == 'COD' ? '#fff' : '#000' }]}>{"Cod"}</Text>
         </View>
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={  walleterror == '' ?  onmywalletpress : null}
+        onPress={walleterror == '' ? onmywalletpress : null}
         style={styles.addNewCardContainer}
       >
         <View style={styles.addNewCardIconContainer}>
           <Icon name={'payment'} size={25} />
         </View>
-        <View style={{ flexDirection: 'row', flex: 6 }}>
-          <Text style={[styles.addNewCardTitle, { color: isSelect == 'WALLET' ? '#008080' : '#000' }]}>{"My Wallete"}</Text>
-          <Text style={[styles.amounttxt,{color : walleterror !== '' ? 'red' : 'green'}]}> ( ₹  {walleteamount} )</Text>
+        <View style={{ flexDirection: 'row', flex: 6, backgroundColor: isSelect == 'WALLET' ? '#a3a3a3' : '#fff', padding: 10 }}>
+          <Text style={[styles.addNewCardTitle, { color: isSelect == 'WALLET' ? '#fff' : '#000' }]}>{"My Wallet"}</Text>
+          <Text style={[styles.amounttxt, { color: walleterror !== '' ? 'red' : 'green' }]}> ( ₹  {walleteamount} )</Text>
         </View>
       </TouchableOpacity>
-        {
-          walleterror !== '' ? <View>
-            <Text style={styles.errortxt}> {walleterror}</Text>
-          </View>
+      {
+        walleterror !== '' ? <View>
+          <Text style={styles.errortxt}> {walleterror}</Text>
+        </View>
           : null
-        }
+      }
 
       <TouchableOpacity
         onPress={onAddNewCard}

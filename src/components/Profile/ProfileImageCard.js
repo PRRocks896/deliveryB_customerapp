@@ -35,14 +35,14 @@ function ProfileImageCard(props) {
   const imagePicker = () => {
     ImagePicker.showImagePicker(options, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+      
       } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
+       
       } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
+       
       } else {
         setprofile(response.uri)
-        console.log("image", response.uri, response.path)
+      
         uploadProfileImage(response.path, response.type, response.fileName)
    
 
@@ -63,18 +63,18 @@ function ProfileImageCard(props) {
       { name: 'profile', filename: fileName, type: Imagetype, data: RNFetchBlob.wrap(Imagepath) },
     ]).then((resp) => {
       let data = resp.json()
-      console.log("Resp", data.data.profilePhoto)
+      
       EventRegister.emit('profileImage', data.data.profilePhoto)
       AsyncStorage.setItem("Profilepic", data.data.profilePhoto)
       setprofile(data.data.profilePhoto)
      
 
     }).catch((err) => {
-      console.log("Error", err)
+      
     })
   }
   
-  // console.log("=======", imagepath, profile)
+ 
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity style={styles.cardImageContainer} onPress={() => imagePicker()}>
