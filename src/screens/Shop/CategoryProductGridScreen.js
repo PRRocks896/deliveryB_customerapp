@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { View, Text, StatusBar, AsyncStorage, Alert } from "react-native";
+import { View, Text } from "react-native";
 import { connect } from "react-redux";
 import { ProductGrid, ProductDetailModal } from "../../components";
-import { firebaseDataManager } from "../../apis";
 import {
   setWishlist,
   setShoppingBag,
@@ -63,17 +62,6 @@ class CategoryProductGridScreen extends Component {
       isProductDetailVisible: !this.state.isProductDetailVisible,
       product: item
     });
-  };
-
-  onFavouritePress = async item => {
-    item.isFavourite = !item.isFavourite;
-    this.setState({ product: item });
-    await this.props.setWishlist(item);
-
-    await firebaseDataManager.setUserWishList(
-      this.props.user.id,
-      this.props.wishlist
-    );
   };
 
   /**

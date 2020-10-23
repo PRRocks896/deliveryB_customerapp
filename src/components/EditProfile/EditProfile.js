@@ -8,7 +8,6 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { Dialog } from 'react-native-simple-dialogs';
 import OTP from '../../Core/onboarding/SmsAuthenticationScreen/otpInput'
 import changeMobilereq from "../../services/ChangeMobile/changemobilereq";
-import { cos } from "react-native-reanimated";
 import changeMobilEdit from "../../services/ChangeMobile/changemobileedit";
 
 function EditProfile(props) {

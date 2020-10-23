@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Profile } from "../../components";
-import { firebaseDataManager } from "../../apis";
-import deviceStorage from "../../utils/deviceStorage";
 import AsyncStorage from "@react-native-community/async-storage";
 import getProfileDetails from "../../services/Profile/getProfile";
 import { BackHandler } from 'react-native'
@@ -36,11 +34,7 @@ class ProfileScreen extends Component {
     this.props.navigation.goBack(null);
     return true;
   }
-  onLogout = async () => {
-    await deviceStorage.removeUserData();
-    await firebaseDataManager.logout();
-    this.onItemPress("LoginStack");
-  };
+ 
 
   onItemPress = (routeName, title) => {
     this.props.navigation.navigate(routeName, {
@@ -66,7 +60,6 @@ class ProfileScreen extends Component {
     return (
       <Profile
         user={this.state.currentUser}
-        onLogout={this.onLogout}
         onItemPress={this.onItemPress}
         navigation={this.props.navigation}
       />

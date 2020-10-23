@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React  from "react";
 import PropTypes from "prop-types";
 import { View, FlatList, Text } from "react-native";
 import ProductCard from "../ProductCard/ProductCard";
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
-import getProducts from '../../services/Products/getproducts'
+
 
 function Featured(props) {
   const colorScheme = useColorScheme();

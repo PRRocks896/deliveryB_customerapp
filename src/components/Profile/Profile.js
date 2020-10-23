@@ -12,7 +12,7 @@ function Profile(props) {
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(colorScheme);
 
-  const { user, onItemPress, onLogout } = props;
+  const { user, onItemPress } = props;
 
   return (
     <ScrollView style={styles.container}>

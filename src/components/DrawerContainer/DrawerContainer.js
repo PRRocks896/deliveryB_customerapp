@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import { useColorScheme } from "react-native-appearance";
 import DrawerItem from "../DrawerItem/DrawerItem";
-import { firebaseDataManager } from "../../apis";
 import deviceStorage from "../../utils/deviceStorage";
 import AppStyles from "../../AppStyles";
 import dynamicStyles from "./styles";
@@ -32,7 +31,6 @@ function DrawerContainer(appConfig) {
 
     const onLogout = async () => {
       await deviceStorage.removeUserData();
-      await firebaseDataManager.logout();
       await AsyncStorage.getAllKeys()
         .then(keys => AsyncStorage.multiRemove(keys))
         .then(async () => {

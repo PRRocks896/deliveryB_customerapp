@@ -3,9 +3,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Home } from "../../components";
 import {
-  firebaseDataManager
-} from "../../apis";
-import {
   setUserData,
   setCategories,
   setWishlist,
@@ -125,17 +122,7 @@ class HomeScreen extends Component {
     });
   };
 
-  onFavouritePress = async item => {
-    item.isFavourite = !item.isFavourite;
-    this.setState({ product: item });
 
-    this.props.setWishlist(item);
-
-    await firebaseDataManager.setUserWishList(
-      this.props.user.id,
-      this.props.wishlist
-    );
-  };
 
   /**
    * 

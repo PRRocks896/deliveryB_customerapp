@@ -27,8 +27,6 @@ function PaymentOptions(props) {
   const [valueradio, setvalueRadio] = useState('')
   const [dialogVisible, setdialogVisible] = useState(false)
   const [cvv, setcvv] = useState('')
-  const [tokenid, setTokenId] = useState('')
-  const [customerId, setCustomerId] = useState('')
   const [transactionId, setTransactionId] = useState('')
   const [chargeConfirm, setChargeConfirm] = useState('')
   const [isLoading, setisLoading] = useState(false)

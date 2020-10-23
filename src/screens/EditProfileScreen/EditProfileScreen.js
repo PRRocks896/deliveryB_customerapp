@@ -1,15 +1,12 @@
 import React, { Component } from "react";
-import { StatusBar, Alert } from "react-native";
+import { Alert } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { EditProfile, HeaderButton } from "../../components";
-import { firebaseDataManager } from "../../apis";
 import AppStyles from "../../AppStyles";
 import { setUserData } from "../../redux/";
-import AppConfig from "../../ShopertinoConfig";
 import AsyncStorage from "@react-native-community/async-storage";
 import addProfile from "../../services/Profile";
-import { getUserData } from "../../apis/firebase/API/auth";
 import getProfileDetails from "../../services/Profile/getProfile";
 
 class EditProfileScreen extends Component {

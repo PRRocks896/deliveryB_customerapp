@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Search } from "../../components";
-import { firebaseDataManager } from "../../apis";
 import {
   setWishlist,
   setShoppingBag,
@@ -35,16 +34,7 @@ class SearchScreen extends Component {
     });
   };
 
-  onFavouritePress = async item => {
-    item.isFavourite = !item.isFavourite;
-
-    this.setState({ product: item });
-    await this.props.setWishlist(item);
-    await firebaseDataManager.setUserWishList(
-      this.props.user.id,
-      this.props.wishlist
-    );
-  };
+  
 
   /**
    * @param {any} item product  add to bag

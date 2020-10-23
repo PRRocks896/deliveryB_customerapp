@@ -8,7 +8,6 @@ import Featured from "./Featured";
 import BestSellers from "./BestSellers";
 import ProductDetailModal from "../Modals/ProductDetailModal/ProductDetailModal";
 import dynamicStyles from "./styles";
-import AppStyles from "../../AppStyles";
 import getCategory from "../../services/Products/getCategory";
 import getProducts from "../../services/Products/getproducts";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
@@ -73,8 +72,6 @@ function Home(props) {
   }, []);
 
   const getCategoryProducts = async () => {
-
-    
     const data = await getCategory();
     if (data.success) {
       setisLoadingcategory(false)
