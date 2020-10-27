@@ -86,6 +86,26 @@ const api = {
         getShopDetails: Config.getURL + 'customer/shop/'
     },
 
+    // services
+    getservice:{
+        getservice: Config.getURL + 'customer/services?order=asc'
+    },
+    booking:{
+        booking: Config.getURL + 'customer/bookings'
+    },
+    getserviceCategorybyname:{
+        getserviceCategorybyname : Config.getURL + 'customer/services?order=asc&category='
+    },
+    searchService:{
+        searchService: Config.getURL + 'customer/search-services?words='
+    },
+    servicebookbycustomerid:{
+        servicebookbycustomerid: Config.getURL + 'customer/bookingsByCustomerId/'
+    },
+    deleteService:{
+        deleteserice: Config.getURL + 'customer/bookings/cancel/'
+    },
+
 
 
 

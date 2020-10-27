@@ -113,7 +113,7 @@ class HomeScreen extends Component {
    * on press category 
    */
   onCategoryPress = item => {
-  
+    console.log("category press", item)
     this.props.navigation.navigate("CategoryProductGrid", {
       title: item.name,
       categoryId: item._id,

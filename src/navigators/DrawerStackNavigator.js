@@ -12,7 +12,6 @@ import {
   SearchScreen,
   ProfileScreen,
   ShoppingBagScreen,
-  
 } from "../screens";
 import styles from "./styles";
 import AppStyles from "../AppStyles";
@@ -20,6 +19,9 @@ import ShopertinoConfig from "../ShopertinoConfig";
 import MyWallet from '../screens/MyWallet/mywallet'
 import AddCards from '../screens/AddCards/addCards'
 import QRScanner from '../screens/MyWallet/qrscanner'
+import SearchService from '../screens/SearchScreen/SearchService'
+import ServicebookDetails from '../screens/Order/servicebookScreen'
+
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: HomeScreen,
@@ -30,7 +32,10 @@ const DrawerNavigator = createDrawerNavigator(
     ShoppingBag: ShoppingBagScreen,
     MyWallet:MyWallet,
     AddCards:AddCards,
-    QRScanner:QRScanner
+    QRScanner:QRScanner,
+    SearchService:SearchService,
+    ServicebookDetails:ServicebookDetails
+   
   },
   {
     drawerPosition: "left",
@@ -71,16 +76,18 @@ const DrawerNavigator = createDrawerNavigator(
               }}
             />
           ),
-        headerTitle:  navigation.state.routes[routeIndex].key == "Search" &&  "Search Products" ||
+        headerTitle:  navigation.state.routes[routeIndex].key == "Search" &&  "Search" ||
         navigation.state.routes[routeIndex].key == "AddCards" && "Add Cards" ||
-        navigation.state.routes[routeIndex].key == 'MyWallet' && 'My Wallet'
-        
+        navigation.state.routes[routeIndex].key == 'MyWallet' && 'My Wallet' || 
+        navigation.state.routes[routeIndex].key ==  'ServicebookDetails' && 'Booked Service' ||
+        navigation.state.routes[routeIndex].key ==  'SearchService' && 'Search Service'
       };
     }
   }
 );
 
 const getDrawerScreenTitle = routeKey => {
+
   switch (routeKey) {
     case "Home":
       return "Dashboard";
@@ -88,8 +95,12 @@ const getDrawerScreenTitle = routeKey => {
       return "Shop";
     case "Order":
       return "Orders";
+    case "ServicebookDetails":
+      return "ServicebookDetails";
     case "Search":
       return "Search";
+    case "SearchService":
+      return "SearchService";
     case "Profile":
       return "Profile";
     case "ShoppingBag":

@@ -12,7 +12,8 @@ import getCategory from "../../services/Products/getCategory";
 import getProducts from "../../services/Products/getproducts";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import NetInfo from '@react-native-community/netinfo';
-
+import ServicesScreen from './services'
+import getServiceData from "../../services/ShopServices/getservices";
 function Home(props) {
   const colorScheme = useColorScheme();
   const [category, setCategory] = useState([])
@@ -21,6 +22,7 @@ function Home(props) {
   const [isLoadingProduct, setisLoadingProduct] = useState(true)
   const [refreshing, setrefreshing] = useState(false)
   const [netInfo, setNetInfo] = useState(false);
+  const [serviceData, setserviceData] = useState([])
 
   const styles = dynamicStyles(colorScheme);
   const {
@@ -57,20 +59,27 @@ function Home(props) {
       "hardwareBackPress",
       backAction
     );
-    
+
     const unsubscribe = NetInfo.addEventListener((state) => {
       console.log("state.isConnected", state.isConnected)
       setNetInfo(state.isConnected);
     });
 
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>main page", featuredproduct.length)
+    // console.log(">>>>>>>>>>>>>>>>>>>>>>>>main page", featuredproduct.length)
     setCategory(categoryproducts)
     setProducts(featuredproduct)
     getCategoryProducts() // For get categories
     getFeaturedProducts() // For get products
-    return () => [backHandler.remove(),  unsubscribe()]
+    getServices() // For get Service of shop
+    return () => [backHandler.remove(), unsubscribe()]
   }, []);
-
+  const getServices = async () => {
+    const response = await getServiceData()
+    console.log("Get Service Data:>>>>>>>>>>>>>>>>>>>>>>>>>>", response)
+    if(response.statusCode == 200){
+      setserviceData(response.data)
+    }
+  }
   const getCategoryProducts = async () => {
     const data = await getCategory();
     if (data.success) {
@@ -92,149 +101,156 @@ function Home(props) {
       </View>
     </View>)
   } else {
-  return (
-    <ScrollView 
-    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
-      getCategoryProducts() // For get categories
-      getFeaturedProducts() //
-  }} />}
-    style={styles.container} > 
-      {
-        isLoadingcategory == true ?
-          <SkeletonPlaceholder>
-            <View style={{ flexDirection: 'row', marginTop: 10 }}>
-              <View style={styles.incategorymainViewskeleton}>
-                <View style={[styles.categoryskeleton, { marginLeft: 10 }]} />
-              </View>
-              <View style={styles.incategorymainViewskeleton}>
-                <View style={styles.categoryskeleton} />
-              </View>
-              <View style={styles.incategorymainViewskeleton}>
-                <View style={styles.categoryskeleton} />
-              </View>
-            </View>
-          </SkeletonPlaceholder>
-          :
-          <Categories
-            navigation={navigation}
-            categories={category}
-            onCategoryPress={props.onCategoryPress}
-          />
-      }
-      {
-        isLoadingProduct == true ?
-          <SkeletonPlaceholder>
-            <View style={{ flexDirection: 'row', marginTop: 20 }}>
-              <View style={{ flex: 1, alignItems: "center" }}>
-                <View style={styles.newArraivalMainViewsSkeleton} />
-                <View style={styles.newArraivalSkeletonValue} />
-                <View style={[styles.newArraivalSkeletonValue, { width: 50 }]} />
-              </View>
-            </View>
-          </SkeletonPlaceholder>
-          :
-          <NewArrivals
-            title={"New Arrivals"}
-            dataSource={products}
-            onCardPress={props.onCardPress}
-            navigation={navigation}
-            appConfig={appConfig}
-          />
-      }
-      {
-        isLoadingProduct == true ?
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            style={{ flexDirection: 'row', marginTop: 20 }}>
+    return (
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
+          getCategoryProducts() // For get categories
+          getFeaturedProducts() //
+        }} />}
+        style={styles.container} >
+        {
+          isLoadingcategory == true ?
             <SkeletonPlaceholder>
-              <View>
-                <View style={styles.featuresmainSkeleton} />
-                <View style={styles.featuredvalueSkeleton} />
-                <View style={styles.featuredsmallValueSkeleton} />
-              </View>
-              <View>
-                <View style={styles.featuresmainSkeleton} />
-                <View style={styles.featuredvalueSkeleton} />
-                <View style={styles.featuredsmallValueSkeleton} />
-              </View>
-              <View>
-                <View style={styles.featuresmainSkeleton} />
-                <View style={styles.featuredvalueSkeleton} />
-                <View style={styles.featuredsmallValueSkeleton} />
-              </View>
-              <View>
-                <View style={styles.featuresmainSkeleton} />
-                <View style={styles.featuredvalueSkeleton} />
-                <View style={styles.featuredsmallValueSkeleton} />
+              <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                <View style={styles.incategorymainViewskeleton}>
+                  <View style={[styles.categoryskeleton, { marginLeft: 10 }]} />
+                </View>
+                <View style={styles.incategorymainViewskeleton}>
+                  <View style={styles.categoryskeleton} />
+                </View>
+                <View style={styles.incategorymainViewskeleton}>
+                  <View style={styles.categoryskeleton} />
+                </View>
               </View>
             </SkeletonPlaceholder>
-          </ScrollView>
-          :
-          <Featured
-            onCardPress={props.onCardPress}
-            featuredProducts={products}
-            title={"Featured"}
-            appConfig={appConfig}
-          />
-      }
-      {
-        isLoadingProduct == true ?
-          <SkeletonPlaceholder>
-            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-              <View style={{ flex: 6, flexDirection: 'row' }}>
-                <View>
-                  <View style={styles.bestsellerMainSkeleton} />
-                  <View style={styles.featuredvalueSkeleton} />
-                  <View style={styles.featuredsmallValueSkeleton} />
-                </View>
-                <View>
-                  <View style={styles.bestsellerMainSkeleton} />
-                  <View style={styles.featuredvalueSkeleton} />
-                  <View style={styles.featuredsmallValueSkeleton} />
+            :
+            <Categories
+              navigation={navigation}
+              categories={category}
+              onCategoryPress={props.onCategoryPress}
+            />
+        }
+        {
+          isLoadingProduct == true ?
+            <SkeletonPlaceholder>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <View style={{ flex: 1, alignItems: "center" }}>
+                  <View style={styles.newArraivalMainViewsSkeleton} />
+                  <View style={styles.newArraivalSkeletonValue} />
+                  <View style={[styles.newArraivalSkeletonValue, { width: 50 }]} />
                 </View>
               </View>
-              <View style={{ flex: 6, flexDirection: 'row', marginTop: 10 }}>
+            </SkeletonPlaceholder>
+            :
+            <NewArrivals
+              title={"New Arrivals"}
+              dataSource={products}
+              onCardPress={props.onCardPress}
+              navigation={navigation}
+              appConfig={appConfig}
+            />
+        }
+        {
+          isLoadingProduct == true ?
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              style={{ flexDirection: 'row', marginTop: 20 }}>
+              <SkeletonPlaceholder>
                 <View>
-                  <View style={styles.bestsellerMainSkeleton} />
+                  <View style={styles.featuresmainSkeleton} />
                   <View style={styles.featuredvalueSkeleton} />
                   <View style={styles.featuredsmallValueSkeleton} />
                 </View>
                 <View>
-                  <View style={styles.bestsellerMainSkeleton} />
+                  <View style={styles.featuresmainSkeleton} />
                   <View style={styles.featuredvalueSkeleton} />
                   <View style={styles.featuredsmallValueSkeleton} />
+                </View>
+                <View>
+                  <View style={styles.featuresmainSkeleton} />
+                  <View style={styles.featuredvalueSkeleton} />
+                  <View style={styles.featuredsmallValueSkeleton} />
+                </View>
+                <View>
+                  <View style={styles.featuresmainSkeleton} />
+                  <View style={styles.featuredvalueSkeleton} />
+                  <View style={styles.featuredsmallValueSkeleton} />
+                </View>
+              </SkeletonPlaceholder>
+            </ScrollView>
+            :
+            <Featured
+              onCardPress={props.onCardPress}
+              featuredProducts={products}
+              title={"Featured"}
+              appConfig={appConfig}
+            />
+        }
+        <ServicesScreen
+          navigation={navigation}
+          appConfig={appConfig}
+          title={"Services"} 
+          servicedata={serviceData}/>
+        {
+          isLoadingProduct == true ?
+            <SkeletonPlaceholder>
+              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
+                <View style={{ flex: 6, flexDirection: 'row' }}>
+                  <View>
+                    <View style={styles.bestsellerMainSkeleton} />
+                    <View style={styles.featuredvalueSkeleton} />
+                    <View style={styles.featuredsmallValueSkeleton} />
+                  </View>
+                  <View>
+                    <View style={styles.bestsellerMainSkeleton} />
+                    <View style={styles.featuredvalueSkeleton} />
+                    <View style={styles.featuredsmallValueSkeleton} />
+                  </View>
+                </View>
+                <View style={{ flex: 6, flexDirection: 'row', marginTop: 10 }}>
+                  <View>
+                    <View style={styles.bestsellerMainSkeleton} />
+                    <View style={styles.featuredvalueSkeleton} />
+                    <View style={styles.featuredsmallValueSkeleton} />
+                  </View>
+                  <View>
+                    <View style={styles.bestsellerMainSkeleton} />
+                    <View style={styles.featuredvalueSkeleton} />
+                    <View style={styles.featuredsmallValueSkeleton} />
+                  </View>
                 </View>
               </View>
-            </View>
-          </SkeletonPlaceholder>
+            </SkeletonPlaceholder>
 
-          :
-          <BestSellers
-            onCardPress={props.onCardPress}
-            bestSellerProducts={products}
-            title={"Best Sellers"}
-            navigation={navigation}
-            shouldLimit={true}
-            limit={10}
-            appConfig={appConfig}
-          />
-      }
-      <ProductDetailModal
-        item={product}
-        shippingMethods={shippingMethods}
-        visible={isProductDetailVisible}
-        onFavouritePress={onFavouritePress}
-        onAddToBag={onAddToBag}
-        onCancelPress={onModalCancelPress}
-        productDetails={productDetails}
-        appConfig={appConfig}
-        alreadyAddecart={alreadyAddecart}
-        navigation={navigation}
-      />
-    </ScrollView>
-  );
-    }
+            :
+            <BestSellers
+              onCardPress={props.onCardPress}
+              bestSellerProducts={products}
+              title={"Best Sellers"}
+              navigation={navigation}
+              shouldLimit={true}
+              limit={10}
+              appConfig={appConfig}
+            />
+        }
+
+
+        <ProductDetailModal
+          item={product}
+          shippingMethods={shippingMethods}
+          visible={isProductDetailVisible}
+          onFavouritePress={onFavouritePress}
+          onAddToBag={onAddToBag}
+          onCancelPress={onModalCancelPress}
+          productDetails={productDetails}
+          appConfig={appConfig}
+          alreadyAddecart={alreadyAddecart}
+          navigation={navigation}
+        />
+      </ScrollView>
+    );
+  }
 }
 
 Home.propTypes = {

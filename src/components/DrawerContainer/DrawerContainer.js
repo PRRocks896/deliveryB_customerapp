@@ -152,11 +152,19 @@ function DrawerContainer(appConfig) {
             }}
           />
           <DrawerItem
-            title="SEARCH"
+            title="SEARCH PRODUCTS"
             source={AppStyles.iconSet.searchDrawer}
             onPress={() => {
               navigation.closeDrawer()
               navigation.navigate("Search", { appConfig });
+            }}
+          />
+          <DrawerItem
+            title="SEARCH SERVICE"
+            source={AppStyles.iconSet.searchDrawer}
+            onPress={() => {
+              navigation.closeDrawer()
+              navigation.navigate("SearchService", { appConfig });
             }}
           />
           <DrawerItem
@@ -165,6 +173,14 @@ function DrawerContainer(appConfig) {
             onPress={() => {
               navigation.closeDrawer()
               navigation.navigate("Order", { appConfig });
+            }}
+          />
+          <DrawerItem
+            title="BOOKED SERVICE"
+            source={AppStyles.iconSet.orderDrawer}
+            onPress={() => {
+              navigation.closeDrawer()
+              navigation.navigate("ServicebookDetails", { appConfig });
             }}
           />
            <DrawerItem

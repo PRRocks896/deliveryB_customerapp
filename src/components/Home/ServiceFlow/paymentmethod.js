@@ -8,51 +8,51 @@ import {
   ProcedureImage,
   PaymentOptions,
   HeaderButton
-} from "../../components";
-import { updatePaymentMethods, setShippingMethods } from "../../redux";
-import AppStyles from "../../AppStyles";
+} from "../../../components";
+import AppStyles from "../../../AppStyles";
 import { Dialog } from 'react-native-simple-dialogs';
 import styles from "react-native-icon-badge/style";
 import AsyncStorage from "@react-native-community/async-storage";
 import { EventRegister } from 'react-native-event-listeners'
 
-class PaymentMethodScreen extends Component {
-  static navigationOptions = ({ navigation, screenProps }) => {
-    const currentTheme = AppStyles.navThemeConstants[screenProps.theme];
-    const { params = {} } = navigation.state;
-    return {
-      headerTintColor: AppStyles.navThemeConstants.light.fontColor,
-      cardStyle: {
-        backgroundColor: AppStyles.navThemeConstants.light.backgroundColor
-      },
-      headerStyle: {
-        backgroundColor: AppStyles.navThemeConstants.light.backgroundColor,
-        borderBottomWidth: 0
-      },
-      headerLeft: (
-        <HeaderButton
-          onPress={() => {
-            navigation.goBack();
-          }}
-          buttonContainerStyle={{ marginLeft: 10 }}
-          title={"Cancel"}
-        />
-      ),
-      headerRight: (
-        <HeaderButton
-          onPress={params.setOrderDetails}
-          buttonContainerStyle={{ marginRight: 10 }}
-          title={"Next"}
-        />
-      )
-    };
-  };
+class ServicePaymentOptions extends Component {
+  
+
+    static navigationOptions = ({ navigation, screenProps }) => {
+        const currentTheme = AppStyles.navThemeConstants[screenProps.theme];
+        const { params = {} } = navigation.state;
+        return {
+          headerTintColor: AppStyles.navThemeConstants.light.fontColor,
+          cardStyle: {
+            backgroundColor: AppStyles.navThemeConstants.light.backgroundColor
+          },
+          headerStyle: {
+            backgroundColor: AppStyles.navThemeConstants.light.backgroundColor,
+            borderBottomWidth: 0
+          },
+          headerLeft: (
+            <HeaderButton
+              onPress={() => {
+                navigation.goBack();
+              }}
+              buttonContainerStyle={{ marginLeft: 10 }}
+              title={"Cancel"}
+            />
+          ),
+          headerRight: (
+            <HeaderButton
+              onPress={params.setOrderDetails}
+              buttonContainerStyle={{ marginRight: 10 }}
+              title={"Next"}
+            />
+          )
+        };
+      };
+
 
   constructor(props) {
     super(props);
-    this.appConfig =
-      props.navigation.state.params.appConfig ||
-      props.navigation.getParam("appConfig");
+  
     this.state = {
       cardNumberValue: "",
       dialogVisible: false,
@@ -90,17 +90,22 @@ class PaymentMethodScreen extends Component {
   setOrderDetails = async () => {
     const { chargeConfirm, transactionid } = this.state
     let data = this.props.navigation.state.params
-    let payamount = data.totalPrice
+    console.log("Params data", data)
   
     if (chargeConfirm !== '') {
-      this.props.navigation.replace("ShippingAddress", {
-        appConfig: this.appConfig,
-        transactionid: chargeConfirm == 'succeeded' ? transactionid : '',
+
+        console.log("data in if",transactionid)
+    this.props.navigation.navigate("PlaceServiceScrren", {
+        transactionid: chargeConfirm === 'succeeded' ? transactionid : '',
         customerID: data.customerID,
-        bagproduct: data.product,
-        totalammount: chargeConfirm == 'WALLET' ? payamount : data.totalPrice,
-        payment_method: chargeConfirm,
-        order_number: Math.floor(100000000000 + Math.random() * 900000000000)
+        totalammount: chargeConfirm == 'WALLET' ? data.totalammount : data.totalammount,
+        payment_method: chargeConfirm === 'succeeded' ? 'Card' : chargeConfirm ,
+        booking_number: Math.floor(100000000000 + Math.random() * 900000000000),
+        slot:data.slot,
+        shopid: data.shopid,
+        service_id: data.service_id,
+        slot_date: data.slot_date,
+
       });
     }
     else {
@@ -213,7 +218,7 @@ class PaymentMethodScreen extends Component {
           navigation={this.props.navigation}
           cardNumbersEnding={this.props.cardNumbersEnding}
           paymentMethods={this.props.paymentMethods}
-          totalprice={this.props.navigation.state.params.totalPrice}
+          totalprice={this.props.navigation.state.params.totalammount}
           onmywalletpress={this.pressmywallet}
 
         />
@@ -240,31 +245,5 @@ class PaymentMethodScreen extends Component {
   }
 }
 
-PaymentMethodScreen.propTypes = {
-  cardNumbersEnding: PropTypes.array,
-  navigation: PropTypes.object,
-  paymentMethods: PropTypes.array,
-  user: PropTypes.object,
-  stripeCustomer: PropTypes.string,
-  setShippingMethods: PropTypes.func,
-  updatePaymentMethods: PropTypes.func
-};
 
-const mapStateToProps = ({ checkout, app }) => {
-  return {
-    totalPrice: checkout.totalPrice,
-    shippingMethod: checkout.shippingMethod,
-    cardNumbersEnding: checkout.cardNumbersEnding,
-    paymentMethods: checkout.paymentMethods,
-    user: app.user,
-    stripeCustomer: app.stripeCustomer
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {
-    setShippingMethods,
-    updatePaymentMethods
-  }
-)(PaymentMethodScreen);
+export default ServicePaymentOptions

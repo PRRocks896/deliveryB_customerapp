@@ -17,6 +17,8 @@ import {
 import DrawerStackNavigator from "./DrawerStackNavigator";
 import AppStyles from "../AppStyles";
 import SaveAddressScreen from "../screens/SaveAddress/saveAddressscreen"
+import ServicePaymentOptions from '../components/Home/ServiceFlow/paymentmethod'
+import PlaceServiceScrren from '../components/Home/ServiceFlow/placeorder'
 const MainStackNavigator = createStackNavigator(
   {
     Drawer: { screen: DrawerStackNavigator },
@@ -29,6 +31,8 @@ const MainStackNavigator = createStackNavigator(
     AddACard: { screen: AddACardScreen },
     Checkout: { screen: CheckoutScreen },
     Bag: { screen: ShoppingBagScreen },
+    ServicePaymentOptions:{ screen : ServicePaymentOptions },
+    PlaceServiceScrren: { screen : PlaceServiceScrren },
     SaveAddress: {
       screen: SaveAddress,
       navigationOptions: {

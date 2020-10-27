@@ -1,5 +1,8 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import AppStyles from "../../AppStyles";
+const { width, height } = Dimensions.get("window");
+
+const featuredTextPadding = 3;
 
 const dynamicStyles = colorScheme => {
   return new StyleSheet.create({
@@ -89,13 +92,116 @@ const dynamicStyles = colorScheme => {
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row',
-      width:'100%',
+      width: '100%',
       position: 'absolute',
       top: 30
-  },
-  offlineText: {
+    },
+    offlineText: {
       color: '#fff'
-  }
+    },
+    productCardConainer: {
+      width: 0.35 * width,
+      height: 0.32 * height,
+      margin: 10,
+      overflow: "visible",
+      marginLeft: 7
+    },
+    productCardImageConainer: {
+      width: "100%",
+      height: "80%",
+    },
+    productCardImage: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 6,
+      resizeMode: 'contain'
+    },
+    productCardPrice: {
+      textAlign: "left",
+      fontSize: 14,
+      color: AppStyles.colorSet[colorScheme].mainTextColor,
+      fontFamily: AppStyles.fontFamily.boldFont,
+      paddingTop: featuredTextPadding
+    },
+    productCardDescription: {
+      textAlign: "left",
+      fontSize: 13,
+      color: '#000',
+      fontFamily: AppStyles.fontFamily.regularFont,
+      paddingTop: featuredTextPadding
+    },
+    transparentContainer: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "flex-end",
+      backgroundColor: "rgba(0,0,0,0.5)"
+    },
+    viewContainer: {
+      width: width,
+      height: height * 0.95,
+      backgroundColor: AppStyles.colorSet[colorScheme].mainThemeBackgroundColor
+    },
+    swiperContainer: {
+      // alignItems: "center",
+      justifyContent: "center",
+      flex: 8
+    },
+   
+    imageBackground: {
+      flex: 1,
+      resizeMode: 'contain'
+    },
+    headerContainerStyle: {
+      width: "96%",
+      alignSelf: "center",
+      height: "4%",
+      position: "absolute",
+      top: "2%",
+    },
+    descriptionContainer: {
+      height: 'auto'
+    },
+    title: {
+      fontFamily: AppStyles.fontFamily.regularFont,
+      color: AppStyles.colorSet[colorScheme].mainTextColor,
+      paddingTop: 20,
+      paddingLeft: 15,
+      fontSize: 17
+    },
+    price: {
+      fontFamily: AppStyles.fontFamily.regularFont,
+      color: AppStyles.colorSet[colorScheme].mainSubtextColor,
+      paddingTop: 7,
+      paddingLeft: 15,
+      fontSize: 15
+    },
+    borderLine: {
+      width: "97%",
+      height: 0.5,
+      alignSelf: "center",
+      marginTop: 10,
+      backgroundColor: "#d9d9d9"
+    },
+    addToBagContainerStyle: {
+      backgroundColor: AppStyles.colorSet[colorScheme].mainThemeForegroundColor,
+      // flex: 2.5,
+      height:50,
+      marginLeft:20,
+      marginRight:20,
+      justifyContent:'center',
+      alignItems:'center'
+      // alignSelf: "flex-end",
+
+    },
+    inputContainer:{
+      borderColor:'#a3a3a3',
+      borderWidth:1,
+      height:50,
+      width:'95%',
+      marginLeft:10,
+      marginRight:10,
+      borderRadius:10,marginTop:10
+    }
   });
 };
 
