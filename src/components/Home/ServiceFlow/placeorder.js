@@ -73,7 +73,7 @@ class PlaceServiceScrren extends Component {
                     slot_time:paramdata.slot
                 })
                 const response = await addBookingData(body)
-                // console.log("Response", response)
+                console.log("Response", response)
                 if(response.statusCode == 200) {
                     this.setState({ isLoading: false })
                     this.props.navigation.navigate('ServicebookDetails')
@@ -107,6 +107,8 @@ class PlaceServiceScrren extends Component {
         slot_time:paramdata.slot
     })
     const response = await addBookingData(body)
+
+    console.log("Place order==============", response)
     if(response.statusCode == 200) {
         this.props.navigation.navigate('ServicebookDetails')
         Toast.show(response.message, Toast.LONG);

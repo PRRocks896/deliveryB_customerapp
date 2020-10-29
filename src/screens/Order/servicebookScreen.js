@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import getOrder from "../../services/Order";
 import AsyncStorage from "@react-native-community/async-storage";
-import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl, Alert } from 'react-native'
+import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl, Alert, Linking } from 'react-native'
 import Appstyle from '../../AppStyles'
 import moment from "moment";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
@@ -36,6 +36,7 @@ class ServicebookDetails extends Component {
             'didFocus',
             payload => {
                 this.componentDidMount()
+                this.getOrders()
 
             });
     }
@@ -56,6 +57,10 @@ class ServicebookDetails extends Component {
         return true;
 
     }
+
+    /**
+     * get service book orders
+     */
     getOrders = async () => {
         var that = this;
         that.page = that.page + 1;
@@ -82,7 +87,9 @@ class ServicebookDetails extends Component {
         else if (data.data.length == 0 || data.data.length == undefined) this.setState({ isShowData: false })
     }
 
-
+/**
+ * display booked orders
+ */
     getOrderList = () => {
 
         const { orderHistory, refreshing } = this.state
@@ -94,14 +101,18 @@ class ServicebookDetails extends Component {
                     const orderdate = moment(item.item.createdAt).format('DD/MM/YYYY HH:mm')
 
                     return (
-                        <TouchableOpacity style={styles.card}>
+                        <TouchableOpacity style={styles.card} onPress={() =>  this.props.navigation.navigate('OrderDetailsScreen', { type:'Service', data: item.item})} style={styles.card }>
                             <View style={styles.row}>
-                                <Text style={styles.tital}>Your Order number :  </Text>
+                                <Text style={styles.tital}>Your Service number :  </Text>
                                 <Text style={styles.subtitle}>{item.item.booking_number}</Text>
                             </View>
                             <View style={styles.row}>
-                                <Text style={styles.tital}>Order Status:  </Text>
+                                <Text style={styles.tital}>Service Status:  </Text>
                                 <Text style={[styles.subtitle, { color: '#008000', fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{item.item.status}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.tital}>Slot Date:  </Text>
+                                <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{item.item.slot_date}</Text>
                             </View>
 
                             <View style={styles.row}>
@@ -136,6 +147,10 @@ class ServicebookDetails extends Component {
 
         )
     }
+    /**
+     * Delete book services
+     * @param {any} id 
+     */
     deleteservice = async(id) => {
         console.log("delete service", id)
         Alert.alert(
@@ -150,6 +165,10 @@ class ServicebookDetails extends Component {
 
        
     }
+    /**
+     * Remove service api call
+     * @param {any} id 
+     */
     removeservice = async(id) => {
         const response = await cancelServiceData(id)
         console.log("Cancel service", response)

@@ -73,7 +73,7 @@ class OrdersScreen extends Component {
         "page": 1
       }
     })
-
+console.log("addressid", addressid)
     const data = await getOrder(addressid, body)
      
       if (data.success) {
@@ -97,7 +97,7 @@ class OrdersScreen extends Component {
         renderItem={(item, index) => {
           const orderdate = moment(item.item.createdAt).format('DD/MM/YYYY HH:mm')
           return (
-            <View style={styles.card}>
+          <TouchableOpacity onPress={ () => this.props.navigation.navigate('OrderDetailsScreen', { type:'Order', data: item.item})} style={styles.card}>
               <View style={styles.row}>
                 <Text style={styles.tital}>Your Order number :  </Text>
                 <Text style={styles.subtitle}>{item.item.order_number}</Text>
@@ -119,7 +119,7 @@ class OrdersScreen extends Component {
               <View>
 
               </View>
-            </View>
+            </TouchableOpacity>
           )
         }}
         onEndReachedThreshold={0.8}

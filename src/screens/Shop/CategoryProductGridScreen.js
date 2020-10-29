@@ -17,7 +17,8 @@ import { Picker } from '@react-native-community/picker'
 import moment from 'moment'
 
 import Header from "../../components/Modals/ProductDetailModal/Header";
-import { isResumable } from "react-native-fs";
+import DatePicker from 'react-native-datepicker'
+
 import AsyncStorage from "@react-native-community/async-storage";
 const timedata = [
   { id: 1, item: '01 : 00 Am' },
@@ -73,8 +74,8 @@ class CategoryProductGridScreen extends Component {
       isServiceData: false,
       modalVisible: false,
       productData: {},
-      selectedSlot: ''
-
+      selectedSlot: '',
+      slotdate :moment().format('DD/MM/YYYY')
     };
     this.appConfig =
       props.navigation.state.params.appConfig ||
@@ -141,7 +142,7 @@ class CategoryProductGridScreen extends Component {
   };
 
   booknow = async (item) => {
-    console.log("item>>>>>>>>>>>>>>", item.serviceDetail.shop_id)
+    console.log("item>>>>>>>>>>>>>>",this.state.slotdate,  item.serviceDetail.shop_id)
     const { productData, selectedSlot } = this.state
     let userid = await AsyncStorage.getItem('userId')
     if (selectedSlot !== '') {
@@ -154,7 +155,7 @@ class CategoryProductGridScreen extends Component {
           slot: selectedSlot,
           shopid: item.serviceDetail.shop_id,
           service_id: productData.serviceDetail._id,
-          slot_date: moment().format('DD/MM/YYYY'),
+          slot_date: this.state.slotdate,
           booking_number: Math.floor(100000000000 + Math.random() * 900000000000)
         })
 
@@ -167,7 +168,7 @@ class CategoryProductGridScreen extends Component {
 
 
   render() {
-    const { selectedSlot, productData, product, isLoadingProduct, categoryProducts, isServiceData, serviceCategoryData, modalVisible } = this.state
+    const {slotdate,  selectedSlot, productData, product, isLoadingProduct, categoryProducts, isServiceData, serviceCategoryData, modalVisible } = this.state
     const { extraData } = this.props;
     if (isServiceData) {
       if(serviceCategoryData.length){
@@ -229,6 +230,35 @@ class CategoryProductGridScreen extends Component {
                         <Text style={styles.title}>{productData.name}</Text>
                         <Text style={styles.title}>Available Slot : {productData.serviceDetail.serviceSlot[0].start} to {productData.serviceDetail.serviceSlot[0].end}</Text>
                         <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{productData.description}</Text>
+                        <View style={styles.inputContainer}>
+                                        <DatePicker
+                                            style={{ width: '100%' }}
+                                            date={slotdate}
+                                            mode="date"
+                                            placeholder="select date"
+                                            format="DD-MM-YYYY"
+                                            minDate={new Date()}
+                                            maxDate={moment().day(17)}
+                                            confirmBtnText="Confirm"
+                                            cancelBtnText="Cancel"
+                                            customStyles={{
+                                                dateIcon: {
+                                                    position: 'absolute',
+                                                    left: 0,
+                                                    top: 4,
+                                                    marginLeft: 10
+                                                },
+                                                dateInput: {
+                                                    marginLeft: -180,
+                                                    borderWidth:0,
+                                                    flex:9,
+                                                    // backgroundColor:'pink'
+                                                }
+                                                // ... You can check the source to find the other keys.
+                                            }}
+                                            onDateChange={(date) =>  this.setState({slotdate: date}) }
+                                        />
+                                    </View>
                         <View style={styles.inputContainer}>
                           <Picker
                             selectedValue={selectedSlot}

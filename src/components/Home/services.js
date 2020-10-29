@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Dimensions, FlatList, TouchableOpacity, Image, Text, Modal, StatusBar, Alert , Share} from "react-native";
+import { ScrollView, View, Dimensions, FlatList, TouchableOpacity, Image, Text, Modal, StatusBar, Alert, Share } from "react-native";
 import dynamicStyles from "./styles";
 import Swiper from "react-native-swiper";
 import Header from "../../components/Modals/ProductDetailModal/Header";
@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 const deviceWidth = Dimensions.get("window").width;
 import RNFetchBlob from "react-native-fetch-blob";
 const deviceHeight = Dimensions.get("window").height;
+import DatePicker from 'react-native-datepicker'
 import moment from 'moment'
 const timedata = [
     { id: 1, item: '01 : 00 Am' },
@@ -43,7 +44,9 @@ function ServicesScreen(props) {
     const [modalVisible, setmodalVisible] = useState(false)
     const [product, setproduct] = useState({})
     const [selectedSlot, setselectedSlot] = useState('')
+    const [slotdate, setslotdate] = useState(moment().format('DD/MM/YYYY'))
 
+// console.log("moment().format('DD/MM/YYYY')",moment().day(17).format('DD/MM/YYYY') )
     const displayserviceData = () => {
         return (
             <FlatList
@@ -72,37 +75,37 @@ function ServicesScreen(props) {
         )
     }
     const onShare = async () => {
-        
-          await Share.share({
+
+        await Share.share({
             title: "Shopertino Product",
             dialogTitle: `Shopertino Product: ${product.name}`,
-            message: product.name + ',' +  product.description + ',' + product.serviceDetail.price,
-           
-    
-          });
-      
-     }
+            message: product.name + ',' + product.description + ',' + product.serviceDetail.price,
+
+
+        });
+
+    }
 
     const booknow = async (item) => {
-        console.log("item>>>>>>>>>>>>>>", item.serviceDetail.shop_id)
+        console.log("item>>>>>>>>>>>>>>",slotdate,   item.serviceDetail.shop_id)
         let userid = await AsyncStorage.getItem('userId')
-            setmodalVisible(false)
-            if(selectedSlot !== ''){
-                props.navigation.navigate('ServicePaymentOptions',
-                    {
-                        appConfig: appConfig,
-                        customerID: userid,
-                        totalammount: product.serviceDetail.price,
-                        slot: selectedSlot,
-                        shopid: item.serviceDetail.shop_id,
-                        service_id:product.serviceDetail._id,
-                        slot_date:moment().format('DD/MM/YYYY'),
-                        booking_number: Math.floor(100000000000 + Math.random() * 900000000000)
-                    })
+        setmodalVisible(false)
+        if (selectedSlot !== '') {
+            props.navigation.navigate('ServicePaymentOptions',
+                {
+                    appConfig: appConfig,
+                    customerID: userid,
+                    totalammount: product.serviceDetail.price,
+                    slot: selectedSlot,
+                    shopid: item.serviceDetail.shop_id,
+                    service_id: product.serviceDetail._id,
+                    slot_date: slotdate,
+                    booking_number: Math.floor(100000000000 + Math.random() * 900000000000)
+                })
 
-            }else{
-                Alert.alert("","Please Select Slot")
-            }
+        } else {
+            Alert.alert("", "Please Select Slot")
+        }
 
     }
     return (
@@ -154,6 +157,34 @@ function ServicesScreen(props) {
                                     <Text style={styles.title}>{product.name}</Text>
                                     <Text style={styles.title}>Available Slot : {product.serviceDetail.serviceSlot[0].start} to {product.serviceDetail.serviceSlot[0].end}</Text>
                                     <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{product.description}</Text>
+                                    <View style={styles.inputContainer}>
+                                        <DatePicker
+                                            style={{ width: '100%' }}
+                                            date={slotdate}
+                                            mode="date"
+                                            placeholder="select date"
+                                            format="DD-MM-YYYY"
+                                            confirmBtnText="Confirm"
+                                            cancelBtnText="Cancel"
+                                            minDate={new Date()}
+                                            maxDate={moment().day(17)}
+                                            customStyles={{
+                                                dateIcon: {
+                                                    position: 'absolute',
+                                                    left: 0,
+                                                    top: 4,
+                                                    marginLeft: 10
+                                                },
+                                                dateInput: {
+                                                    marginLeft: -180,
+                                                    borderWidth:0,
+                                                   
+                                                }
+                                                // ... You can check the source to find the other keys.
+                                            }}
+                                            onDateChange={(date) =>  setslotdate(date) }
+                                        />
+                                    </View>
                                     <View style={styles.inputContainer}>
                                         <Picker
                                             selectedValue={selectedSlot}

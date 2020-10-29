@@ -85,6 +85,10 @@ const api = {
     getShopDetails:{
         getShopDetails: Config.getURL + 'customer/shop/'
     },
+    getorderbyid:{
+        getorderbyid : Config.getURL + 'customer/orders/'
+    },
+    
 
     // services
     getservice:{
@@ -104,6 +108,9 @@ const api = {
     },
     deleteService:{
         deleteserice: Config.getURL + 'customer/bookings/cancel/'
+    },
+    getserviceorderdetails:{
+        getserviceorderdetails: Config.getURL + 'customer/bookings/'
     },
 
 

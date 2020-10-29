@@ -21,7 +21,7 @@ import AddCards from '../screens/AddCards/addCards'
 import QRScanner from '../screens/MyWallet/qrscanner'
 import SearchService from '../screens/SearchScreen/SearchService'
 import ServicebookDetails from '../screens/Order/servicebookScreen'
-
+import OrderDetailsScreen from '../screens/Order/orderDetails'
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: HomeScreen,
@@ -34,8 +34,8 @@ const DrawerNavigator = createDrawerNavigator(
     AddCards:AddCards,
     QRScanner:QRScanner,
     SearchService:SearchService,
-    ServicebookDetails:ServicebookDetails
-   
+    ServicebookDetails:ServicebookDetails,
+    // OrderDetailsScreen:OrderDetailsScreen
   },
   {
     drawerPosition: "left",
@@ -81,6 +81,7 @@ const DrawerNavigator = createDrawerNavigator(
         navigation.state.routes[routeIndex].key == 'MyWallet' && 'My Wallet' || 
         navigation.state.routes[routeIndex].key ==  'ServicebookDetails' && 'Booked Service' ||
         navigation.state.routes[routeIndex].key ==  'SearchService' && 'Search Service'
+        // navigation.state.routes[routeIndex].key ==  'OrderDetailsScreen' && 'Details'
       };
     }
   }
@@ -101,6 +102,8 @@ const getDrawerScreenTitle = routeKey => {
       return "Search";
     case "SearchService":
       return "SearchService";
+    // case "OrderDetailsScreen" :
+    //   return "OrderDetailsScreen"  
     case "Profile":
       return "Profile";
     case "ShoppingBag":
