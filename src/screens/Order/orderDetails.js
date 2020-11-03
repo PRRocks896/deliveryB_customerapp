@@ -22,6 +22,7 @@ class OrderDetailsScreen extends Component {
             payment_method: '',
             quantity: '',
             shopname: '',
+            paymentstatus:''
 
 
         }
@@ -34,17 +35,26 @@ class OrderDetailsScreen extends Component {
             });
     }
     componentDidMount = async () => {
-        console.log("Details screen", this.props.navigation.state.params)
-        if (this.props.navigation.state.params.type == 'Order') {
-            this.getOrderDetails()
-        } else if (this.props.navigation.state.params.type == 'Service') {
-            this.getServiceDetails()
-        }
+            this.changedateformate()
     }
+            changedateformate = () => {
+                const time = this.props.navigation.state.params.data.slot_time
+                        console.log("Time", time)
+                    let timeformate = `${time}:00`
+                    let hour = (timeformate.split(':'))[0]
+                    let part = hour > 12 ? 'pm' : 'am';
+                    hour = hour > 12 ? hour - 12 : hour;
+                    hour = (hour + '').length == 1 ? `0${hour}` : hour;
+                    let data = `${hour}: 00 ${part}`
+                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER TIME", data)
+                  this.setState({slottime: data})
+                    return (`${hour} ${part}`)
+               
+            }
 
 
     render() {
-
+        const {slottime} = this.state
         const data = this.props.navigation.state.params.data
         if (this.props.navigation.state.params.type == 'Order') {
             return (
@@ -108,7 +118,7 @@ class OrderDetailsScreen extends Component {
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.tital}>Slot Time:  </Text>
-                            <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{data.slot_time}</Text>
+                            <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{slottime}</Text>
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.tital}>Slot Date:  </Text>
@@ -118,6 +128,11 @@ class OrderDetailsScreen extends Component {
                         <View style={styles.row}>
                             <Text style={styles.tital}>Total amount:  </Text>
                             <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{data.amount}</Text>
+                        </View>
+
+                        <View style={styles.row}>
+                            <Text style={styles.tital}>Payment:  </Text>
+                            <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{data.payment_method == 'COD' ? 'He/She has to pay to shop' : 'Already paid'}</Text>
                         </View>
 
                         <List.Section>

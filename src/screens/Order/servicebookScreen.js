@@ -78,7 +78,6 @@ class ServicebookDetails extends Component {
         })
 
         const data = await getservicebookbyid(userid, body)
-        // console.log("data======================",data)
         if (data.success) {
             this.setState({ orderHistory: data.data , isLoadingcategory: false})
             // that.setState({ orderHistory:  that.page == 1 ? data.data : [...this.state.orderHistory, ...data.data], isLoadingorder: false , isLoading: false, setOnLoad: true})
