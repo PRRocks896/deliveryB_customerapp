@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl , Linking} from 'react-native'
+import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl, Linking } from 'react-native'
 import Appstyle from '../../AppStyles'
 import getorderbyidDetails from "../../services/Order/oderbyid";
 import serviceDetailsData from "../../services/ShopServices/getserviceorderdetails";
@@ -22,7 +22,7 @@ class OrderDetailsScreen extends Component {
             payment_method: '',
             quantity: '',
             shopname: '',
-            paymentstatus:''
+            paymentstatus: ''
 
 
         }
@@ -35,27 +35,28 @@ class OrderDetailsScreen extends Component {
             });
     }
     componentDidMount = async () => {
-            this.changedateformate()
+        this.changedateformate()
     }
-            changedateformate = () => {
-                const time = this.props.navigation.state.params.data.slot_time
-                        console.log("Time", time)
-                    let timeformate = `${time}:00`
-                    let hour = (timeformate.split(':'))[0]
-                    let part = hour > 12 ? 'pm' : 'am';
-                    hour = hour > 12 ? hour - 12 : hour;
-                    hour = (hour + '').length == 1 ? `0${hour}` : hour;
-                    let data = `${hour}: 00 ${part}`
-                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER TIME", data)
-                  this.setState({slottime: data})
-                    return (`${hour} ${part}`)
-               
-            }
+    /**
+     * Change date formate for service slot time
+     */
+    changedateformate = () => {
+        const time = this.props.navigation.state.params.data.slot_time
+        let timeformate = `${time}:00`
+        let hour = (timeformate.split(':'))[0]
+        let part = hour > 12 ? 'pm' : 'am';
+        hour = hour > 12 ? hour - 12 : hour;
+        hour = (hour + '').length == 1 ? `0${hour}` : hour;
+        let data = `${hour}: 00 ${part}`
+        this.setState({ slottime: data })
+        return (`${hour} ${part}`)
+
+    }
 
 
     render() {
-        const {slottime} = this.state
-        const data = this.props.navigation.state.params.data
+        const { slottime } = this.state
+        const data = this.props.navigation.state.params.data // Data from params (orderscreen and servicebookscreen)
         if (this.props.navigation.state.params.type == 'Order') {
             return (
                 <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -88,14 +89,14 @@ class OrderDetailsScreen extends Component {
                                         <Text style={styles.tital}>  {data.shop_id.shopAddress}</Text>
                                     </View>
                                     {
-                                        data.deliveryType == 'SELF_PICKED' ? 
-                                        <TouchableOpacity 
-                                        onPress={() => Linking.openURL(`google.navigation:q=${data.shop_id.shopLatitude}+${data.shop_id.shopLongitude}`)}
-                                        style={[styles.buttoncontainer, styles.row, { justifyContent: 'center', alignItems: 'center'}]}>
-                                            <Icon name={'place'} color={'#a3a3a3'} size={25} />
-                                            <Text style={styles.tital}>{'Get Shop Location'}</Text>
-                                        </TouchableOpacity>
-                                        : null
+                                        data.deliveryType == 'SELF_PICKED' ?
+                                            <TouchableOpacity
+                                                onPress={() => Linking.openURL(`google.navigation:q=${data.shop_id.shopLatitude}+${data.shop_id.shopLongitude}`)}
+                                                style={[styles.buttoncontainer, styles.row, { justifyContent: 'center', alignItems: 'center' }]}>
+                                                <Icon name={'place'} color={'#a3a3a3'} size={25} />
+                                                <Text style={styles.tital}>{'Get Shop Location'}</Text>
+                                            </TouchableOpacity>
+                                            : null
                                     }
                                 </View>
                             </List.Accordion>
@@ -103,8 +104,8 @@ class OrderDetailsScreen extends Component {
                     </View>
                 </View>
             );
-        }else{
-            console.log("Data=====service===",data)
+        } else {
+            console.log("Data=====service===", data)
             return (
                 <View style={{ flex: 1, backgroundColor: '#fff' }}>
                     <View style={[styles.card, styles.marginTop]}>
@@ -148,14 +149,14 @@ class OrderDetailsScreen extends Component {
                                         <Icon name={'place'} color={'#a3a3a3'} size={25} />
                                         <Text style={styles.tital}>  {data.shop_id.shopAddress}</Text>
                                     </View>
-                                   
-                                        <TouchableOpacity 
+
+                                    <TouchableOpacity
                                         onPress={() => Linking.openURL(`google.navigation:q=${data.shop_id.shopLatitude}+${data.shop_id.shopLongitude}`)}
-                                        style={[styles.buttoncontainer, styles.row, { justifyContent: 'center', alignItems: 'center'}]}>
-                                            <Icon name={'place'} color={'#a3a3a3'} size={25} />
-                                            <Text style={styles.tital}>{'Get Shop Location'}</Text>
-                                        </TouchableOpacity>
-                                        
+                                        style={[styles.buttoncontainer, styles.row, { justifyContent: 'center', alignItems: 'center' }]}>
+                                        <Icon name={'place'} color={'#a3a3a3'} size={25} />
+                                        <Text style={styles.tital}>{'Get Shop Location'}</Text>
+                                    </TouchableOpacity>
+
                                 </View>
                             </List.Accordion>
                         </List.Section>
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         marginTop: 10,
-        margin:10
+        margin: 10
     }
 
 })
