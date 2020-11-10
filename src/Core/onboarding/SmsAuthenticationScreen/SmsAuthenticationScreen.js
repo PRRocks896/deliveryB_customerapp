@@ -89,6 +89,8 @@ function SmsAuthenticationScreen(props) {
 
       
       const data = await signup(body);
+
+      console.log("signup======================", data)
      
       if (data.success) {
         props.setUserData({
@@ -102,7 +104,7 @@ function SmsAuthenticationScreen(props) {
         AsyncStorage.setItem("useridSignup", data.data._id)
       } else {
         setLoading(false);
-        // Toast.show(data.message, Toast.LONG);
+        Toast.show(data.message, Toast.LONG);
         setmobileError(data.message)
 
       }
@@ -122,7 +124,7 @@ function SmsAuthenticationScreen(props) {
     let body = JSON.stringify({ id: useridsignup, otp: smsCode })
     const data = await verifyOTP(body);
     
-
+console.log("Verify otp", data)
     AsyncStorage.setItem('reqToken', data.data.reqToken)
     if (data.success) {
       setLoading(false);

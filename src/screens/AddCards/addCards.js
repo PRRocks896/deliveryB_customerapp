@@ -271,7 +271,7 @@ export default class AddCards extends Component {
                 "pagination": {
                     "sortBy": "createdAt",
                     "descending": true,
-                    "rowsPerPage": 100,
+                    "rowsPerPage": 600,
                     "page": 1
                 }
             })

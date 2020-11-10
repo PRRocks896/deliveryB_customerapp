@@ -72,7 +72,7 @@ class ServicebookDetails extends Component {
             "pagination": {
                 "sortBy": "ace",
                 "descending": true,
-                "rowsPerPage": 200,
+                "rowsPerPage": 500,
                 "page": 1
             }
         })
