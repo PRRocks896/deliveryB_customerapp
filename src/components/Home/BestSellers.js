@@ -33,14 +33,20 @@ function BestSellers(props) {
 
   return (
     <View style={styles.unitContainer}>
-      <Text style={styles.unitTitle}>{title}</Text>
-      <ProductGrid
-        products={bestSellerProducts}
-        onCardPress={onCardPress}
-        extraData={extraData}
-        itemContainerStyle={{ alignItems: "center" }}
-        appConfig={appConfig}
-      />
+      {
+        bestSellerProducts.length ? 
+        <>
+        <Text style={styles.unitTitle}>{title}</Text>
+        <ProductGrid
+          products={bestSellerProducts}
+          onCardPress={onCardPress}
+          extraData={extraData}
+          itemContainerStyle={{ alignItems: "center" }}
+          appConfig={appConfig}
+        />
+        </>
+        : null
+      }
     </View>
   );
 }

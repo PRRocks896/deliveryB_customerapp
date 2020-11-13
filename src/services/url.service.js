@@ -62,7 +62,7 @@ const api = {
         getbagproduct : Config.getURL + 'customer/wishlistByCustomerId/'
     },
     wishlistchangeStatus: {
-        wishlistchangeStatus: Config.getURL + 'customer/wishlist/'
+        wishlistchangeStatus: Config.getURL + 'wishlist/checkout/'
     },
     changeMobile: {
         changeMobile: Config.getURL + 'shared/change-mobile'

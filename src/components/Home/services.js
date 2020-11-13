@@ -46,7 +46,7 @@ function ServicesScreen(props) {
     const [selectedSlot, setselectedSlot] = useState('')
     const [slotdate, setslotdate] = useState(moment().format('DD/MM/YYYY'))
 
-// console.log("moment().format('DD/MM/YYYY')",moment().day(17).format('DD/MM/YYYY') )
+    // console.log("moment().format('DD/MM/YYYY')",moment().day(17).format('DD/MM/YYYY') )
     const displayserviceData = () => {
         return (
             <FlatList
@@ -87,7 +87,7 @@ function ServicesScreen(props) {
     }
 
     const booknow = async (item) => {
-        console.log("item>>>>>>>>>>>>>>",slotdate,   item.serviceDetail.shop_id)
+        console.log("item>>>>>>>>>>>>>>", slotdate, item.serviceDetail.shop_id)
         let userid = await AsyncStorage.getItem('userId')
         setmodalVisible(false)
         if (selectedSlot !== '') {
@@ -111,12 +111,18 @@ function ServicesScreen(props) {
     return (
         <>
             <ScrollView style={styles.container} >
-                <View style={styles.unitContainer}>
-                    <Text style={styles.unitTitle}>{title}</Text>
-                </View>
-                <View>
-                    {displayserviceData()}
-                </View>
+                {
+                    servicedata.length ?
+                        <>
+                            <View style={styles.unitContainer}>
+                                <Text style={styles.unitTitle}>{title}</Text>
+                            </View>
+                            <View>
+                                {displayserviceData()}
+                            </View>
+                        </>
+                        : null
+                }
             </ScrollView>
             {
                 modalVisible ?
@@ -177,12 +183,12 @@ function ServicesScreen(props) {
                                                 },
                                                 dateInput: {
                                                     marginLeft: -180,
-                                                    borderWidth:0,
-                                                   
+                                                    borderWidth: 0,
+
                                                 }
                                                 // ... You can check the source to find the other keys.
                                             }}
-                                            onDateChange={(date) =>  setslotdate(date) }
+                                            onDateChange={(date) => setslotdate(date)}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>

@@ -1,4 +1,4 @@
-import React  from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { View, FlatList, Text } from "react-native";
 import ProductCard from "../ProductCard/ProductCard";
@@ -25,15 +25,21 @@ function Featured(props) {
   const { featuredProducts, title } = props;
   return (
     <View style={styles.unitContainer}>
-      <Text style={styles.unitTitle}>{title}</Text>
-      <FlatList
-        showsHorizontalScrollIndicator={false}
-        data={featuredProducts}
-        keyExtractor={(item, index) => index.toString()}
-        horizontal={true}
-        extraData={featuredProducts}
-        renderItem={renderItem}
-      />
+      {
+        featuredProducts.length ?
+          <>
+            <Text style={styles.unitTitle}>{title}</Text>
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              data={featuredProducts}
+              keyExtractor={(item, index) => index.toString()}
+              horizontal={true}
+              extraData={featuredProducts}
+              renderItem={renderItem}
+            />
+          </>
+          : null
+      }
     </View>
   );
 }

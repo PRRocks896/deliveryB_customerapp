@@ -84,6 +84,8 @@ class ShoppingBagScreen extends Component {
     if(getdata.statusCode == 200) {
       this.setState({isDataLoading: false})
       this.setState({ allShoppingBag: getdata.data })
+
+      console.log("Data=========================bag",getdata )
       if (getdata.data.length !== 0) this.setState({ isShowData: true })
       else if (getdata.data.length == 0) this.setState({ isShowData: false })
       this.props.setTotalShoppingBagPrice();
@@ -130,7 +132,9 @@ class ShoppingBagScreen extends Component {
         const total = allShoppingBag.map(item => item.amount).reduce((prev, next) => prev + next);
         this.setState({ totalPayamount: total })
         let body = JSON.stringify(item)
+        console.log("Body in screen, body", body)
         const data = await itemQuentity(item._id, body)
+        console.log("Data when update", data)
         
       }
     })

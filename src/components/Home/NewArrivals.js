@@ -27,8 +27,14 @@ function NewArrivals(props) {
 
   return (
     <View style={styles.carouselContainer}>
-      <Text style={styles.carouselTitleText}>{title}</Text>
-      <CarouselView dataSource={dataSource.length ? dataSource.slice(0, 5) : dataSource} renderItem={renderItem} />
+      {
+        dataSource.length ?
+          <>
+            <Text style={styles.carouselTitleText}>{title}</Text>
+            <CarouselView dataSource={dataSource.length ? dataSource.slice(0, 5) : dataSource} renderItem={renderItem} />
+          </>
+          : null
+      }
     </View>
   );
 }
