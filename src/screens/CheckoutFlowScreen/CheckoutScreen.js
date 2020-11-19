@@ -148,13 +148,14 @@ class CheckoutScreen extends Component {
             );
           }
          else if (placeorderresponse.statusCode == 200) {
+           console.log("placeorderresponse,", placeorderresponse)
             this.setState({ dialogVisible: false, isLoading: false })
            
             bagData.map(async (item) => {
              
               // After place order make statis true for placed products
               const cartStatus = await changeCartStatus(item._id)
-              
+              console.log("cartStatus=============", cartStatus)
               if (cartStatus.statusCode == 200) {
               
                 this.props.navigation.navigate("Order", { appConfig: this.appConfig });
@@ -266,12 +267,10 @@ class CheckoutScreen extends Component {
     }
     else if (placeorderresponse.statusCode == 200) {
       this.setState({ dialogVisible: false, isLoading: false })
-      
       bagData.map(async (item) => {
       
         // After place order make statis true for placed products
         const cartStatus = await changeCartStatus(item._id)
-       
         if (cartStatus.statusCode == 200) {
          
           this.props.navigation.navigate("Order", { appConfig: this.appConfig });

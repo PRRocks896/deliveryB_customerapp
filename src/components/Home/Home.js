@@ -78,6 +78,7 @@ function Home(props) {
     console.log("Get Service Data:>>>>>>>>>>>>>>>>>>>>>>>>>>", response)
     if(response.statusCode == 200){
       setserviceData(response.data)
+      
     }
   }
   const getCategoryProducts = async () => {
@@ -85,6 +86,8 @@ function Home(props) {
     if (data.success) {
       setisLoadingcategory(false)
       setCategory(data.data)
+    }else{
+      setisLoadingcategory(false)
     }
   }
   const getFeaturedProducts = async () => {
@@ -92,6 +95,8 @@ function Home(props) {
     if (data.success) {
       setisLoadingProduct(false)
       setProducts(data.data)
+    }else{
+      setisLoadingProduct(false)
     }
   }
   if (netInfo == false) {

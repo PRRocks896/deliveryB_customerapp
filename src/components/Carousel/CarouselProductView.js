@@ -5,7 +5,8 @@ import {
   // Dimensions,
   TouchableOpacity,
   Platform,
-  View
+  View,
+  ActivityIndicator
 } from "react-native";
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
@@ -25,8 +26,18 @@ function CarouselProductView(props) {
       onPress={onCardPress}
     >
       <View style={styles.carouselProductViewContainer}>
+      <ActivityIndicator size={'small'} color={'#000'}
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }} />
         <Image
-          style={styles.carouselProductViewImage}
+          style={[styles.carouselProductViewImage, {zIndex:1}]}
           source={{ uri: item.productImage }}
         />
       </View>

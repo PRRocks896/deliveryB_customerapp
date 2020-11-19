@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { View, Text, FlatList, TouchableOpacity, Image, Modal, Dimensions, StatusBar, ScrollView, Alert , Share} from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Image, Modal, Dimensions, StatusBar, ScrollView, Alert, Share } from "react-native";
 import { connect } from "react-redux";
 import { ProductGrid, ProductDetailModal } from "../../components";
 import {
@@ -75,23 +75,23 @@ class CategoryProductGridScreen extends Component {
       modalVisible: false,
       productData: {},
       selectedSlot: '',
-      slotdate :moment().format('DD/MM/YYYY')
+      slotdate: moment().format('DD/MM/YYYY')
     };
     this.appConfig =
       props.navigation.state.params.appConfig ||
       props.navigation.getParam("appConfig");
   }
-   onShare = async () => {
-        const {productData} = this.state
+  onShare = async () => {
+    const { productData } = this.state
     await Share.share({
       title: "Shopertino Product",
       dialogTitle: `Shopertino Product: ${productData.name}`,
-      message: productData.name + ',' +  productData.description + ',' + productData.serviceDetail.price,
-     
+      message: productData.name + ',' + productData.description + ',' + productData.serviceDetail.price,
+
 
     });
 
-}
+  }
   componentDidMount() {
     this.setState({ id: this.props.navigation.state.params.products._id })
     this.setState({ setCategoryName: this.props.navigation.state.params.products.name })
@@ -109,9 +109,9 @@ class CategoryProductGridScreen extends Component {
       const response = await getservicebyName(name)
       // console.log("response service category", response.data)
       if (response.data.length !== 0) {
-        this.setState({ serviceCategoryData: response.data, isServiceData: true , isLoadingProduct: false})
+        this.setState({ serviceCategoryData: response.data, isServiceData: true, isLoadingProduct: false })
       } else {
-        this.setState({ isServiceData: false , isLoadingProduct: false})
+        this.setState({ isServiceData: false, isLoadingProduct: false })
 
       }
     } else {
@@ -142,7 +142,7 @@ class CategoryProductGridScreen extends Component {
   };
 
   booknow = async (item) => {
-    console.log("item>>>>>>>>>>>>>>",this.state.slotdate,  item.serviceDetail.shop_id)
+    console.log("item>>>>>>>>>>>>>>", this.state.slotdate, item.serviceDetail.shop_id)
     const { productData, selectedSlot } = this.state
     let userid = await AsyncStorage.getItem('userId')
     if (selectedSlot !== '') {
@@ -168,209 +168,208 @@ class CategoryProductGridScreen extends Component {
 
 
   render() {
-    const {slotdate,  selectedSlot, productData, product, isLoadingProduct, categoryProducts, isServiceData, serviceCategoryData, modalVisible } = this.state
+    const { slotdate, selectedSlot, productData, product, isLoadingProduct, categoryProducts, isServiceData, serviceCategoryData, modalVisible } = this.state
     const { extraData } = this.props;
     if (isServiceData) {
-      if(serviceCategoryData.length){
-      return (
-        <>
-          <View style={styles.container}>
-            <FlatList
-              data={serviceCategoryData}
-              renderItem={(item) => {
-                return (
-                  <TouchableOpacity onPress={() => this.setState({ modalVisible: true, productData: item.item })} style={styles.card}>
-                    <Image source={{ uri: item.item.serviceImage }} style={styles.serviceImage} />
-                    <View>
-                      <Text style={styles.productCardPrice}>₹ {item.item.serviceDetail.price}</Text>
-                      <Text style={styles.productCardDescription} numberOfLines={1}>
-                        {item.item.name}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )
-              }}
-              numColumns={2}
-              keyExtractor={(item) => (item._id).toString()}
-            />
-            {
-              modalVisible ?
-                <Modal
-                  animationType="slide"
-                  transparent={true}
-                  hideModalContentWhileAnimating={true}
-                  visible={modalVisible}
-                  animationInTiming={600}
-                  animationOutTiming={600}
-                  backdropTransitionInTiming={600}
-                  backdropTransitionOutTiming={600}
-                  style={styles.modalStyle}
-                  animationIn="zoomInDown"
-                  animationOut="zoomOutUp"
-                  backdropOpacity={0.5}
-                  deviceWidth={deviceWidth}
-                  deviceHeight={deviceHeight}
-                  onRequestClose={() => {
-                    this.setState({ modalVisible: false })
-                  }}
-                >
-                  <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
-                  <View style={styles.transparentContainer}>
-                    <View style={styles.viewContainer}>
-                      <ScrollView style={styles.descriptionContainer}>
-                        <Header
-                          onCancelPress={() => this.setState({ modalVisible: false })}
-                          headerContainerStyle={styles.headerContainerStyle}
-                          onSharePress={this.onShare} />
-                        <Image
-                          style={{ width: '100%', height: 200, marginTop: 60 }}
-                          resizeMode={'contain'}
-                          source={{ uri: productData.serviceImage }}
-                        />
-                        <Text style={styles.title}>{productData.name}</Text>
-                        <Text style={styles.title}>Available Slot : {productData.serviceDetail.serviceSlot[0].start} to {productData.serviceDetail.serviceSlot[0].end}</Text>
-                        <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{productData.description}</Text>
-                        <View style={styles.inputContainer}>
-                                        <DatePicker
-                                            style={{ width: '100%' }}
-                                            date={slotdate}
-                                            mode="date"
-                                            placeholder="select date"
-                                            format="DD-MM-YYYY"
-                                            minDate={new Date()}
-                                            maxDate={moment().day(17)}
-                                            confirmBtnText="Confirm"
-                                            cancelBtnText="Cancel"
-                                            customStyles={{
-                                                dateIcon: {
-                                                    position: 'absolute',
-                                                    left: 0,
-                                                    top: 4,
-                                                    marginLeft: 10
-                                                },
-                                                dateInput: {
-                                                    marginLeft: -180,
-                                                    borderWidth:0,
-                                                    flex:9,
-                                                    // backgroundColor:'pink'
-                                                }
-                                                // ... You can check the source to find the other keys.
-                                            }}
-                                            onDateChange={(date) =>  this.setState({slotdate: date}) }
-                                        />
-                                    </View>
-                        <View style={styles.inputContainer}>
-                          <Picker
-                            selectedValue={selectedSlot}
-                            style={{ width: '100%', height: 40 }}
-                            onValueChange={(itemValue, itemIndex) => {
-                              if (productData.serviceDetail.serviceSlot[0].start <= itemIndex && productData.serviceDetail.serviceSlot[0].end >= itemIndex) {
-                                this.setState({ selectedSlot: itemValue })
-                              } else {
-                                Alert.alert("", `Plaease Select time Between ${productData.serviceDetail.serviceSlot[0].start} to ${productData.serviceDetail.serviceSlot[0].end}`)
+      if (serviceCategoryData.length) {
+        return (
+          <>
+            <View style={styles.container}>
+              <FlatList
+                data={serviceCategoryData}
+                renderItem={(item) => {
+                  return (
+                    <TouchableOpacity onPress={() => this.setState({ modalVisible: true, productData: item.item })} style={styles.card}>
+                      <Image source={{ uri: item.item.serviceImage }} style={styles.serviceImage} />
+                      <View>
+                        <Text style={styles.productCardPrice}>₹ {item.item.serviceDetail.price}</Text>
+                        <Text style={styles.productCardDescription} numberOfLines={1}>
+                          {item.item.name}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )
+                }}
+                numColumns={2}
+                keyExtractor={(item) => (item._id).toString()}
+              />
+              {
+                modalVisible ?
+                  <Modal
+                    animationType="slide"
+                    transparent={true}
+                    hideModalContentWhileAnimating={true}
+                    visible={modalVisible}
+                    animationInTiming={600}
+                    animationOutTiming={600}
+                    backdropTransitionInTiming={600}
+                    backdropTransitionOutTiming={600}
+                    style={styles.modalStyle}
+                    animationIn="zoomInDown"
+                    animationOut="zoomOutUp"
+                    backdropOpacity={0.5}
+                    deviceWidth={deviceWidth}
+                    deviceHeight={deviceHeight}
+                    onRequestClose={() => {
+                      this.setState({ modalVisible: false })
+                    }}
+                  >
+                    <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
+                    <View style={styles.transparentContainer}>
+                      <View style={styles.viewContainer}>
+                        <ScrollView style={styles.descriptionContainer}>
+                          <Header
+                            onCancelPress={() => this.setState({ modalVisible: false })}
+                            headerContainerStyle={styles.headerContainerStyle}
+                            onSharePress={this.onShare} />
+                          <Image
+                            style={{ width: '100%', height: 200, marginTop: 60 }}
+                            resizeMode={'contain'}
+                            source={{ uri: productData.serviceImage }}
+                          />
+                          <Text style={styles.title}>{productData.name}</Text>
+                          <Text style={styles.title}>Available Slot : {productData.serviceDetail.serviceSlot[0].start} to {productData.serviceDetail.serviceSlot[0].end}</Text>
+                          <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{productData.description}</Text>
+                          <View style={styles.inputContainer}>
+                            <DatePicker
+                              style={{ width: '100%' }}
+                              date={slotdate}
+                              mode="date"
+                              placeholder="select date"
+                              format="DD-MM-YYYY"
+                              minDate={new Date()}
+                              maxDate={moment().day(17)}
+                              confirmBtnText="Confirm"
+                              cancelBtnText="Cancel"
+                              customStyles={{
+                                dateIcon: {
+                                  position: 'absolute',
+                                  left: 0,
+                                  top: 4,
+                                  marginLeft: 10
+                                },
+                                dateInput: {
+                                  marginLeft: -180,
+                                  borderWidth: 0,
+                                  flex: 9,
+                                  // backgroundColor:'pink'
+                                }
+                                // ... You can check the source to find the other keys.
+                              }}
+                              onDateChange={(date) => this.setState({ slotdate: date })}
+                            />
+                          </View>
+                          <View style={styles.inputContainer}>
+                            <Picker
+                              selectedValue={selectedSlot}
+                              style={{ width: '100%', height: 40 }}
+                              onValueChange={(itemValue, itemIndex) => {
+                                if (productData.serviceDetail.serviceSlot[0].start <= itemIndex && productData.serviceDetail.serviceSlot[0].end >= itemIndex) {
+                                  this.setState({ selectedSlot: itemValue })
+                                } else {
+                                  Alert.alert("", `Plaease Select time Between ${productData.serviceDetail.serviceSlot[0].start} to ${productData.serviceDetail.serviceSlot[0].end}`)
+                                }
                               }
-                            }
-                            }>
-                            <Picker.Item label="Select Slot" value="" />
-                            {
-                              timedata.map((item) => {
-                                return (
-                                  <Picker.Item label={item.item} value={item.id} key={item.id} />
-                                )
+                              }>
+                              <Picker.Item label="Select Slot" value="" />
+                              {
+                                timedata.map((item) => {
+                                  return (
+                                    <Picker.Item label={item.item} value={item.id} key={item.id} />
+                                  )
 
-                              })
-                            }
-                          </Picker>
-                        </View>
-                        <Text style={styles.price}>₹ {productData.serviceDetail ? productData.serviceDetail.price : null}</Text>
-                        <View style={styles.borderLine} />
-                        <TouchableOpacity
-                          onPress={() => this.booknow(productData)}
-                          style={[styles.addToBagContainerStyle, { marginBottom: 20 }]}>
-                          <Text style={{ color: '#fff', fontSize: 20 }}>{"Book Now"}</Text>
-                        </TouchableOpacity>
-                      </ScrollView>
+                                })
+                              }
+                            </Picker>
+                          </View>
+                          <Text style={styles.price}>₹ {productData.serviceDetail ? productData.serviceDetail.price : null}</Text>
+                          <View style={styles.borderLine} />
+                          <TouchableOpacity
+                            onPress={() => this.booknow(productData)}
+                            style={[styles.addToBagContainerStyle, { marginBottom: 20 }]}>
+                            <Text style={{ color: '#fff', fontSize: 20 }}>{"Book Now"}</Text>
+                          </TouchableOpacity>
+                        </ScrollView>
 
+                      </View>
                     </View>
-                  </View>
-                </Modal>
-                : null
-            }
-          </View>
-        </>
-      )}else{
-        return(
+                  </Modal>
+                  : null
+              }
+            </View>
+          </>
+        )
+      } else {
+        return (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>{'No Service Found'}</Text>
-              </View>
+            <Text>{'No Service Found'}</Text>
+          </View>
         )
       }
     } else {
       return (
         <>
-          {
-            categoryProducts.length ?
-              <View style={styles.container}>
+          <View style={styles.container}>
 
-                {
-                  isLoadingProduct == true ?
-                    <SkeletonPlaceholder>
-                      <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                        <View style={{ flex: 6, flexDirection: 'row' }}>
-                          <View>
-                            <View style={styles.bestsellerMainSkeleton} />
-                            <View style={styles.featuredvalueSkeleton} />
-                            <View style={styles.featuredsmallValueSkeleton} />
-                          </View>
-                          <View>
-                            <View style={styles.bestsellerMainSkeleton} />
-                            <View style={styles.featuredvalueSkeleton} />
-                            <View style={styles.featuredsmallValueSkeleton} />
-                          </View>
-                        </View>
-                        <View style={{ flex: 6, flexDirection: 'row', marginTop: 10 }}>
-                          <View>
-                            <View style={styles.bestsellerMainSkeleton} />
-                            <View style={styles.featuredvalueSkeleton} />
-                            <View style={styles.featuredsmallValueSkeleton} />
-                          </View>
-                          <View>
-                            <View style={styles.bestsellerMainSkeleton} />
-                            <View style={styles.featuredvalueSkeleton} />
-                            <View style={styles.featuredsmallValueSkeleton} />
-                          </View>
-                        </View>
+            {
+              isLoadingProduct == true ?
+                <SkeletonPlaceholder>
+                  <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
+                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                      <View>
+                        <View style={styles.bestsellerMainSkeleton} />
+                        <View style={styles.featuredvalueSkeleton} />
+                        <View style={styles.featuredsmallValueSkeleton} />
                       </View>
-                    </SkeletonPlaceholder>
-                    :
-                    <ProductGrid
-                      products={this.state.categoryProducts}
-                      onCardPress={this.onCardPress}
-                      itemContainerStyle={{ alignItems: "center" }}
-                      extraData={extraData}
-                      appConfig={this.appConfig}
-                    />
-                }
-                <ProductDetailModal
-                  shippingMethods={this.props.shippingMethods}
-                  item={this.state.product}
-                  visible={this.state.isProductDetailVisible}
-                  productDetails={product.productDetail}
-                  onFavouritePress={this.onFavouritePress}
-                  onAddToBag={this.onAddToBag}
-                  onCancelPress={() =>
-                    this.setState({
-                      isProductDetailVisible: !this.state.isProductDetailVisible
-                    })
-                  }
-                  appConfig={this.appConfig}
-                />
-              </View>
-              :
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>{'No Product Found'}</Text>
-              </View>
-          }
+                      <View>
+                        <View style={styles.bestsellerMainSkeleton} />
+                        <View style={styles.featuredvalueSkeleton} />
+                        <View style={styles.featuredsmallValueSkeleton} />
+                      </View>
+                    </View>
+                    <View style={{ flex: 6, flexDirection: 'row', marginTop: 10 }}>
+                      <View>
+                        <View style={styles.bestsellerMainSkeleton} />
+                        <View style={styles.featuredvalueSkeleton} />
+                        <View style={styles.featuredsmallValueSkeleton} />
+                      </View>
+                      <View>
+                        <View style={styles.bestsellerMainSkeleton} />
+                        <View style={styles.featuredvalueSkeleton} />
+                        <View style={styles.featuredsmallValueSkeleton} />
+                      </View>
+                    </View>
+                  </View>
+                </SkeletonPlaceholder>
+                :
+                categoryProducts.length ?
+                  <ProductGrid
+                    products={this.state.categoryProducts}
+                    onCardPress={this.onCardPress}
+                    itemContainerStyle={{ alignItems: "center" }}
+                    extraData={extraData}
+                    appConfig={this.appConfig}
+                  />
+                  :
+                  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text>{'No Product Found'}</Text>
+                  </View>
+            }
+            <ProductDetailModal
+              shippingMethods={this.props.shippingMethods}
+              item={this.state.product}
+              visible={this.state.isProductDetailVisible}
+              productDetails={product.productDetail}
+              onFavouritePress={this.onFavouritePress}
+              onAddToBag={this.onAddToBag}
+              onCancelPress={() =>
+                this.setState({
+                  isProductDetailVisible: !this.state.isProductDetailVisible
+                })
+              }
+              appConfig={this.appConfig}
+            />
+          </View>
         </>
       );
     }

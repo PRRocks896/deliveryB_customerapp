@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Dimensions, FlatList, TouchableOpacity, Image, Text, Modal, StatusBar, Alert, Share } from "react-native";
+import { ScrollView, View, Dimensions, FlatList, TouchableOpacity, Image, Text, Modal, StatusBar, Alert, Share, ActivityIndicator } from "react-native";
 import dynamicStyles from "./styles";
 import Swiper from "react-native-swiper";
 import Header from "../../components/Modals/ProductDetailModal/Header";
@@ -59,9 +59,21 @@ function ServicesScreen(props) {
                             style={styles.productCardConainer}
                             onPress={() => [setproduct(item.item), setmodalVisible(true)]}
                         >
+
                             <View style={styles.productCardImageConainer}>
+                                <ActivityIndicator size={'small'} color={'#000'}
+                                    style={{
+                                        position: 'absolute',
+                                        left: 0,
+                                        right: 0,
+                                        top: 0,
+                                        bottom: 0,
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }} />
                                 <Image style={styles.productCardImage} source={{ uri: item.item.serviceImage }} />
                             </View>
+
                             <Text style={styles.productCardPrice}
                             >₹ {item.item.serviceDetail.price}</Text>
                             <Text style={styles.productCardDescription} numberOfLines={1}>
@@ -80,8 +92,6 @@ function ServicesScreen(props) {
             title: "Shopertino Product",
             dialogTitle: `Shopertino Product: ${product.name}`,
             message: product.name + ',' + product.description + ',' + product.serviceDetail.price,
-
-
         });
 
     }

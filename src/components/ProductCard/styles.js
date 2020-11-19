@@ -23,7 +23,8 @@ const dynamicStyles = colorScheme => {
       width: "100%",
       height: "100%",
       borderRadius: 6,
-      resizeMode: 'contain'
+      resizeMode: 'contain',
+      zIndex:1
     },
     productCardPrice: {
       textAlign: "left",
