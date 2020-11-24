@@ -25,6 +25,10 @@
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+       <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAAyBoIK3-3psCrVDMpZCKj5zaMmDAPp0I"/>
+
       <meta-data
         android:name="com.google.android.gms.wallet.api.enabled"
         android:value="true"/>

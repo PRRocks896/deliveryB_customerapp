@@ -19,6 +19,9 @@ const api = {
     resetPassword: {
         resetPassword: Config.getURL + 'shared/app-reset-password'
     },
+    getbestSellerProduct:{
+        getbestSellerProduct: Config.getURL + 'customer/products?order=asc&page='
+    },
     getProduct: {
         getProduct: Config.getURL + 'customer/products?order=asc'
     },
@@ -87,6 +90,15 @@ const api = {
     },
     getorderbyid:{
         getorderbyid : Config.getURL + 'customer/orders/'
+    },
+    getsubCategory:{
+        getsubCategory : Config.getURL + 'common/subCategory/list/'
+    },
+    getSubCategoryData:{
+        getSubCategoryData : Config.getURL + 'customer/shop/search/all?words=&category='
+    },
+    sortingProduct:{
+        sortingProduct : Config.getURL + 'customer/shop/search/all?words=&'
     },
     
 

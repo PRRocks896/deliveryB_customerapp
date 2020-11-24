@@ -118,6 +118,72 @@ const styles = StyleSheet.create({
     marginLeft:10,
     marginRight:10,
     borderRadius:10,marginTop:10
+  },
+  subCategoryView:{
+    width:'auto',
+    padding:5,
+    height:50,
+    backgroundColor:'#E7E7E7',
+    borderWidth:1,
+    borderColor:'#000',
+    marginRight:10,
+    borderRadius:10,
+    justifyContent:'center',
+    alignItems:'center',
+    paddingRight:10,
+    paddingLeft:10
+  },
+  subcategoyTxt:{
+    fontSize:15,
+    color:'#000',
+    fontFamily: AppStyles.fontFamily.regularFont,
+  },
+  imageBackgroundContainer: {
+    flex: 1.9,
+    backgroundColor: "#d9d7da",
+  },
+  imageBackground: {
+    flex: 1,
+    resizeMode: 'contain'
+  },
+  swiperContainer: {
+    // alignItems: "center",
+    justifyContent: "center",
+    flex: 8
+  },
+ 
+  filterbtnContainer:{
+    width:55,
+    height:55,
+    borderRadius:360,
+    backgroundColor:'#e7e7e7',
+    position:'absolute',
+    bottom:10,
+    right:10,
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  bottomsortContainer:{
+    paddingTop:25,
+    paddingLeft:25,
+  },
+  sortingbottomtxt:{
+    fontFamily: AppStyles.fontFamily.regularFont,
+    fontSize:16,
+    marginTop:10,
+  },
+  applybutton:{
+    backgroundColor: '#404040',
+    height:40,
+    marginLeft:20,
+    marginRight:20,
+    justifyContent:'center',
+    alignItems:'center',
+    marginTop:10,
+    width:'40%',
+    alignSelf:'center'
+    
+
   }
 });
 

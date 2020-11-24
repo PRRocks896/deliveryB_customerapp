@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, FlatList, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Image, Modal, Dimensions, StatusBar, ScrollView, Alert, Share } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Image, Modal, Dimensions, StatusBar, ScrollView, Alert, Share, BackHandler } from "react-native";
 
 import { Searchbar } from 'react-native-paper'
 import searchproducts from '../../services/Search/index'
@@ -57,6 +57,8 @@ class SearchService extends Component {
     this.appConfig =
       props.navigation.state.params.appConfig ||
       props.navigation.getParam("appConfig");
+      this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+
   }
 
  
@@ -72,7 +74,16 @@ class SearchService extends Component {
     });
   }
 
-
+  async componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+  handleBackButtonClick() {
+    this.props.navigation.goBack(null);
+    return true;
+  }
   booknow = async (item) => {
     const { productData, selectedSlot } = this.state
     let userid = await AsyncStorage.getItem('userId')

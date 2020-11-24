@@ -38,7 +38,7 @@ function CarouselProductView(props) {
           }} />
         <Image
           style={[styles.carouselProductViewImage, {zIndex:1}]}
-          source={{ uri: item.productImage }}
+          source={{ uri: item.productImage[0] }}
         />
       </View>
       <Text numberOfLines={2} style={[styles.carouselProductViewTitle]}>

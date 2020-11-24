@@ -7,11 +7,12 @@ import {
   setShoppingBag,
   setProductPricesBYQty
 } from "../../redux/";
-import { View ,Keyboard, TouchableWithoutFeedback} from "react-native";
+import { View ,Keyboard, TouchableWithoutFeedback, BackHandler, LogBox } from "react-native";
 import { Searchbar } from 'react-native-paper'
 import searchproducts from '../../services/Search/index'
 import addToBagProduct from "../../components/AddTobagProduct/addbagproduct";
-
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();
 class SearchScreen extends Component {
   constructor(props) {
     super(props);
@@ -25,8 +26,8 @@ class SearchScreen extends Component {
     this.appConfig =
       props.navigation.state.params.appConfig ||
       props.navigation.getParam("appConfig");
+      this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
-
   onCardPress = item => {
     this.setState({
       product: item,
@@ -35,7 +36,18 @@ class SearchScreen extends Component {
   };
 
   
+  async componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
 
+  handleBackButtonClick() {
+  
+    this.props.navigation.goBack(null);
+    return true;
+  }
   /**
    * @param {any} item product  add to bag
    */
@@ -75,7 +87,7 @@ class SearchScreen extends Component {
             onChangeText={(query) => this.onChangeSearch(query)}
           />
         </TouchableWithoutFeedback >
-        <Search
+        {/* <Search
           // products={this.props.searchResultProducts}
           products={this.state.searchResultProducts}
           shippingMethods={this.props.shippingMethods}
@@ -86,7 +98,7 @@ class SearchScreen extends Component {
           product={this.state.product}
           isProductDetailVisible={this.state.isProductDetailVisible}
           appConfig={this.appConfig}
-        />
+        /> */}
       </>
     );
   }

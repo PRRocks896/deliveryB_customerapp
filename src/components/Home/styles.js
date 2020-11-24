@@ -201,6 +201,75 @@ const dynamicStyles = colorScheme => {
       marginLeft:10,
       marginRight:10,
       borderRadius:10,marginTop:10
+    },
+    imageBackgroundContainer: {
+      flex: 1.9,
+      backgroundColor: "#d9d7da",
+    },
+    colorview:{
+      borderColor:'#a3a3a3',
+      borderWidth:1,
+      backgroundColor:'#fff',
+      width:'auto',
+      padding:5,
+      paddingLeft:8,
+      paddingRight:8,
+      borderRadius:50,
+      marginLeft:10,
+      marginTop:5
+    },
+    colorText:{
+      color:'#000',
+      fontSize:15
+    },
+    titlecolor:{
+      textAlign:'center',
+       textAlignVertical:'center', 
+       fontSize:18, 
+       marginLeft:8,
+       fontFamily: AppStyles.fontFamily.regularFont,
+
+    },
+    filtercontainer:{
+      flexDirection:'row',
+      height:25,
+      backgroundColor:'#e7e7e7',
+      marginBottom:10
+    },
+    filtertxt:{
+      fontFamily: AppStyles.fontFamily.regularFont,
+      fontSize:16,
+      textAlign:'center'
+    },
+    sortingView:{
+      flexDirection:'row',
+      justifyContent:'center',
+      alignItems:'center', 
+      flex: 6 , 
+      borderRightWidth:1, 
+      borderRightColor:'#a3a3a3'
+    },
+    bottomsortContainer:{
+      paddingTop:25,
+      paddingLeft:25,
+    },
+    sortingbottomtxt:{
+      fontFamily: AppStyles.fontFamily.regularFont,
+      fontSize:16,
+      marginTop:10,
+    },
+    applybutton:{
+      backgroundColor: AppStyles.colorSet[colorScheme].mainThemeForegroundColor,
+      height:40,
+      marginLeft:20,
+      marginRight:20,
+      justifyContent:'center',
+      alignItems:'center',
+      marginTop:10,
+      width:'40%',
+      alignSelf:'center'
+      
+
     }
   });
 };

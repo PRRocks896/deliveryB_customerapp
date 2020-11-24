@@ -25,6 +25,8 @@ function ProductDetailModal(props) {
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(colorScheme);
   const [alreadyaddecart, setalreadyaddecart] = useState(false)
+  const [selecteditemcolor, setselecteditemcolor] = useState('')
+  const [selecteditemSize, setselecteditemSize] = useState('')
 
   useEffect(() => {
     checkalreadyaddtocart()
@@ -33,17 +35,16 @@ function ProductDetailModal(props) {
     let userid = await AsyncStorage.getItem('userId')
     const getdata = await getbagproduct(userid)
     let found = getdata.data.some(i => i.products[0].product_id.productMasterId == item._id)
-    
+
     if (found == true) {
       setalreadyaddecart(true)
     }
   }
 
   const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, alreadyAddecart, navigation } = props;
-
   const onShare = async () => {
     const fs = RNFetchBlob.fs;
-   
+
     let base64img;
     let imagePath = null;
     RNFetchBlob.config({
@@ -54,9 +55,9 @@ function ProductDetailModal(props) {
         imagePath = resp.path();
         return resp.readFile("base64");
       }).then(base64Data => {
-      
+
         base64img = base64Data
-     
+
         return fs.unlink(imagePath);
       });
     try {
@@ -91,7 +92,6 @@ function ProductDetailModal(props) {
       onBackButtonPress={onCancelPress}
     >
 
-
       <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
       <View style={styles.transparentContainer}>
         <View style={styles.viewContainer}>
@@ -100,12 +100,19 @@ function ProductDetailModal(props) {
             activeDot={<View style={styles.activeDot} />}
             containerStyle={styles.swiperContainer}
           >
-            <View style={styles.imageBackgroundContainer}>
-              <Image
-                style={styles.imageBackground}
-                source={{ uri: item.productImage }}
-              />
-            </View>
+
+            {
+              item.productImage && item.productImage.map((item) => {
+                return (
+                  <View style={styles.imageBackgroundContainer}>
+                    <Image
+                      style={styles.imageBackground}
+                      source={{ uri: item }}
+                    />
+                  </View>
+                )
+              })}
+
           </Swiper>
 
 
@@ -128,6 +135,43 @@ function ProductDetailModal(props) {
                   style={styles.price}
                 >₹ {item.productDetail ? item.productDetail.price : null}</Text>
             }
+
+            {
+              item.productDetail && item.productDetail.hasOwnProperty('color') ? item.productDetail.color.length ?
+                <View style={{ flexDirection: 'row' }}>
+                  <Text style={styles.titlecolor}>{'Colors'}</Text>
+                  {
+                    item.productDetail.color.map((item) => {
+                      return (
+                        <TouchableOpacity onPress={ () => setselecteditemcolor(item)} style={[styles.colorview, { backgroundColor : selecteditemcolor == item ? '#a3a3a3' : '#fff'}]}>
+                          <Text style={styles.colorText}>{item} </Text>
+                        </TouchableOpacity>
+                      )
+                    })
+                  }
+                </View>
+                : null
+                : null
+            }
+            {
+              item.productDetail && item.productDetail.hasOwnProperty('size') ? item.productDetail.size.length ?
+                <View style={{ flexDirection: 'row' }}>
+                  <Text style={styles.titlecolor}>{'Size'}    </Text>
+                  {item.productDetail.size.map((item) => {
+                    return (
+                      <TouchableOpacity
+                      onPress = { () => setselecteditemSize(item)}
+                      style={[styles.colorview , {backgroundColor: selecteditemSize == item ? '#a3a3a3' : '#fff'}]}>
+                        <Text style={styles.colorText}>{item} </Text>
+                      </TouchableOpacity>
+                    )
+                  })}
+                </View>
+                : null
+                : null
+            }
+
+
             <View style={styles.borderLine} />
 
             <TouchableOpacity
@@ -136,8 +180,6 @@ function ProductDetailModal(props) {
               <Text style={{ color: '#fff', fontSize: 20 }}>{alreadyAddecart == true || alreadyaddecart == true ? "Added in Bag" : "ADD TO BAG"}</Text>
             </TouchableOpacity>
           </ScrollView>
-
-
         </View>
       </View>
 

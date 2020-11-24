@@ -11,17 +11,20 @@ function Featured(props) {
   const styles = dynamicStyles(colorScheme);
 
 
-  const renderItem = ({ item, index }) => (
-    <ProductCard
-      onPress={() => props.onCardPress(item)}
-      key={index + ""}
-      item={item}
-      appConfig={props.appConfig}
-      price={item.productDetail.price}
+  const renderItem = ({ item, index }) => {
+    if (index < 10) {
+      return (
+        <ProductCard
+          onPress={() => props.onCardPress(item)}
+          key={index + ""}
+          item={item}
+          appConfig={props.appConfig}
+          price={item.productDetail.price}
 
-    />
-  );
-
+        />
+      );
+    }
+  }
   const { featuredProducts, title } = props;
   return (
     <View style={styles.unitContainer}>
@@ -32,7 +35,7 @@ function Featured(props) {
             <FlatList
               showsHorizontalScrollIndicator={false}
               data={featuredProducts}
-              keyExtractor={(item, index) => index.toString()}
+              // keyExtractor={(item, index) => index.toString()}
               horizontal={true}
               extraData={featuredProducts}
               renderItem={renderItem}

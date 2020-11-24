@@ -9,6 +9,7 @@ function ProductCard(props) {
   const styles = dynamicStyles(colorScheme);
 
   const { cardConainerStyle, onPress, item, price, appConfig, productDetails } = props;
+
   return (
     <TouchableOpacity
       activeOpacity={0.7}
@@ -27,7 +28,7 @@ function ProductCard(props) {
             alignItems: 'center',
             justifyContent: 'center'
           }} />
-        <Image style={styles.productCardImage} source={{ uri: item.productImage }} />
+        <Image style={styles.productCardImage} source={{ uri:  item.productImage[0] }} />
       </View>
 
 

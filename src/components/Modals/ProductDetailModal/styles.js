@@ -177,6 +177,30 @@ const dynamicStyles = colorScheme => {
       width: 22,
       height: 22,
       marginRight: 3
+    },
+    colorview:{
+      borderColor:'#a3a3a3',
+      borderWidth:1,
+      backgroundColor:'#fff',
+      width:'auto',
+      padding:5,
+      paddingLeft:8,
+      paddingRight:8,
+      borderRadius:50,
+      marginLeft:10,
+      marginTop:5
+    },
+    colorText:{
+      color:'#000',
+      fontSize:15
+    },
+    titlecolor:{
+      textAlign:'center',
+       textAlignVertical:'center', 
+       fontSize:18, 
+       marginLeft:8,
+       fontFamily: AppStyles.fontFamily.regularFont,
+
     }
   });
 };

@@ -11,6 +11,7 @@ const addToBagProduct = async(item, alreadyAddecart) => {
     let products = []
     let found;
     const getdata = await getbagproduct(userid)
+    // console.log("add to bag function", getdata)
     if (getdata.data !== null) {
       found = getdata.data.some(i => i.products[0].product_id.id == item.productDetail._id)
   

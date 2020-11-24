@@ -46,7 +46,7 @@ function ServicesScreen(props) {
     const [selectedSlot, setselectedSlot] = useState('')
     const [slotdate, setslotdate] = useState(moment().format('DD/MM/YYYY'))
 
-    // console.log("moment().format('DD/MM/YYYY')",moment().day(17).format('DD/MM/YYYY') )
+
     const displayserviceData = () => {
         return (
             <FlatList
@@ -71,7 +71,7 @@ function ServicesScreen(props) {
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }} />
-                                <Image style={styles.productCardImage} source={{ uri: item.item.serviceImage }} />
+                                <Image style={styles.productCardImage} source={{ uri: item.item.serviceImage[0] }} />
                             </View>
 
                             <Text style={styles.productCardPrice}
@@ -97,7 +97,6 @@ function ServicesScreen(props) {
     }
 
     const booknow = async (item) => {
-        console.log("item>>>>>>>>>>>>>>", slotdate, item.serviceDetail.shop_id)
         let userid = await AsyncStorage.getItem('userId')
         setmodalVisible(false)
         if (selectedSlot !== '') {
@@ -124,8 +123,15 @@ function ServicesScreen(props) {
                 {
                     servicedata.length ?
                         <>
-                            <View style={styles.unitContainer}>
+                            <View style={[styles.unitContainer, { flexDirection: 'row' }]}>
+                                <View style={{flex:8}}>
                                 <Text style={styles.unitTitle}>{title}</Text>
+                                </View>
+                                <TouchableOpacity 
+                                onPress = { () => props.navigation.navigate('ViewAllProductsPage', {key: 'service'})}
+                                style={{ flex: 3 }}>
+                                    <Text style={styles.unitTitle}>{'View All'}</Text>
+                                </TouchableOpacity>
                             </View>
                             <View>
                                 {displayserviceData()}
@@ -160,16 +166,35 @@ function ServicesScreen(props) {
                         <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
                         <View style={styles.transparentContainer}>
                             <View style={styles.viewContainer}>
+                                <Swiper
+                                    loop={false}
+                                    activeDot={<View style={styles.activeDot} />}
+                                    containerStyle={styles.swiperContainer}
+                                >
+
+                                    {
+                                        product.serviceImage && product.serviceImage.map((item) => {
+                                            
+                                            return (
+                                                <View style={styles.imageBackgroundContainer}>
+                                                    <Image
+                                                        style={styles.imageBackground}
+                                                        source={{ uri: item }}
+                                                    />
+                                                </View>
+                                            )
+                                        })}
+
+                                </Swiper>
+
+                                <Header
+                                    onCancelPress={() => setmodalVisible(false)}
+                                    headerContainerStyle={styles.headerContainerStyle}
+                                    onSharePress={onShare} />
+
                                 <ScrollView style={styles.descriptionContainer}>
-                                    <Header
-                                        onCancelPress={() => setmodalVisible(false)}
-                                        headerContainerStyle={styles.headerContainerStyle}
-                                        onSharePress={onShare} />
-                                    <Image
-                                        style={{ width: '100%', height: 200, marginTop: 60 }}
-                                        resizeMode={'contain'}
-                                        source={{ uri: product.serviceImage }}
-                                    />
+
+
                                     <Text style={styles.title}>{product.name}</Text>
                                     <Text style={styles.title}>Available Slot : {product.serviceDetail.serviceSlot[0].start} to {product.serviceDetail.serviceSlot[0].end}</Text>
                                     <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{product.description}</Text>

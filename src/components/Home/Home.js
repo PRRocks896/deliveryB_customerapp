@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { ScrollView, View, BackHandler, Alert, RefreshControl, Text } from "react-native";
+import { ScrollView, View, BackHandler, Alert, RefreshControl, Text, FlatList, Dimensions, TouchableOpacity, ActivityIndicator, Image, Content,SafeAreaView  } from "react-native";
 import { useColorScheme } from "react-native-appearance";
 import Categories from "./Categories";
 import NewArrivals from "./NewArrivals";
@@ -14,6 +14,7 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import NetInfo from '@react-native-community/netinfo';
 import ServicesScreen from './services'
 import getServiceData from "../../services/ShopServices/getservices";
+import getbestSellerService from '../../services/Products/bestSellerProducts'
 function Home(props) {
   const colorScheme = useColorScheme();
   const [category, setCategory] = useState([])
@@ -24,6 +25,14 @@ function Home(props) {
   const [netInfo, setNetInfo] = useState(false);
   const [serviceData, setserviceData] = useState([])
 
+  const [page, setpage] = useState(0)
+
+  const [bestseelerpage, setbestseelerpage] = useState(0)
+  const [bestSellerProducts, setbestSellerProducts] = useState([])
+
+  const [servicepage, setservicepage] = useState(0)
+
+  const { width } = Dimensions.get("window");
   const styles = dynamicStyles(colorScheme);
   const {
     navigation,
@@ -61,41 +70,43 @@ function Home(props) {
     );
 
     const unsubscribe = NetInfo.addEventListener((state) => {
-      console.log("state.isConnected", state.isConnected)
       setNetInfo(state.isConnected);
     });
 
-    // console.log(">>>>>>>>>>>>>>>>>>>>>>>>main page", featuredproduct.length)
     setCategory(categoryproducts)
     setProducts(featuredproduct)
     getCategoryProducts() // For get categories
     getFeaturedProducts() // For get products
     getServices() // For get Service of shop
+   
     return () => [backHandler.remove(), unsubscribe()]
   }, []);
   const getServices = async () => {
-    const response = await getServiceData()
-    console.log("Get Service Data:>>>>>>>>>>>>>>>>>>>>>>>>>>", response)
-    if(response.statusCode == 200){
+    const response = await getServiceData(0)
+    if (response.statusCode == 200) {
       setserviceData(response.data)
-      
+
     }
   }
+
+
   const getCategoryProducts = async () => {
     const data = await getCategory();
     if (data.success) {
       setisLoadingcategory(false)
       setCategory(data.data)
-    }else{
+    } else {
       setisLoadingcategory(false)
     }
   }
+
+
   const getFeaturedProducts = async () => {
-    const data = await getProducts();
+    const data = await getProducts(page);
     if (data.success) {
       setisLoadingProduct(false)
       setProducts(data.data)
-    }else{
+    } else {
       setisLoadingProduct(false)
     }
   }
@@ -195,8 +206,8 @@ function Home(props) {
         <ServicesScreen
           navigation={navigation}
           appConfig={appConfig}
-          title={"Services"} 
-          servicedata={serviceData}/>
+          title={"Services"}
+          servicedata={serviceData} />
         {
           isLoadingProduct == true ?
             <SkeletonPlaceholder>
@@ -229,15 +240,15 @@ function Home(props) {
             </SkeletonPlaceholder>
 
             :
-            <BestSellers
-              onCardPress={props.onCardPress}
-              bestSellerProducts={products}
-              title={"Best Sellers"}
-              navigation={navigation}
-              shouldLimit={true}
-              limit={10}
-              appConfig={appConfig}
-            />
+          <BestSellers
+            onCardPress={props.onCardPress}
+            // bestSellerProducts={products}
+            title={"Best Sellers"}
+            navigation={navigation}
+            shouldLimit={false}
+            limit={50}
+            appConfig={appConfig}
+          />
         }
 
 

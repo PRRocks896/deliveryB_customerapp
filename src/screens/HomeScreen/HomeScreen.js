@@ -12,7 +12,7 @@ import {
   setProducts,
   loadOrderHistory
 } from "../../redux/";
-import {  BackHandler } from "react-native";
+import { BackHandler } from "react-native";
 import addToBagProduct from "../../components/AddTobagProduct/addbagproduct";
 import getCategory from "../../services/Products/getCategory";
 import getProducts from "../../services/Products/getproducts";
@@ -28,8 +28,8 @@ class HomeScreen extends Component {
       asyncAddBagArray: [],
       alreadyAddecart: false,
 
-      categoryProduct:[],
-      fetauredproducts:[]
+      categoryProduct: [],
+      fetauredproducts: []
     };
     this.appConfig =
       props.navigation.state.params.appConfig ||
@@ -46,7 +46,7 @@ class HomeScreen extends Component {
   }
 
   async componentDidMount() {
-   
+
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     this.getCategoryProducts() // For get categories
     this.getFeaturedProducts() // For get products
@@ -55,19 +55,19 @@ class HomeScreen extends Component {
     this.setShippingAddress();
     // this.getCaegory()
   }
-   getCategoryProducts = async () => {
-   
+  getCategoryProducts = async () => {
+
     const data = await getCategory();
-   
+
     if (data.success) {
-      this.setState({categoryProduct: data.data})
+      this.setState({ categoryProduct: data.data })
     }
   }
-   getFeaturedProducts = async () => {
+  getFeaturedProducts = async () => {
     const data = await getProducts();
-    
+
     if (data.success) {
-      this.setState({fetauredproducts: data.data})
+      this.setState({ fetauredproducts: data.data })
     }
   }
   /**
@@ -130,16 +130,16 @@ class HomeScreen extends Component {
    * add to cart api call here
    */
   onAddToBag = async (item) => {
-    
-    this.setState({isProductDetailVisible : false})
-    const {alreadyAddecart} = this.state
+
+    this.setState({ isProductDetailVisible: false })
+    const { alreadyAddecart } = this.state
 
     //add to bag product call from component
     addToBagProduct(item, alreadyAddecart)
   };
-/**
- * On model Cancle
- */
+  /**
+   * On model Cancle
+   */
   onModalCancel = () => {
     this.setState({
       isProductDetailVisible: !this.state.isProductDetailVisible

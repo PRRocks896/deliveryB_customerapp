@@ -90,11 +90,10 @@ class ServicePaymentOptions extends Component {
   setOrderDetails = async () => {
     const { chargeConfirm, transactionid } = this.state
     let data = this.props.navigation.state.params
-    console.log("Params data", data)
+    
   
     if (chargeConfirm !== '') {
 
-        console.log("data in if",transactionid)
     this.props.navigation.navigate("PlaceServiceScrren", {
         transactionid: chargeConfirm === 'succeeded' ? transactionid : '',
         customerID: data.customerID,

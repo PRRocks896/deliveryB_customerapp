@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Alert, StatusBar, Image, Dimensions, BackHandler, TouchableOpacity, StyleSheet, View, Text, FlatList, ActivityIndicator } from "react-native";
+import { Alert, StatusBar, Image, Dimensions, BackHandler, TouchableOpacity, StyleSheet, View, Text, FlatList, ActivityIndicator, PermissionsAndroid } from "react-native";
 import PropTypes from "prop-types";
-import { connect } from "react-redux"; 
+import { connect } from "react-redux";
 import AppStyles from "../../AppStyles";
 import {
   setProductPricesBYQty,
@@ -19,9 +19,14 @@ import removeCartItem from "../../services/AddToBag/removecartitem";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { EventRegister } from 'react-native-event-listeners'
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import Geolocation from 'react-native-geolocation-service';
+
+const { width, height } = Dimensions.get('window')
+const ASPECT_RATIO = width / height
+const LATITUDE_DELTA = 0.0922
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
 
 
-const { width, height } = Dimensions.get("window");
 const paddingLeft = 13;
 
 
@@ -49,13 +54,20 @@ class ShoppingBagScreen extends Component {
       totalPayamount: '',
       isLoading: false,
       isShowData: true,
-      isDataLoading:false
+      isDataLoading: false,
+
+      region: {
+        latitude: 22.2856,
+        longitude: 70.7561,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
+      },
     }
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.props.navigation.addListener(
       'didFocus',
       payload => {
-          this.componentDidMount()
+        this.componentDidMount()
 
       });
 
@@ -79,23 +91,71 @@ class ShoppingBagScreen extends Component {
 
     let userid = await AsyncStorage.getItem('userId')
     console.log("userid", userid)
-    this.setState({isDataLoading:true})
+    this.setState({ isDataLoading: true })
     const getdata = await getbagproduct(userid)
-    if(getdata.statusCode == 200) {
-      this.setState({isDataLoading: false})
+    if (getdata.statusCode == 200) {
+      this.setState({ isDataLoading: false })
       this.setState({ allShoppingBag: getdata.data })
 
-      console.log("Data=========================bag",getdata )
+      console.log("Data=========================bag", getdata)
       if (getdata.data.length !== 0) this.setState({ isShowData: true })
       else if (getdata.data.length == 0) this.setState({ isShowData: false })
       this.props.setTotalShoppingBagPrice();
       const total = getdata.data.map(item => item.amount).reduce((prev, next) => prev + next);
       this.setState({ totalPayamount: total })
-    }else{
-      this.setState({isDataLoading: true})
+    } else {
+      this.setState({ isDataLoading: true })
     }
+
+
+    this.permissionforlocation()
+
   }
 
+  permissionforlocation = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          'title': 'Tribata shop app',
+          'message': 'Example App access to your location '
+        }
+      )
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        // Get Current Location 
+        this.getLocation();
+
+      } else {
+        alert("Location permission denied");
+      }
+    } catch (err) {
+      console.warn(err)
+    }
+  }
+  getLocation = async () => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log("Position", position.coords.latitude, position.coords.longitude)
+        const region = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: 0.001,
+          longitudeDelta: 0.001
+        };
+        this.setState({
+          region: region,
+          error: null,
+        });
+      },
+      (error) => {
+        alert( error.message);
+        this.setState({
+          error: error.message,
+        })
+      },
+      { enableHighAccuracy: false, timeout: 200000, maximumAge: 5000 },
+    );
+  }
 
   /**
    * On Continue press navigate to PaymentMethod screen
@@ -127,7 +187,7 @@ class ShoppingBagScreen extends Component {
         allShoppingBag[index].products[0].quantity = allShoppingBag[index].products[0].quantity + 1
         allShoppingBag[index].amount = allShoppingBag[index].products[0].price * allShoppingBag[index].products[0].quantity
         this.setState({ count: allShoppingBag[index].products[0].quantity })
-       
+
 
         const total = allShoppingBag.map(item => item.amount).reduce((prev, next) => prev + next);
         this.setState({ totalPayamount: total })
@@ -135,7 +195,7 @@ class ShoppingBagScreen extends Component {
         console.log("Body in screen, body", body)
         const data = await itemQuentity(item._id, body)
         console.log("Data when update", data)
-        
+
       }
     })
   }
@@ -254,25 +314,25 @@ class ShoppingBagScreen extends Component {
   }
 
   render() {
-    const { totalPayamount, isLoading, isShowData ,isDataLoading} = this.state
+    const { totalPayamount, isLoading, isShowData, isDataLoading } = this.state
 
     if (isShowData == true) {
 
       return (
         <View style={styles.container}>
           {
-            isDataLoading ?  
-            <SkeletonPlaceholder>
-            <View style={styles.shopmainSkeleton}>
-             <View style={styles.shopCategorySkeleton} />
-           </View>
-           <View style={styles.shopmainSkeleton}>
-             <View style={styles.shopCategorySkeleton} />
-           </View>
-      
-         </SkeletonPlaceholder>
-         :
-          this.getbagProducts()
+            isDataLoading ?
+              <SkeletonPlaceholder>
+                <View style={styles.shopmainSkeleton}>
+                  <View style={styles.shopCategorySkeleton} />
+                </View>
+                <View style={styles.shopmainSkeleton}>
+                  <View style={styles.shopCategorySkeleton} />
+                </View>
+
+              </SkeletonPlaceholder>
+              :
+              this.getbagProducts()
           }
           {
             this.state.allShoppingBag.length != 0 ?
@@ -387,7 +447,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 100,
     borderRadius: 5,
-    resizeMode:'contain'
+    resizeMode: 'contain'
   },
   text: {
     fontFamily: AppStyles.fontFamily.regularFont,
@@ -437,7 +497,7 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 10
   },
-  shopmainSkeleton:{
+  shopmainSkeleton: {
     flexDirection: "row", alignItems: "center"
   }
 })
