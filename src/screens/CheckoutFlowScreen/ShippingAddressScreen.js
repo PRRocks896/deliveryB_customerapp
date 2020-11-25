@@ -110,7 +110,7 @@ class ShippingAddressScreen extends Component {
         payment_method: data.payment_method,
         order_number: data.order_number
       });
-      this.props.setTotalPrice();
+      // this.props.setTotalPrice();
     } else {
       Alert.alert(
         "",

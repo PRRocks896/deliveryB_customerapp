@@ -6,31 +6,36 @@ import getbagproduct from "../../services/AddToBag/getbagProduct"
 
 
 
-const addToBagProduct = async(item, alreadyAddecart) => {
+const addToBagProduct = async(item, alreadyAddecart, color, size, quentity, selectedshopID) => {
+  console.log("On Add to bag function", color, size, quentity)
     let userid = await AsyncStorage.getItem('userId')
     let products = []
     let found;
     const getdata = await getbagproduct(userid)
-    // console.log("add to bag function", getdata)
+    console.log("add to bag function", getdata)
     if (getdata.data !== null) {
       found = getdata.data.some(i => i.products[0].product_id.id == item.productDetail._id)
-  
+        console.log("found==========", found)
 
       if (found == false) {
         products.push({
           product_id: item.productDetail._id,
           price: item.productDetail.price,
-          quantity: 1,
+          discount_price:item.productDetail.discount_price ? item.productDetail.discount_price : item.productDetail.price, 
+          quantity: quentity,
+          size:size,
+          color:color,
           name: item.name,
           productImage: item.productImage
         })
         let body = {
           customer_id: userid,
-          shop_id: item.productDetail.shop_id,
+          shop_id: selectedshopID,
           amount: item.productDetail.price,
           products: products
         }
         const data = await addtobag(JSON.stringify(body))
+        console.log("Add to bage response", data)
         const getdata = await getbagproduct(userid)
         if (getdata.success && getdata.data !== null) {
           EventRegister.emit('cartlength', getdata.data.length)

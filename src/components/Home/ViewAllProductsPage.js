@@ -9,7 +9,7 @@ import Swiper from "react-native-swiper";
 import getServiceData from "../../services/ShopServices/getservices";
 import DatePicker from 'react-native-datepicker'
 import { Picker } from '@react-native-community/picker'
-
+import Icons from 'react-native-vector-icons/MaterialCommunityIcons'
 import {
   ScrollView, View,
   BackHandler,
@@ -34,6 +34,9 @@ import AsyncStorage from "@react-native-community/async-storage";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RBSheet from "react-native-raw-bottom-sheet";
 import { sortingProducts } from '../../services/Products/getsubCategory'
+import ProductDetailModal from "../Modals/ProductDetailModal/ProductDetailModal";
+import addToBagProduct from "../AddTobagProduct/addbagproduct";
+import ServiceModelComponent from "../Modals/ProductDetailModal/ServiceModel";
 const timedata = [
   { id: 1, item: '01 : 00 Am' },
   { id: 2, item: '02 : 00 Am' },
@@ -84,6 +87,11 @@ function ViewAllProductsPage(props) {
   const refRBSheet = useRef();
 
   const [isSelectSort, setisSelectSort] = useState('lowTohigh')
+
+  const [alreadyAddecart, setalreadyAddecart] = useState(false)
+
+
+
   useEffect(() => {
     getBestSellerProducts()
     getServices()
@@ -171,15 +179,6 @@ function ViewAllProductsPage(props) {
     )
   }
 
-  const onShare = async () => {
-
-    await Share.share({
-      title: "Shopertino Product",
-      dialogTitle: `Shopertino Product: ${clickproduct.name}`,
-      message: clickproduct.name + ',' + clickproduct.description + ',' + clickproduct.productDetail.price,
-    });
-
-  }
 
 
   const displayserviceData = () => {
@@ -283,7 +282,7 @@ function ViewAllProductsPage(props) {
 
     if (servicePage == 0 && serviceData.length == 0) {
       let order = isSelectSort == 'lowTohigh' ? 'asc' : 'desc'
-      let data = `page=${servicePage}&limit=10&sort=productDetail.price&priceLow=10&priceHigh=100000&order=${order}`
+      let data = `page=${servicePage}&limit=10&sort=serviceDetail.price&priceLow=10&priceHigh=100000&order=${order}`
       refRBSheet.current.close()
       const response = await sortingProducts(data)
       if (response.statusCode == 200) {
@@ -294,6 +293,18 @@ function ViewAllProductsPage(props) {
       }
     }
   }
+  /**
+   * 
+   * @param {any} item product data 
+   * add to bag product
+   */
+  const onAddToBag = async (item, color, size, quentity, selectedshopID) => {
+    setmodalVisible(!modalVisible)
+
+
+    //add to bag product call from component
+    addToBagProduct(item, alreadyAddecart, color, size, quentity, selectedshopID)
+  };
 
 
   if (key == 'service') {
@@ -304,10 +315,6 @@ function ViewAllProductsPage(props) {
             serviceData.length ?
               <View>
                 <View style={styles.filtercontainer}>
-                  {/* <TouchableOpacity onPress={() => refRBSheet.current.open()} style={styles.sortingView}>
-              <Text style={styles.filtertxt}>{'Sort'}  </Text>
-              <Icon name={'sort'} color={'#000'} size={20} />
-            </TouchableOpacity> */}
                   <TouchableOpacity onPress={() => refRBSheet.current.open()} style={styles.sortingView}>
                     <Text style={styles.filtertxt}>{'Filter'}  </Text>
                     <Icon name={'filter-list'} color={'#000'} size={20} />
@@ -318,6 +325,17 @@ function ViewAllProductsPage(props) {
               : null
           }
         </View>
+
+        <ServiceModelComponent
+          item={service}
+          shippingMethods={props.shippingMethods}
+          visible={servicemodalVisible}
+          onAddToBag={booknow}
+          onCancelPress={() => setservicemodalVisible(!servicemodalVisible)}
+          appConfig={props.appConfig}
+          navigation={props.navigation}
+        />
+
 
         <RBSheet
           ref={refRBSheet}
@@ -376,7 +394,7 @@ function ViewAllProductsPage(props) {
 
           </View>
         </RBSheet>
-        {
+        {/* {
           servicemodalVisible ?
 
 
@@ -497,33 +515,35 @@ function ViewAllProductsPage(props) {
               </View>
             </Modal>
             : null
-        }
+        } */}
       </>
     )
   } else if (key == 'BestSeller') {
     return (
       <SafeAreaView>
         <View style={styles.unitContainer}>
-
-          <View style={styles.filtercontainer}>
-            {/* <TouchableOpacity onPress={() => refRBSheet.current.open()} style={styles.sortingView}>
-              <Text style={styles.filtertxt}>{'Sort'}  </Text>
-              <Icon name={'sort'} color={'#000'} size={20} />
-            </TouchableOpacity> */}
-            <TouchableOpacity onPress={() => refRBSheet.current.open()} style={styles.sortingView}>
-              <Text style={styles.filtertxt}>{'Filter'}  </Text>
-              <Icon name={'filter-list'} color={'#000'} size={20} />
-            </TouchableOpacity>
-          </View>
           {
             bestSellerProducts.length ?
 
-              <View style={{ marginBottom: 120 }}>
+              <View style={{ marginBottom: 0 }}>
                 {displaybestproducts()}
               </View>
 
               : null
           }
+          <TouchableOpacity onPress={() => refRBSheet.current.open()} style={styles.filtercontainer} s>
+            <Icon name={'filter-list'} color={'#000'} size={28} />
+          </TouchableOpacity>
+
+          <ProductDetailModal
+            item={clickproduct}
+            shippingMethods={props.shippingMethods}
+            visible={modalVisible}
+            onAddToBag={onAddToBag}
+            onCancelPress={() => setmodalVisible(!modalVisible)}
+            appConfig={props.appConfig}
+            navigation={props.navigation}
+          />
         </View>
 
         <RBSheet
@@ -583,106 +603,7 @@ function ViewAllProductsPage(props) {
 
           </View>
         </RBSheet>
-        {
-          modalVisible ?
-            <Modal
-              isVisible={modalVisible}
-              hideModalContentWhileAnimating={true}
-              animationIn="zoomInDown"
-              animationOut="zoomOutUp"
-              animationInTiming={600}
-              animationOutTiming={600}
-              backdropTransitionInTiming={600}
-              backdropTransitionOutTiming={600}
-              style={styles.modalStyle}
-              backdropOpacity={0.5}
-              deviceWidth={deviceWidth}
-              deviceHeight={deviceHeight}
-              onBackButtonPress={() => setmodalVisible(false)}
-              onRequestClose={() => {
-                setmodalVisible(!modalVisible)
-              }}
-            >
 
-              <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
-              <View style={styles.transparentContainer}>
-                <View style={styles.viewContainer}>
-                  <Swiper
-                    loop={false}
-                    activeDot={<View style={styles.activeDot} />}
-                    containerStyle={styles.swiperContainer}
-                  >
-                    {clickproduct.productImage && clickproduct.productImage.map((item) => {
-                      return (
-                        <View style={styles.imageBackgroundContainer}>
-                          <Image
-                            style={styles.imageBackground}
-                            source={{ uri: item }}
-                          />
-                        </View>
-                      )
-                    })}
-                  </Swiper>
-                  <Header
-                    onCancelPress={() => setmodalVisible(false)}
-                    headerContainerStyle={styles.headerContainerStyle}
-                    onSharePress={onShare}
-                  />
-
-                  <ScrollView style={styles.descriptionContainer}>
-                    <Text style={styles.title}>{clickproduct.name}</Text>
-                    <Text style={[styles.title, { paddingTop: 5, fontSize: 15 }]}>{clickproduct.description}</Text>
-                    <Text
-                      style={styles.price}
-                    >₹ {clickproduct.productDetail.price}</Text>
-
-                    {
-                      clickproduct.productDetail && clickproduct.productDetail.hasOwnProperty('color') ? clickproduct.productDetail.color.length ?
-                        <View style={{ flexDirection: 'row' }}>
-                          <Text style={styles.titlecolor}>{'Colors'}</Text>
-                          {
-                            clickproduct.productDetail.color.map((item) => {
-                              return (
-                                <TouchableOpacity onPress={() => setselecteditemcolor(item)} style={[styles.colorview, { backgroundColor: selecteditemcolor == item ? '#a3a3a3' : '#fff' }]}>
-                                  <Text style={styles.colorText}>{item} </Text>
-                                </TouchableOpacity>
-                              )
-                            })
-                          }
-                        </View>
-                        : null
-                        : null
-                    }
-                    {
-                      clickproduct.productDetail && clickproduct.productDetail.hasOwnProperty('size') ? clickproduct.productDetail.size.length ?
-                        <View style={{ flexDirection: 'row' }}>
-                          <Text style={styles.titlecolor}>{'Size'}    </Text>
-                          {clickproduct.productDetail.size.map((item) => {
-                            return (
-                              <TouchableOpacity
-                                onPress={() => setselecteditemSize(item)}
-                                style={[styles.colorview, { backgroundColor: selecteditemSize == item ? '#a3a3a3' : '#fff' }]}>
-                                <Text style={styles.colorText}>{item} </Text>
-                              </TouchableOpacity>
-                            )
-                          })}
-                        </View>
-                        : null
-                        : null
-                    }
-                    <View style={styles.borderLine} />
-                    <TouchableOpacity
-                      onPress={() => onAddToBag(item)}
-                      style={styles.addToBagContainerStyle}>
-                      <Text style={{ color: '#fff', fontSize: 20 }}>{"ADD TO BAG"}</Text>
-                    </TouchableOpacity>
-                  </ScrollView>
-                </View>
-              </View>
-
-            </Modal>
-            : null
-        }
       </SafeAreaView>
     );
   }

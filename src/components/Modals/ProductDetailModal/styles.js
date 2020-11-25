@@ -201,7 +201,49 @@ const dynamicStyles = colorScheme => {
        marginLeft:8,
        fontFamily: AppStyles.fontFamily.regularFont,
 
+    },
+    quantityControlIconContainer: {
+      height: 25,
+      width: 25,
+      borderRadius: 5,
+      borderWidth: 1.5,
+      borderColor: '#a3a3a3',
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    quantityCount: {
+      color: '#a3a3a3',
+      fontFamily: AppStyles.fontFamily.regularFont,
+      fontSize: 16
+    },
+    quantityControlIcon: {
+      height: 10,
+      width: 10,
+      tintColor: "#bdbdc2"
+    },
+    bottomsheet:{
+      padding:10,
+      paddingLeft:15,
+      paddingTop:20
+    },
+    shopname:{
+      fontSize:15,
+      fontFamily: AppStyles.fontFamily.regularFont,
+    },
+    applybutton:{
+      backgroundColor: AppStyles.colorSet[colorScheme].mainThemeForegroundColor,
+      height:40,
+      marginLeft:20,
+      marginRight:20,
+      justifyContent:'center',
+      alignItems:'center',
+      marginTop:10,
+      width:'40%',
+      alignSelf:'center'
+      
+
     }
+  
   });
 };
 

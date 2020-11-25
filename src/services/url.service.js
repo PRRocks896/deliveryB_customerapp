@@ -100,6 +100,9 @@ const api = {
     sortingProduct:{
         sortingProduct : Config.getURL + 'customer/shop/search/all?words=&'
     },
+    allshoplist:{
+        allshoplist : Config.getURL + 'customer/shop/list/'
+    },
     
 
     // services

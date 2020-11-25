@@ -129,13 +129,13 @@ class HomeScreen extends Component {
    * @param {any} item added item
    * add to cart api call here
    */
-  onAddToBag = async (item) => {
+  onAddToBag = async (item, color, size, quentity, selectedshopID) => {
 
     this.setState({ isProductDetailVisible: false })
     const { alreadyAddecart } = this.state
 
     //add to bag product call from component
-    addToBagProduct(item, alreadyAddecart)
+    addToBagProduct(item, alreadyAddecart, color, size, quentity, selectedshopID)
   };
   /**
    * On model Cancle

@@ -151,12 +151,12 @@ class CategoryProductGridScreen extends Component {
    * @param {any} item product data 
    * add to bag product
    */
-  onAddToBag = async (item) => {
+  onAddToBag = async (item, color, size, quentity, selectedshopID) => {
     this.setState({ isProductDetailVisible: false })
     const { alreadyAddecart } = this.state
 
     //add to bag product call from component
-    addToBagProduct(item, alreadyAddecart)
+    addToBagProduct(item, alreadyAddecart, color, size, quentity, selectedshopID)
   };
 
   booknow = async (item) => {
@@ -185,7 +185,8 @@ class CategoryProductGridScreen extends Component {
   getsubProducts = async (id) => {
     this.setState({subcategoryid: id})
     let categorydata = this.props.navigation.state.params.categoryId
-    let data = `${categorydata}&page=0&limit=1000&sort=serviceDetail.price&order=desc&subcategory=${id}&priceLow=0&priceHigh=20000`
+    console.log("ids", categorydata, id)
+    let data = `${categorydata}&page=0&limit=1000&sort=productDetail.price&order=desc&subcategory=${id}&priceLow=10&priceHigh=20000`
     let response = await getsubcategoryProductService(data)
     console.log("responseof sub category products", response)
     if (response.statusCode == 200) {
@@ -193,14 +194,20 @@ class CategoryProductGridScreen extends Component {
         this.setState({ categoryProducts: response.data.products })
       } else {
         this.setState({ categoryProducts: [] })
-
       }
+    }
 
-      if (response.data.services.length > 0) {
-        this.setState({ serviceCategoryData: response.data.services })
-      } else {
-        this.setState({ serviceCategoryData: [] })
-
+    if(this.state.isServiceData){
+      let data = `${categorydata}&page=0&limit=1000&sort=serviceDetail.price&order=desc&subcategory=${id}&priceLow=10&priceHigh=20000`
+      let response = await getsubcategoryProductService(data)
+      console.log("responseof sub category products", response)
+      if (response.statusCode == 200) {
+        if (response.data.services.length > 0) {
+          this.setState({ serviceCategoryData: response.data.services })
+        } else {
+          this.setState({ serviceCategoryData: [] })
+  
+        }
       }
     }
   }

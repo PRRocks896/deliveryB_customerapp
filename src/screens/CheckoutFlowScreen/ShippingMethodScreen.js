@@ -59,7 +59,7 @@ class ShippingMethodScreen extends Component {
   };
 
   navigateUser = () => {
-    this.props.setTotalPrice();
+    // this.props.setTotalPrice();
     this.props.navigation.replace("Checkout", { appConfig: this.appConfig });
   };
 

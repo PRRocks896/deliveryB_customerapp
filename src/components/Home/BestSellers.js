@@ -22,6 +22,8 @@ import {
   Modal,
   Share
 } from "react-native";
+import addToBagProduct from "../AddTobagProduct/addbagproduct";
+import ProductDetailModal from "../Modals/ProductDetailModal/ProductDetailModal";
 const { width } = Dimensions.get("window");
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height;
@@ -37,6 +39,7 @@ function BestSellers(props) {
   const [bestSellerProducts, setbestSellerProducts] = useState([])
   const [modalVisible, setmodalVisible] = useState(false)
   const [clickproduct, setclickproduct] = useState({})
+  const [alreadyAddecart, setalreadyAddecart] = useState(false)
 
 
   const getBestSellerProducts = async () => {
@@ -100,6 +103,18 @@ function BestSellers(props) {
     });
 
   }
+  /**
+   * 
+   * @param {any} item product data 
+   * add to bag product
+   */
+  const onAddToBag = async (item, color, size, quentity, selectedshopID) => {
+    setmodalVisible(!modalVisible)
+
+
+    //add to bag product call from component
+    addToBagProduct(item, alreadyAddecart, color, size, quentity, selectedshopID)
+  };
 
   return (
     <SafeAreaView>
@@ -111,9 +126,9 @@ function BestSellers(props) {
                 <View style={{ flex: 8 }}>
                   <Text style={styles.unitTitle}>{title}</Text>
                 </View>
-                <TouchableOpacity 
-                onPress={ () => props.navigation.navigate('ViewAllProductsPage', {key: 'BestSeller',  appConfig: props.appConfig})}
-                style={{ flex: 3 }}>
+                <TouchableOpacity
+                  onPress={() => props.navigation.navigate('ViewAllProductsPage', { key: 'BestSeller', appConfig: props.appConfig, shippingMethods: props.shippingMethods })}
+                  style={{ flex: 3 }}>
                   <Text style={styles.unitTitle}>{'View All'}</Text>
                 </TouchableOpacity>
               </View>
@@ -124,71 +139,15 @@ function BestSellers(props) {
             : null
         }
       </View>
-      {
-        modalVisible ?
-          <Modal
-            isVisible={modalVisible}
-            hideModalContentWhileAnimating={true}
-            animationIn="zoomInDown"
-            animationOut="zoomOutUp"
-            animationInTiming={600}
-            animationOutTiming={600}
-            backdropTransitionInTiming={600}
-            backdropTransitionOutTiming={600}
-            style={styles.modalStyle}
-            backdropOpacity={0.5}
-            deviceWidth={deviceWidth}
-            deviceHeight={deviceHeight}
-            onBackButtonPress={() => setmodalVisible(false)}
-            onRequestClose={() => {
-              setmodalVisible(!modalVisible)
-            }}
-          >
-
-            <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
-            <View style={styles.transparentContainer}>
-              <View style={styles.viewContainer}>
-                <Swiper
-                  loop={false}
-                  activeDot={<View style={styles.activeDot} />}
-                  containerStyle={styles.swiperContainer}
-                >
-                  {clickproduct.productImage && clickproduct.productImage.map((item) => {
-                    return (
-                      <View style={styles.imageBackgroundContainer}>
-                        <Image
-                          style={styles.imageBackground}
-                          source={{ uri: item }}
-                        />
-                      </View>
-                    )
-                  })}
-                </Swiper>
-                <Header
-                  onCancelPress={() => setmodalVisible(false)}
-                  headerContainerStyle={styles.headerContainerStyle}
-                  onSharePress={onShare}
-                />
-
-                <ScrollView style={styles.descriptionContainer}>
-                  <Text style={styles.title}>{clickproduct.name}</Text>
-                  <Text style={[styles.title, { paddingTop: 5, fontSize: 15 }]}>{clickproduct.description}</Text>
-                  <Text
-                    style={styles.price}
-                  >₹ {clickproduct.productDetail.price}</Text>
-                  <View style={styles.borderLine} />
-                  <TouchableOpacity
-                    onPress={() => onAddToBag(item)}
-                    style={styles.addToBagContainerStyle}>
-                    <Text style={{ color: '#fff', fontSize: 20 }}>{"ADD TO BAG"}</Text>
-                  </TouchableOpacity>
-                </ScrollView>
-              </View>
-            </View>
-
-          </Modal>
-          : null
-      }
+      <ProductDetailModal
+        item={clickproduct}
+        shippingMethods={props.shippingMethods}
+        visible={modalVisible}
+        onAddToBag={onAddToBag}
+        onCancelPress={() => setmodalVisible(!modalVisible)}
+        appConfig={props.appConfig}
+        navigation={props.navigation}
+      />
     </SafeAreaView>
   );
 }

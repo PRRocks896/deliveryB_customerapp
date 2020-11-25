@@ -248,6 +248,7 @@ function Home(props) {
             shouldLimit={false}
             limit={50}
             appConfig={appConfig}
+            shippingMethods={shippingMethods}
           />
         }
 

@@ -272,7 +272,7 @@ class ShoppingBagScreen extends Component {
           return (
             <View style={[styles.card, { flexDirection: 'row' }]}>
               <View style={{ flex: 2.5 }}>
-                <Image style={styles.img} source={{ uri: item.item.products[0].productImage }} />
+                <Image style={styles.img} source={{ uri: item.item.products &&  item.item.products[0].productImage[0] }} />
               </View>
               <View style={{ flex: 5, padding: 10 }}>
                 <Text style={styles.text}>{item.item.products[0].name}</Text>

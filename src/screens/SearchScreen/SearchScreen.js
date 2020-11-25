@@ -51,12 +51,12 @@ class SearchScreen extends Component {
   /**
    * @param {any} item product  add to bag
    */
-  onAddToBag = async (item) => {
+  onAddToBag = async (item,  color, size, quentity, selectedshopID) => {
     this.setState({ isProductDetailVisible: false })
     const { alreadyAddecart } = this.state
 
     //add to bag product call from component
-    addToBagProduct(item, alreadyAddecart)
+    addToBagProduct(item, alreadyAddecart, color, size, quentity, selectedshopID)
 
   };
 
@@ -68,7 +68,6 @@ class SearchScreen extends Component {
   onChangeSearch = async (query) => {
     if (query.length > 0) {
       const data = await searchproducts(query)
-
       this.setState({ searchResultProducts: data.data })
     } else {
       this.setState({ searchResultProducts: [] })
@@ -87,8 +86,8 @@ class SearchScreen extends Component {
             onChangeText={(query) => this.onChangeSearch(query)}
           />
         </TouchableWithoutFeedback >
-        {/* <Search
-          // products={this.props.searchResultProducts}
+        <Search
+          products={this.props.searchResultProducts}
           products={this.state.searchResultProducts}
           shippingMethods={this.props.shippingMethods}
           onModalCancel={this.onModalCancel}
@@ -98,7 +97,7 @@ class SearchScreen extends Component {
           product={this.state.product}
           isProductDetailVisible={this.state.isProductDetailVisible}
           appConfig={this.appConfig}
-        /> */}
+        />
       </>
     );
   }

@@ -15,3 +15,8 @@ export async function sortingProducts  (data) {
     return res;
 
 }
+export async function getallShopList  (producttid) {
+    const res = await WebReq.get(api.allshoplist.allshoplist + producttid, true)
+    return res;
+
+}
