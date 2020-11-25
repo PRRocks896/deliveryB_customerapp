@@ -232,19 +232,20 @@ function ViewAllProductsPage(props) {
 
   }
 
-  const booknow = async (item) => {
-
+  const booknow = async (item, selectedSlot, selectedshopID, slotdate) => {
     let userid = await AsyncStorage.getItem('userId')
     setmodalVisible(false)
+    setservicemodalVisible(false)
     if (selectedSlot !== '') {
+     
       props.navigation.navigate('ServicePaymentOptions',
         {
           appConfig: props.navigation.state.params.appConfig,
           customerID: userid,
-          totalammount: service.serviceDetail.price,
+          totalammount: item.serviceDetail.price,
           slot: selectedSlot,
-          shopid: item.serviceDetail.shop_id,
-          service_id: service.serviceDetail._id,
+          shopid: selectedshopID,
+          service_id: item.serviceDetail._id,
           slot_date: slotdate,
           booking_number: Math.floor(100000000000 + Math.random() * 900000000000)
         })
@@ -314,13 +315,14 @@ function ViewAllProductsPage(props) {
           {
             serviceData.length ?
               <View>
-                <View style={styles.filtercontainer}>
-                  <TouchableOpacity onPress={() => refRBSheet.current.open()} style={styles.sortingView}>
-                    <Text style={styles.filtertxt}>{'Filter'}  </Text>
+                <View>
+                {displayserviceData()}
+                  </View>
+               
+                  <TouchableOpacity onPress={() => refRBSheet.current.open()} style={styles.filtercontainer}>
                     <Icon name={'filter-list'} color={'#000'} size={20} />
                   </TouchableOpacity>
-                </View>
-                {displayserviceData()}
+                
               </View>
               : null
           }
@@ -330,7 +332,7 @@ function ViewAllProductsPage(props) {
           item={service}
           shippingMethods={props.shippingMethods}
           visible={servicemodalVisible}
-          onAddToBag={booknow}
+          onAddToBag={(item, selectedSlot, selectedshopID,slotdate) => booknow(item, selectedSlot, selectedshopID,slotdate)}
           onCancelPress={() => setservicemodalVisible(!servicemodalVisible)}
           appConfig={props.appConfig}
           navigation={props.navigation}
@@ -394,128 +396,7 @@ function ViewAllProductsPage(props) {
 
           </View>
         </RBSheet>
-        {/* {
-          servicemodalVisible ?
-
-
-            <Modal
-              animationType="slide"
-              transparent={true}
-              hideModalContentWhileAnimating={true}
-              visible={servicemodalVisible}
-              animationInTiming={600}
-              animationOutTiming={600}
-              backdropTransitionInTiming={600}
-              backdropTransitionOutTiming={600}
-              style={styles.modalStyle}
-              animationIn="zoomInDown"
-              animationOut="zoomOutUp"
-              backdropOpacity={0.5}
-              deviceWidth={deviceWidth}
-              deviceHeight={deviceHeight}
-              onRequestClose={() => {
-                setservicemodalVisible(!servicemodalVisible)
-              }}
-            >
-              <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
-              <View style={styles.transparentContainer}>
-                <View style={styles.viewContainer}>
-                  <Swiper
-                    loop={false}
-                    activeDot={<View style={styles.activeDot} />}
-                    containerStyle={styles.swiperContainer}
-                  >
-
-                    {
-                      service.serviceImage && service.serviceImage.map((item) => {
-                        return (
-                          <View style={styles.imageBackgroundContainer}>
-                            <Image
-                              style={styles.imageBackground}
-                              source={{ uri: item }}
-                            />
-                          </View>
-                        )
-                      })}
-
-                  </Swiper>
-
-                  <Header
-                    onCancelPress={() => setmodalVisible(false)}
-                    headerContainerStyle={styles.headerContainerStyle}
-                    onSharePress={onShareservice} />
-
-                  <ScrollView style={styles.descriptionContainer}>
-
-
-                    <Text style={styles.title}>{service.name}</Text>
-                    <Text style={styles.title}>Available Slot : {service.serviceDetail.serviceSlot[0].start} to {service.serviceDetail.serviceSlot[0].end}</Text>
-                    <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{service.description}</Text>
-                    <View style={styles.inputContainer}>
-                      <DatePicker
-                        style={{ width: '100%' }}
-                        date={slotdate}
-                        mode="date"
-                        placeholder="select date"
-                        format="DD-MM-YYYY"
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        minDate={new Date()}
-                        maxDate={moment().day(17)}
-                        customStyles={{
-                          dateIcon: {
-                            position: 'absolute',
-                            left: 0,
-                            top: 4,
-                            marginLeft: 10
-                          },
-                          dateInput: {
-                            marginLeft: -180,
-                            borderWidth: 0,
-
-                          }
-                          // ... You can check the source to find the other keys.
-                        }}
-                        onDateChange={(date) => setslotdate(date)}
-                      />
-                    </View>
-                    <View style={styles.inputContainer}>
-                      <Picker
-                        selectedValue={selectedSlot}
-                        style={{ width: '100%', height: 40 }}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (service.serviceDetail.serviceSlot[0].start <= itemIndex && service.serviceDetail.serviceSlot[0].end >= itemIndex) {
-                            setselectedSlot(itemValue)
-                          } else {
-                            Alert.alert("", `Plaease Select time Between ${service.serviceDetail.serviceSlot[0].start} to ${service.serviceDetail.serviceSlot[0].end}`)
-                          }
-                        }
-                        }>
-                        <Picker.Item label="Select Slot" value="" />
-                        {
-                          timedata.map((item) => {
-                            return (
-                              <Picker.Item label={item.item} value={item.id} key={item.id} />
-                            )
-
-                          })
-                        }
-                      </Picker>
-                    </View>
-                    <Text style={styles.price}>₹ {service.serviceDetail ? service.serviceDetail.price : null}</Text>
-                    <View style={styles.borderLine} />
-                    <TouchableOpacity
-                      onPress={() => booknow(service)}
-                      style={[styles.addToBagContainerStyle, { marginBottom: 20 }]}>
-                      <Text style={{ color: '#fff', fontSize: 20 }}>{"Book Now"}</Text>
-                    </TouchableOpacity>
-                  </ScrollView>
-
-                </View>
-              </View>
-            </Modal>
-            : null
-        } */}
+       
       </>
     )
   } else if (key == 'BestSeller') {

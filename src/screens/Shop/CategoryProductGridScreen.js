@@ -21,7 +21,8 @@ import Header from "../../components/Modals/ProductDetailModal/Header";
 import DatePicker from 'react-native-datepicker'
 import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorage from "@react-native-community/async-storage";
-import { getsubcategoryProductService, getSubCategoryService , sortingProducts} from "../../services/Products/getsubCategory";
+import { getsubcategoryProductService, getSubCategoryService, sortingProducts } from "../../services/Products/getsubCategory";
+import ServiceModelComponent from "../../components/Modals/ProductDetailModal/ServiceModel";
 
 const timedata = [
   { id: 1, item: '01 : 00 Am' },
@@ -82,8 +83,8 @@ class CategoryProductGridScreen extends Component {
       subCategoryArray: [],
 
       page: 0,
-      isSelectSort:'lowTohigh',
-      subcategoryid:''
+      isSelectSort: 'lowTohigh',
+      subcategoryid: ''
     };
     this.appConfig =
       props.navigation.state.params.appConfig ||
@@ -113,7 +114,7 @@ class CategoryProductGridScreen extends Component {
   }
 
   getsubCategory = async (id) => {
-    
+
     const response = await getSubCategoryService(id)
     if (response.statusCode == 200) {
       this.setState({ subCategoryArray: response.data })
@@ -159,8 +160,8 @@ class CategoryProductGridScreen extends Component {
     addToBagProduct(item, alreadyAddecart, color, size, quentity, selectedshopID)
   };
 
-  booknow = async (item) => {
-    const { productData, selectedSlot } = this.state
+  booknow = async (item, selectedSlot, selectedshopID, slotdate) => {
+   
     let userid = await AsyncStorage.getItem('userId')
     if (selectedSlot !== '') {
       this.setState({ modalVisible: false })
@@ -168,11 +169,11 @@ class CategoryProductGridScreen extends Component {
         {
           appConfig: this.appConfig,
           customerID: userid,
-          totalammount: productData.serviceDetail.price,
+          totalammount: item.serviceDetail.price,
           slot: selectedSlot,
-          shopid: item.serviceDetail.shop_id,
-          service_id: productData.serviceDetail._id,
-          slot_date: this.state.slotdate,
+          shopid: selectedshopID,
+          service_id: item.serviceDetail._id,
+          slot_date: slotdate,
           booking_number: Math.floor(100000000000 + Math.random() * 900000000000)
         })
 
@@ -183,7 +184,7 @@ class CategoryProductGridScreen extends Component {
   }
 
   getsubProducts = async (id) => {
-    this.setState({subcategoryid: id})
+    this.setState({ subcategoryid: id })
     let categorydata = this.props.navigation.state.params.categoryId
     console.log("ids", categorydata, id)
     let data = `${categorydata}&page=0&limit=1000&sort=productDetail.price&order=desc&subcategory=${id}&priceLow=10&priceHigh=20000`
@@ -197,7 +198,7 @@ class CategoryProductGridScreen extends Component {
       }
     }
 
-    if(this.state.isServiceData){
+    if (this.state.isServiceData) {
       let data = `${categorydata}&page=0&limit=1000&sort=serviceDetail.price&order=desc&subcategory=${id}&priceLow=10&priceHigh=20000`
       let response = await getsubcategoryProductService(data)
       console.log("responseof sub category products", response)
@@ -206,7 +207,7 @@ class CategoryProductGridScreen extends Component {
           this.setState({ serviceCategoryData: response.data.services })
         } else {
           this.setState({ serviceCategoryData: [] })
-  
+
         }
       }
     }
@@ -234,8 +235,8 @@ class CategoryProductGridScreen extends Component {
 
   applysorting = async () => {
     let id = this.props.navigation.state.params.categoryId
-    this.setState({categoryProducts: []})
-    this.setState({serviceCategoryData : []})
+    this.setState({ categoryProducts: [] })
+    this.setState({ serviceCategoryData: [] })
     if (this.state.categoryProducts.length == 0) {
       let order = this.state.isSelectSort == 'lowTohigh' ? 'asc' : 'desc'
       let data = `page=0&limit=10000&sort=productDetail.price&priceLow=10&priceHigh=100000&order=${order}&category=${id}&subcategory=${this.state.subcategoryid}`
@@ -245,9 +246,9 @@ class CategoryProductGridScreen extends Component {
       console.log("sorting data response ======", response)
       if (response.statusCode == 200) {
         if (response.data.products.length > 0) {
-          this.setState({categoryProducts: response.data.products})
+          this.setState({ categoryProducts: response.data.products })
         }
-       
+
       }
     }
 
@@ -258,9 +259,9 @@ class CategoryProductGridScreen extends Component {
       const response = await sortingProducts(data)
       console.log("sorting data response ======", response)
       if (response.statusCode == 200) {
-       
-        if(response.data.services.length > 0){
-          this.setState({serviceCategoryData : response.data.services})
+
+        if (response.data.services.length > 0) {
+          this.setState({ serviceCategoryData: response.data.services })
         }
       }
     }
@@ -301,188 +302,80 @@ class CategoryProductGridScreen extends Component {
                 numColumns={2}
                 keyExtractor={(item) => (item._id).toString()}
               />
-              
+
               <TouchableOpacity onPress={() => this.RBSheet.open()} style={styles.filterbtnContainer}>
-                    <Icon name={'filter-list'} color={'#000'} size={25} />
-                  </TouchableOpacity>
-                  <RBSheet
-                    ref={ref => {
-                      this.RBSheet = ref;
-                    }}
-                    closeOnDragDown={true}
-                    closeOnPressMask={false}
-                    height={210}
-                    openDuration={250}
-                    onRequestClose={() => this.RBSheet.close()}
-                    customStyles={{
-                      draggableIcon: {
-                        backgroundColor: "#a3a3a3",
-                        width: '20%'
-                      },
-                      container: {
-                        borderTopRightRadius: 50,
-                        borderTopLeftRadius: 50,
-                        padding: 10
+                <Icon name={'filter-list'} color={'#000'} size={25} />
+              </TouchableOpacity>
+              <RBSheet
+                ref={ref => {
+                  this.RBSheet = ref;
+                }}
+                closeOnDragDown={true}
+                closeOnPressMask={false}
+                height={210}
+                openDuration={250}
+                onRequestClose={() => this.RBSheet.close()}
+                customStyles={{
+                  draggableIcon: {
+                    backgroundColor: "#a3a3a3",
+                    width: '20%'
+                  },
+                  container: {
+                    borderTopRightRadius: 50,
+                    borderTopLeftRadius: 50,
+                    padding: 10
+                  }
+                }}
+              >
+                <View style={styles.bottomsortContainer}>
+                  <TouchableOpacity
+                    onPress={() => this.setState({ isSelectSort: 'lowTohigh' })}
+                    style={{ flexDirection: 'row' }}>
+                    <View style={{ flex: 7 }}>
+                      <Text style={styles.sortingbottomtxt}>{'Price Low to High'}</Text>
+                    </View>
+                    <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
+                      {
+                        isSelectSort == 'lowTohigh' ?
+                          <Icon name={'done'} size={20} color={'#000'} />
+                          : null
                       }
-                    }}
-                  >
-                    <View style={styles.bottomsortContainer}>
-                      <TouchableOpacity
-                        onPress={() => this.setState({ isSelectSort: 'lowTohigh'})}
-                        style={{ flexDirection: 'row' }}>
-                        <View style={{ flex: 7 }}>
-                          <Text style={styles.sortingbottomtxt}>{'Price Low to High'}</Text>
-                        </View>
-                        <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
-                          {
-                            isSelectSort == 'lowTohigh' ?
-                              <Icon name={'done'} size={20} color={'#000'} />
-                              : null
-                          }
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => this.setState({ isSelectSort:'highTolow'}) }
-                        style={{ flexDirection: 'row' }}>
-                        <View style={{ flex: 7 }}>
-                          <Text style={styles.sortingbottomtxt}>{'Price High to Low'}</Text>
-                        </View>
-                        <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
-                          {
-                            isSelectSort == 'highTolow' ?
-                              <Icon name={'done'} size={20} color={'#000'} />
-                              : null
-                          }
-                        </View>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        onPress={() => this.applysorting()}
-                        style={styles.applybutton}>
-                        <Text style={{ color: '#fff', fontSize: 15 }}>{"Apply"}</Text>
-                      </TouchableOpacity>
-
                     </View>
-                  </RBSheet>
-              {
-                modalVisible ?
-                  <Modal
-                    animationType="slide"
-                    transparent={true}
-                    hideModalContentWhileAnimating={true}
-                    visible={modalVisible}
-                    animationInTiming={600}
-                    animationOutTiming={600}
-                    backdropTransitionInTiming={600}
-                    backdropTransitionOutTiming={600}
-                    style={styles.modalStyle}
-                    animationIn="zoomInDown"
-                    animationOut="zoomOutUp"
-                    backdropOpacity={0.5}
-                    deviceWidth={deviceWidth}
-                    deviceHeight={deviceHeight}
-                    onRequestClose={() => {
-                      this.setState({ modalVisible: false })
-                    }}
-                  >
-                    <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
-                    <View style={styles.transparentContainer}>
-                      <View style={styles.viewContainer}>
-                        <Swiper
-                          loop={false}
-                          activeDot={<View style={styles.activeDot} />}
-                          containerStyle={styles.swiperContainer}
-                        >
-
-                          {
-                            productData.serviceImage && productData.serviceImage.map((item) => {
-
-                              return (
-                                <View style={styles.imageBackgroundContainer}>
-                                  <Image
-                                    style={styles.imageBackground}
-                                    source={{ uri: item }}
-                                  />
-                                </View>
-                              )
-                            })}
-
-                        </Swiper>
-                        <Header
-                          onCancelPress={() => this.setState({ modalVisible: false })}
-                          headerContainerStyle={styles.headerContainerStyle}
-                          onSharePress={this.onShare} />
-                        <ScrollView style={styles.descriptionContainer}>
-
-                          <Text style={styles.title}>{productData.name}</Text>
-                          <Text style={styles.title}>Available Slot : {productData.serviceDetail.serviceSlot[0].start} to {productData.serviceDetail.serviceSlot[0].end}</Text>
-                          <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{productData.description}</Text>
-                          <View style={styles.inputContainer}>
-                            <DatePicker
-                              style={{ width: '100%' }}
-                              date={slotdate}
-                              mode="date"
-                              placeholder="select date"
-                              format="DD-MM-YYYY"
-                              minDate={new Date()}
-                              maxDate={moment().day(17)}
-                              confirmBtnText="Confirm"
-                              cancelBtnText="Cancel"
-                              customStyles={{
-                                dateIcon: {
-                                  position: 'absolute',
-                                  left: 0,
-                                  top: 4,
-                                  marginLeft: 10
-                                },
-                                dateInput: {
-                                  marginLeft: -180,
-                                  borderWidth: 0,
-                                  flex: 9,
-                                  // backgroundColor:'pink'
-                                }
-                                // ... You can check the source to find the other keys.
-                              }}
-                              onDateChange={(date) => this.setState({ slotdate: date })}
-                            />
-                          </View>
-                          <View style={styles.inputContainer}>
-                            <Picker
-                              selectedValue={selectedSlot}
-                              style={{ width: '100%', height: 40 }}
-                              onValueChange={(itemValue, itemIndex) => {
-                                if (productData.serviceDetail.serviceSlot[0].start <= itemIndex && productData.serviceDetail.serviceSlot[0].end >= itemIndex) {
-                                  this.setState({ selectedSlot: itemValue })
-                                } else {
-                                  Alert.alert("", `Plaease Select time Between ${productData.serviceDetail.serviceSlot[0].start} to ${productData.serviceDetail.serviceSlot[0].end}`)
-                                }
-                              }
-                              }>
-                              <Picker.Item label="Select Slot" value="" />
-                              {
-                                timedata.map((item) => {
-                                  return (
-                                    <Picker.Item label={item.item} value={item.id} key={item.id} />
-                                  )
-
-                                })
-                              }
-                            </Picker>
-                          </View>
-                          <Text style={styles.price}>₹ {productData.serviceDetail ? productData.serviceDetail.price : null}</Text>
-                          <View style={styles.borderLine} />
-                          <TouchableOpacity
-                            onPress={() => this.booknow(productData)}
-                            style={[styles.addToBagContainerStyle, { marginBottom: 20 }]}>
-                            <Text style={{ color: '#fff', fontSize: 20 }}>{"Book Now"}</Text>
-                          </TouchableOpacity>
-                        </ScrollView>
-
-                      </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => this.setState({ isSelectSort: 'highTolow' })}
+                    style={{ flexDirection: 'row' }}>
+                    <View style={{ flex: 7 }}>
+                      <Text style={styles.sortingbottomtxt}>{'Price High to Low'}</Text>
                     </View>
-                  </Modal>
-                  : null
-              }
+                    <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
+                      {
+                        isSelectSort == 'highTolow' ?
+                          <Icon name={'done'} size={20} color={'#000'} />
+                          : null
+                      }
+                    </View>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => this.applysorting()}
+                    style={styles.applybutton}>
+                    <Text style={{ color: '#fff', fontSize: 15 }}>{"Apply"}</Text>
+                  </TouchableOpacity>
+
+                </View>
+              </RBSheet>
+
+              <ServiceModelComponent
+                item={productData}
+                shippingMethods={this.props.shippingMethods}
+                visible={modalVisible}
+                onAddToBag={(item, selectedSlot, selectedshopID, slotdate) => this.booknow(item, selectedSlot, selectedshopID, slotdate)}
+                onCancelPress={() => this.setState({ modalVisible: !this.state.modalVisible})}
+                appConfig={this.props.appConfig}
+                navigation={this.props.navigation}
+              />
+              
             </View>
           </>
         )
@@ -578,7 +471,7 @@ class CategoryProductGridScreen extends Component {
                   >
                     <View style={styles.bottomsortContainer}>
                       <TouchableOpacity
-                        onPress={() => this.setState({ isSelectSort: 'lowTohigh'})}
+                        onPress={() => this.setState({ isSelectSort: 'lowTohigh' })}
                         style={{ flexDirection: 'row' }}>
                         <View style={{ flex: 7 }}>
                           <Text style={styles.sortingbottomtxt}>{'Price Low to High'}</Text>
@@ -592,7 +485,7 @@ class CategoryProductGridScreen extends Component {
                         </View>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => this.setState({ isSelectSort:'highTolow'}) }
+                        onPress={() => this.setState({ isSelectSort: 'highTolow' })}
                         style={{ flexDirection: 'row' }}>
                         <View style={{ flex: 7 }}>
                           <Text style={styles.sortingbottomtxt}>{'Price High to Low'}</Text>

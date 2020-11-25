@@ -237,7 +237,6 @@ class CheckoutScreen extends Component {
     result.map((item, indexOfResult) => {
       let obj = [];
       bagData.map((productitem, indexOfBagdata) => {
-        console.log("in place order product",  productitem.products[0].color ,productitem.products[0].size )
         if (item.shop_id == productitem.products[0].product_id.shop_id) {
           obj.push({
             product_id: productitem.products[0].product_id._id,
@@ -249,12 +248,10 @@ class CheckoutScreen extends Component {
           })
         }
       })
-      console.log("obj", obj)
       result[indexOfResult].products = obj
     })
 
 
-    console.log("result===========", JSON.stringify(result), result[0].products)
     //Call Place order api
     const placeorderresponse = await placeOrder(JSON.stringify(result));
     console.log("placeorderresponse", placeorderresponse)
@@ -272,11 +269,9 @@ class CheckoutScreen extends Component {
     else if (placeorderresponse.statusCode == 200) {
       this.setState({ dialogVisible: false, isLoading: false })
       bagData.map(async (item) => {
-      console.log("item.id",item._id )
         // After place order make statis true for placed products
         const cartStatus = await changeCartStatus(item._id)
 
-        console.log("changeCartStatus",cartStatus )
         if (cartStatus.statusCode == 200) {
          
           this.props.navigation.navigate("Order", { appConfig: this.appConfig });

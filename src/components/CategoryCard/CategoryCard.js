@@ -16,7 +16,7 @@ function CategoryCard(props) {
       onPress={onCategoryPress}
       style={[styles.categoryTextContainerView, styles.categoryImageContainer, imageContainerStyle,{paddingLeft:10,paddingRight:10}]}
     >
-      <Text style={styles.categoryText}>{item.name.toUpperCase()}</Text>
+      <Text style={styles.categoryText}>{(item.name.toUpperCase()).replace(/_/g, " ")}</Text>
     </TouchableOpacity>
 
   );

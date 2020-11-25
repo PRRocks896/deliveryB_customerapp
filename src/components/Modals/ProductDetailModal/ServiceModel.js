@@ -8,7 +8,8 @@ import {
     TouchableOpacity,
     Image,
     AsyncStorage,
-    FlatList
+    FlatList,
+    Alert
 } from "react-native";
 import PropTypes from "prop-types";
 import Modal from "react-native-modal";
@@ -52,7 +53,7 @@ const timedata = [
     { id: 22, item: '22 : 00 Pm' },
     { id: 23, item: '23 : 00 Pm' },
     { id: 24, item: '24 : 00 Pm' },
-  ]
+]
 function ServiceModelComponent(props) {
     const colorScheme = useColorScheme();
     const styles = dynamicStyles(colorScheme);
@@ -63,10 +64,10 @@ function ServiceModelComponent(props) {
     const [shopList, setshopList] = useState([])
     const refRBSheet = useRef();
     const [selectedshopID, setselectedshopID] = useState('')
-    const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, alreadyAddecart, navigation, bookNow} = props;
+    const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, alreadyAddecart, navigation, bookNow } = props;
     const [selectedSlot, setselectedSlot] = useState('')
-  const [slotdate, setslotdate] = useState(moment().format('DD/MM/YYYY'))
-  const [serviceData, setserviceData] = useState([])
+    const [slotdate, setslotdate] = useState(moment().format('DD/MM/YYYY'))
+    const [serviceData, setserviceData] = useState([])
 
     /**
      * Get Shop All List by Product Master id
@@ -85,22 +86,22 @@ function ServiceModelComponent(props) {
         }
     }
 
-   
+
 
 
     const onShare = async () => {
-        
-            await Share.share({
-                title: "Shopertino Product",
-                dialogTitle: `Shopertino Product: ${item.name}`,
-                message: item.name + item.description + item.serviceDetail.price,
-                image: item.serviceImage[0]
 
-            });
-        
+        await Share.share({
+            title: "Shopertino Product",
+            dialogTitle: `Shopertino Product: ${item.name}`,
+            message: item.name + item.description + item.serviceDetail.price,
+            image: item.serviceImage[0]
+
+        });
+
     };
 
-  
+
 
 
     const displayshopList = () => {
@@ -115,7 +116,7 @@ function ServiceModelComponent(props) {
                                     <Text style={styles.shopname}>{item.item.name}  </Text>
                                     {
                                         item.item.isVerified ?
-                                            <Icons name='check-decagram' size={18} color={'#3043F8'} style={{ textAlign: 'center', alignSelf: 'center' }} />
+                                            <Icons name='check-decagram' size={18} color={'#36D8FF'} style={{ textAlign: 'center', alignSelf: 'center', marginTop:5 }} />
                                             : null
                                     }
                                 </View>
@@ -136,160 +137,159 @@ function ServiceModelComponent(props) {
         )
     }
 
-// console.log("item====service==========================", item)
-if(item){
-    return (
-        <>
-            <Modal
-                isVisible={visible}
-                hideModalContentWhileAnimating={true}
-                animationIn="zoomInDown"
-                animationOut="zoomOutUp"
-                animationInTiming={600}
-                animationOutTiming={600}
-                backdropTransitionInTiming={600}
-                backdropTransitionOutTiming={600}
-                style={styles.modalStyle}
-                backdropOpacity={0.5}
-                deviceWidth={deviceWidth}
-                deviceHeight={deviceHeight}
-                onBackButtonPress={onCancelPress}
-            >
+    if (item) {
+        return (
+            <>
+                <Modal
+                    isVisible={visible}
+                    hideModalContentWhileAnimating={true}
+                    animationIn="zoomInDown"
+                    animationOut="zoomOutUp"
+                    animationInTiming={600}
+                    animationOutTiming={600}
+                    backdropTransitionInTiming={600}
+                    backdropTransitionOutTiming={600}
+                    style={styles.modalStyle}
+                    backdropOpacity={0.5}
+                    deviceWidth={deviceWidth}
+                    deviceHeight={deviceHeight}
+                    onBackButtonPress={onCancelPress}
+                >
 
-                <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
-                <View style={styles.transparentContainer}>
-                    <View style={styles.viewContainer}>
-                        <Swiper
-                            loop={false}
-                            activeDot={<View style={styles.activeDot} />}
-                            containerStyle={styles.swiperContainer}
-                        >
+                    <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
+                    <View style={styles.transparentContainer}>
+                        <View style={styles.viewContainer}>
+                            <Swiper
+                                loop={false}
+                                activeDot={<View style={styles.activeDot} />}
+                                containerStyle={styles.swiperContainer}
+                            >
 
-                            {
-                                item.serviceImage && item.serviceImage.map((item) => {
-                                    return (
-                                        <View style={styles.imageBackgroundContainer}>
-                                            <Image
-                                                style={styles.imageBackground}
-                                                source={{ uri: item }}
-                                            />
-                                        </View>
-                                    )
-                                })}
-
-
-                        </Swiper>
+                                {
+                                    item.serviceImage && item.serviceImage.map((item) => {
+                                        return (
+                                            <View style={styles.imageBackgroundContainer}>
+                                                <Image
+                                                    style={styles.imageBackground}
+                                                    source={{ uri: item }}
+                                                />
+                                            </View>
+                                        )
+                                    })}
 
 
-                        <Header
-                            onCancelPress={onCancelPress}
-                            headerContainerStyle={styles.headerContainerStyle}
-                            onSharePress={onShare}
-                        />
+                            </Swiper>
 
 
-                        <ScrollView style={styles.descriptionContainer}>
+                            <Header
+                                onCancelPress={onCancelPress}
+                                headerContainerStyle={styles.headerContainerStyle}
+                                onSharePress={onShare}
+                            />
 
 
-                            <Text style={styles.title}>{item.name}</Text>
-                            <Text style={styles.title}>Available Slot : { item.serviceDetail && item.serviceDetail.serviceSlot[0].start} to { item.serviceDetail && item.serviceDetail.serviceSlot[0].end}</Text>
-                            <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{item.description}</Text>
-                            <View style={styles.inputContainer}>
-                                <DatePicker
-                                    style={{ width: '100%' }}
-                                    date={slotdate}
-                                    mode="date"
-                                    placeholder="select date"
-                                    format="DD-MM-YYYY"
-                                    confirmBtnText="Confirm"
-                                    cancelBtnText="Cancel"
-                                    minDate={new Date()}
-                                    maxDate={moment().day(17)}
-                                    customStyles={{
-                                        dateIcon: {
-                                            position: 'absolute',
-                                            left: 0,
-                                            top: 4,
-                                            marginLeft: 10
-                                        },
-                                        dateInput: {
-                                            marginLeft: -180,
-                                            borderWidth: 0,
+                            <ScrollView style={styles.descriptionContainer}>
 
+
+                                <Text style={styles.title}>{item.name}</Text>
+                                <Text style={styles.title}>Available Slot : {item.serviceDetail && item.serviceDetail.serviceSlot[0].start} to {item.serviceDetail && item.serviceDetail.serviceSlot[0].end}</Text>
+                                <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{item.description}</Text>
+                                <View style={styles.inputContainer}>
+                                    <DatePicker
+                                        style={{ width: '100%' }}
+                                        date={slotdate}
+                                        mode="date"
+                                        placeholder="select date"
+                                        format="DD-MM-YYYY"
+                                        confirmBtnText="Confirm"
+                                        cancelBtnText="Cancel"
+                                        minDate={new Date()}
+                                        maxDate={moment().day(17)}
+                                        customStyles={{
+                                            dateIcon: {
+                                                position: 'absolute',
+                                                left: 0,
+                                                top: 4,
+                                                marginLeft: 10
+                                            },
+                                            dateInput: {
+                                                marginLeft: -180,
+                                                borderWidth: 0,
+
+                                            }
+                                            // ... You can check the source to find the other keys.
+                                        }}
+                                        onDateChange={(date) => setslotdate(date)}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Picker
+                                        selectedValue={selectedSlot}
+                                        style={{ width: '100%', height: 40 }}
+                                        onValueChange={(itemValue, itemIndex) => {
+                                            if (item.serviceDetail.serviceSlot[0].start <= itemIndex && item.serviceDetail.serviceSlot[0].end >= itemIndex) {
+                                                setselectedSlot(itemValue)
+                                            } else {
+                                                Alert.alert("", `Plaease Select time Between ${item.serviceDetail.serviceSlot[0].start} to ${item.serviceDetail.serviceSlot[0].end}`)
+                                            }
                                         }
-                                        // ... You can check the source to find the other keys.
-                                    }}
-                                    onDateChange={(date) => setslotdate(date)}
-                                />
-                            </View>
-                            <View style={styles.inputContainer}>
-                                <Picker
-                                    selectedValue={selectedSlot}
-                                    style={{ width: '100%', height: 40 }}
-                                    onValueChange={(itemValue, itemIndex) => {
-                                        if (item.serviceDetail.serviceSlot[0].start <= itemIndex && item.serviceDetail.serviceSlot[0].end >= itemIndex) {
-                                            setselectedSlot(itemValue)
-                                        } else {
-                                            Alert.alert("", `Plaease Select time Between ${item.serviceDetail.serviceSlot[0].start} to ${item.serviceDetail.serviceSlot[0].end}`)
-                                        }
-                                    }
-                                    }>
-                                    <Picker.Item label="Select Slot" value="" />
-                                    {
-                                        timedata.map((item) => {
-                                            return (
-                                                <Picker.Item label={item.item} value={item.id} key={item.id} />
-                                            )
+                                        }>
+                                        <Picker.Item label="Select Slot" value="" />
+                                        {
+                                            timedata.map((item) => {
+                                                return (
+                                                    <Picker.Item label={item.item} value={item.id} key={item.id} />
+                                                )
 
-                                        })
-                                    }
-                                </Picker>
-                            </View>
-                            <Text style={styles.price}>₹ {item.serviceDetail ? item.serviceDetail.price : null}</Text>
-                            <View style={styles.borderLine} />
-                            <TouchableOpacity
-                                onPress={() => [refRBSheet.current.open(), getShopList()]}
-                                style={[styles.addToBagContainerStyle, { marginBottom: 20 }]}>
-                                <Text style={{ color: '#fff', fontSize: 20 }}>{"Book Now"}</Text>
-                            </TouchableOpacity>
-                        </ScrollView>
+                                            })
+                                        }
+                                    </Picker>
+                                </View>
+                                <Text style={styles.price}>₹ {item.serviceDetail ? item.serviceDetail.price : null}</Text>
+                                <View style={styles.borderLine} />
+                                <TouchableOpacity
+                                    onPress={() => [refRBSheet.current.open(), getShopList()]}
+                                    style={[styles.addToBagContainerStyle, { marginBottom: 20 }]}>
+                                    <Text style={{ color: '#fff', fontSize: 20 }}>{"Book Now"}</Text>
+                                </TouchableOpacity>
+                            </ScrollView>
+                        </View>
                     </View>
-                </View>
 
-            </Modal>
+                </Modal>
 
-            <RBSheet
-                ref={refRBSheet}
-                closeOnDragDown={true}
-                closeOnPressMask={false}
-                height={210}
-                openDuration={250}
-                onRequestClose={() => refRBSheet.current.close()}
-                customStyles={{
-                    draggableIcon: {
-                        backgroundColor: "#a3a3a3",
-                        width: '20%'
-                    },
-                    container: {
-                        borderTopRightRadius: 50,
-                        borderTopLeftRadius: 50,
-                        padding: 10
-                    }
-                }}
-            >
-                <View>
-                    {displayshopList()}
+                <RBSheet
+                    ref={refRBSheet}
+                    closeOnDragDown={true}
+                    closeOnPressMask={false}
+                    height={210}
+                    openDuration={250}
+                    onRequestClose={() => refRBSheet.current.close()}
+                    customStyles={{
+                        draggableIcon: {
+                            backgroundColor: "#a3a3a3",
+                            width: '20%'
+                        },
+                        container: {
+                            borderTopRightRadius: 50,
+                            borderTopLeftRadius: 50,
+                            padding: 10
+                        }
+                    }}
+                >
+                    <View>
+                        {displayshopList()}
 
-                    <TouchableOpacity
-                        onPress={() => [bookNow(item), refRBSheet.current.close()]}
-                        style={styles.applybutton}>
-                        <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
-                    </TouchableOpacity>
-                </View>
-            </RBSheet>
-        </>
-    );
-            }
+                        <TouchableOpacity
+                            onPress={ () => [onAddToBag(item, selectedSlot, selectedshopID,slotdate ),refRBSheet.current.close() ]}
+                            style={styles.applybutton}>
+                            <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </RBSheet>
+            </>
+        );
+    }
 }
 
 

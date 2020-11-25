@@ -121,7 +121,7 @@ function ProductDetailModal(props) {
                   <Text style={styles.shopname}>{item.item.name}  </Text>
                   {
                     item.item.isVerified ? 
-                    <Icons name='check-decagram' size={18} color={'#3043F8'} style={{textAlign:'center',alignSelf:'center'}} />
+                    <Icons name='check-decagram' size={18} color={'#36D8FF'} style={{textAlign:'center',alignSelf:'center', marginTop:3}} />
                     : null 
                   }
                 </View>

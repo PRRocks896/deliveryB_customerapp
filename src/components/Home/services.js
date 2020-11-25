@@ -11,6 +11,7 @@ import RNFetchBlob from "react-native-fetch-blob";
 const deviceHeight = Dimensions.get("window").height;
 import DatePicker from 'react-native-datepicker'
 import moment from 'moment'
+import ServiceModelComponent from "../Modals/ProductDetailModal/ServiceModel";
 const timedata = [
     { id: 1, item: '01 : 00 Am' },
     { id: 2, item: '02 : 00 Am' },
@@ -96,7 +97,7 @@ function ServicesScreen(props) {
 
     }
 
-    const booknow = async (item) => {
+    const booknow = async (item, selectedSlot, selectedshopID, slotdate) => {
         let userid = await AsyncStorage.getItem('userId')
         setmodalVisible(false)
         if (selectedSlot !== '') {
@@ -104,10 +105,10 @@ function ServicesScreen(props) {
                 {
                     appConfig: appConfig,
                     customerID: userid,
-                    totalammount: product.serviceDetail.price,
+                    totalammount: item.serviceDetail.price,
                     slot: selectedSlot,
-                    shopid: item.serviceDetail.shop_id,
-                    service_id: product.serviceDetail._id,
+                    shopid: selectedshopID,
+                    service_id: item.serviceDetail._id,
                     slot_date: slotdate,
                     booking_number: Math.floor(100000000000 + Math.random() * 900000000000)
                 })
@@ -124,12 +125,12 @@ function ServicesScreen(props) {
                     servicedata.length ?
                         <>
                             <View style={[styles.unitContainer, { flexDirection: 'row' }]}>
-                                <View style={{flex:8}}>
-                                <Text style={styles.unitTitle}>{title}</Text>
+                                <View style={{ flex: 8 }}>
+                                    <Text style={styles.unitTitle}>{title}</Text>
                                 </View>
-                                <TouchableOpacity 
-                                onPress = { () => props.navigation.navigate('ViewAllProductsPage', {key: 'service'})}
-                                style={{ flex: 3 }}>
+                                <TouchableOpacity
+                                    onPress={() => props.navigation.navigate('ViewAllProductsPage', { key: 'service' })}
+                                    style={{ flex: 3 }}>
                                     <Text style={styles.unitTitle}>{'View All'}</Text>
                                 </TouchableOpacity>
                             </View>
@@ -140,129 +141,19 @@ function ServicesScreen(props) {
                         : null
                 }
             </ScrollView>
-            {
-                modalVisible ?
+
+            <ServiceModelComponent
+                item={product}
+                shippingMethods={props.shippingMethods}
+                visible={modalVisible}
+                onAddToBag={(item, selectedSlot, selectedshopID, slotdate) => booknow(item, selectedSlot, selectedshopID, slotdate)}
+                onCancelPress={() => setmodalVisible(!modalVisible)}
+                appConfig={props.appConfig}
+                navigation={props.navigation}
+            />
 
 
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        hideModalContentWhileAnimating={true}
-                        visible={modalVisible}
-                        animationInTiming={600}
-                        animationOutTiming={600}
-                        backdropTransitionInTiming={600}
-                        backdropTransitionOutTiming={600}
-                        style={styles.modalStyle}
-                        animationIn="zoomInDown"
-                        animationOut="zoomOutUp"
-                        backdropOpacity={0.5}
-                        deviceWidth={deviceWidth}
-                        deviceHeight={deviceHeight}
-                        onRequestClose={() => {
-                            setmodalVisible(!modalVisible)
-                        }}
-                    >
-                        <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
-                        <View style={styles.transparentContainer}>
-                            <View style={styles.viewContainer}>
-                                <Swiper
-                                    loop={false}
-                                    activeDot={<View style={styles.activeDot} />}
-                                    containerStyle={styles.swiperContainer}
-                                >
-
-                                    {
-                                        product.serviceImage && product.serviceImage.map((item) => {
-                                            
-                                            return (
-                                                <View style={styles.imageBackgroundContainer}>
-                                                    <Image
-                                                        style={styles.imageBackground}
-                                                        source={{ uri: item }}
-                                                    />
-                                                </View>
-                                            )
-                                        })}
-
-                                </Swiper>
-
-                                <Header
-                                    onCancelPress={() => setmodalVisible(false)}
-                                    headerContainerStyle={styles.headerContainerStyle}
-                                    onSharePress={onShare} />
-
-                                <ScrollView style={styles.descriptionContainer}>
-
-
-                                    <Text style={styles.title}>{product.name}</Text>
-                                    <Text style={styles.title}>Available Slot : {product.serviceDetail.serviceSlot[0].start} to {product.serviceDetail.serviceSlot[0].end}</Text>
-                                    <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{product.description}</Text>
-                                    <View style={styles.inputContainer}>
-                                        <DatePicker
-                                            style={{ width: '100%' }}
-                                            date={slotdate}
-                                            mode="date"
-                                            placeholder="select date"
-                                            format="DD-MM-YYYY"
-                                            confirmBtnText="Confirm"
-                                            cancelBtnText="Cancel"
-                                            minDate={new Date()}
-                                            maxDate={moment().day(17)}
-                                            customStyles={{
-                                                dateIcon: {
-                                                    position: 'absolute',
-                                                    left: 0,
-                                                    top: 4,
-                                                    marginLeft: 10
-                                                },
-                                                dateInput: {
-                                                    marginLeft: -180,
-                                                    borderWidth: 0,
-
-                                                }
-                                                // ... You can check the source to find the other keys.
-                                            }}
-                                            onDateChange={(date) => setslotdate(date)}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Picker
-                                            selectedValue={selectedSlot}
-                                            style={{ width: '100%', height: 40 }}
-                                            onValueChange={(itemValue, itemIndex) => {
-                                                if (product.serviceDetail.serviceSlot[0].start <= itemIndex && product.serviceDetail.serviceSlot[0].end >= itemIndex) {
-                                                    setselectedSlot(itemValue)
-                                                } else {
-                                                    Alert.alert("", `Plaease Select time Between ${product.serviceDetail.serviceSlot[0].start} to ${product.serviceDetail.serviceSlot[0].end}`)
-                                                }
-                                            }
-                                            }>
-                                            <Picker.Item label="Select Slot" value="" />
-                                            {
-                                                timedata.map((item) => {
-                                                    return (
-                                                        <Picker.Item label={item.item} value={item.id} key={item.id} />
-                                                    )
-
-                                                })
-                                            }
-                                        </Picker>
-                                    </View>
-                                    <Text style={styles.price}>₹ {product.serviceDetail ? product.serviceDetail.price : null}</Text>
-                                    <View style={styles.borderLine} />
-                                    <TouchableOpacity
-                                        onPress={() => booknow(product)}
-                                        style={[styles.addToBagContainerStyle, { marginBottom: 20 }]}>
-                                        <Text style={{ color: '#fff', fontSize: 20 }}>{"Book Now"}</Text>
-                                    </TouchableOpacity>
-                                </ScrollView>
-
-                            </View>
-                        </View>
-                    </Modal>
-                    : null
-            }
+           
         </>
     );
 
