@@ -37,32 +37,7 @@ import { sortingProducts } from '../../services/Products/getsubCategory'
 import ProductDetailModal from "../Modals/ProductDetailModal/ProductDetailModal";
 import addToBagProduct from "../AddTobagProduct/addbagproduct";
 import ServiceModelComponent from "../Modals/ProductDetailModal/ServiceModel";
-const timedata = [
-  { id: 1, item: '01 : 00 Am' },
-  { id: 2, item: '02 : 00 Am' },
-  { id: 3, item: '03 : 00 Am' },
-  { id: 4, item: '04 : 00 Am' },
-  { id: 5, item: '05 : 00 Am' },
-  { id: 6, item: '06 : 00 Am' },
-  { id: 7, item: '07 : 00 Am' },
-  { id: 8, item: '08 : 00 Am' },
-  { id: 9, item: '09 : 00 Am' },
-  { id: 10, item: '10 : 00 Am' },
-  { id: 11, item: '11 : 00 Am' },
-  { id: 12, item: '12 : 00 Am' },
-  { id: 13, item: '13 : 00 Pm' },
-  { id: 14, item: '14 : 00 Pm' },
-  { id: 15, item: '15 : 00 Pm' },
-  { id: 16, item: '16 : 00 Pm' },
-  { id: 17, item: '17 : 00 Pm' },
-  { id: 18, item: '18 : 00 Pm' },
-  { id: 19, item: '19 : 00 Pm' },
-  { id: 20, item: '20 : 00 Pm' },
-  { id: 21, item: '21 : 00 Pm' },
-  { id: 22, item: '22 : 00 Pm' },
-  { id: 23, item: '23 : 00 Pm' },
-  { id: 24, item: '24 : 00 Pm' },
-]
+
 
 function ViewAllProductsPage(props) {
   const colorScheme = useColorScheme();

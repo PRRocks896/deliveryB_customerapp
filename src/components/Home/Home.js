@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { ScrollView, View, BackHandler, Alert, RefreshControl, Text, FlatList, Dimensions, TouchableOpacity, ActivityIndicator, Image, Content,SafeAreaView  } from "react-native";
+import { ScrollView, View, BackHandler, Alert, RefreshControl, Text, FlatList, Dimensions, TouchableOpacity, ActivityIndicator, Image, Content, SafeAreaView } from "react-native";
 import { useColorScheme } from "react-native-appearance";
 import Categories from "./Categories";
 import NewArrivals from "./NewArrivals";
@@ -15,6 +15,9 @@ import NetInfo from '@react-native-community/netinfo';
 import ServicesScreen from './services'
 import getServiceData from "../../services/ShopServices/getservices";
 import getbestSellerService from '../../services/Products/bestSellerProducts'
+import { Searchbar } from 'react-native-paper';
+import Icon from "react-native-vector-icons/MaterialIcons";
+
 function Home(props) {
   const colorScheme = useColorScheme();
   const [category, setCategory] = useState([])
@@ -34,6 +37,7 @@ function Home(props) {
 
   const { width } = Dimensions.get("window");
   const styles = dynamicStyles(colorScheme);
+  const [searchQuery, setSearchQuery] = useState('');
   const {
     navigation,
     shippingMethods,
@@ -78,7 +82,7 @@ function Home(props) {
     getCategoryProducts() // For get categories
     getFeaturedProducts() // For get products
     getServices() // For get Service of shop
-   
+
     return () => [backHandler.remove(), unsubscribe()]
   }, []);
   const getServices = async () => {
@@ -110,6 +114,8 @@ function Home(props) {
       setisLoadingProduct(false)
     }
   }
+
+  const onChangeSearch = query => setSearchQuery(query);
   if (netInfo == false) {
     return (<View style={styles.container}>
       <View style={styles.offlineContainer}>
@@ -124,6 +130,17 @@ function Home(props) {
           getFeaturedProducts() //
         }} />}
         style={styles.container} >
+        <View style={{ marginLeft: 10, marginRight: 10, marginTop: 5 }}>
+          <Searchbar
+            onPress={() => props.navigation.navigate('AllSearchPage', { appConfig: props.appConfig})}
+            placeholder="Search"
+            onChangeText={onChangeSearch}
+            value={searchQuery}
+            clearIcon={() => <Icon name={'close'} size={20} color={'#808080'} />}
+          />
+        </View>
+
+
         {
           isLoadingcategory == true ?
             <SkeletonPlaceholder>
@@ -240,16 +257,16 @@ function Home(props) {
             </SkeletonPlaceholder>
 
             :
-          <BestSellers
-            onCardPress={props.onCardPress}
-            // bestSellerProducts={products}
-            title={"Best Sellers"}
-            navigation={navigation}
-            shouldLimit={false}
-            limit={50}
-            appConfig={appConfig}
-            shippingMethods={shippingMethods}
-          />
+            <BestSellers
+              onCardPress={props.onCardPress}
+              // bestSellerProducts={products}
+              title={"Best Sellers"}
+              navigation={navigation}
+              shouldLimit={false}
+              limit={50}
+              appConfig={appConfig}
+              shippingMethods={shippingMethods}
+            />
         }
 
 

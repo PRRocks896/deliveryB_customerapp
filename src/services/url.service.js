@@ -103,6 +103,12 @@ const api = {
     allshoplist:{
         allshoplist : Config.getURL + 'customer/shop/list/'
     },
+    cancelorder:{
+        cancelorder: Config.getURL + 'customer/orders/cancel/'
+    },
+    allSearch:{
+        allSearch:Config.getURL + 'customer/shop/search/all?order=desc&'
+    },
     
 
     // services
@@ -141,6 +147,10 @@ const api = {
     customerCharges: {
         customerCharges: 'https://api.stripe.com/v1/charges'
     },
+
+    googleapiforkm:{
+        googleapiforkm: 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&'
+    }
 
 }
 

@@ -20,6 +20,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { EventRegister } from 'react-native-event-listeners'
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Geolocation from 'react-native-geolocation-service';
+import shopdetails from "../../services/ShopDetails/shopdetails";
+import getkmgoogleapi from "../../services/Googleapi/googleapi";
 
 const { width, height } = Dimensions.get('window')
 const ASPECT_RATIO = width / height
@@ -62,12 +64,19 @@ class ShoppingBagScreen extends Component {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA
       },
+
+      customerLat:'',
+      customerLong:'',
+
+      taxsCharges:0,
+      deliveryfee:0
     }
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.props.navigation.addListener(
       'didFocus',
       payload => {
         this.componentDidMount()
+        this.permissionforlocation()
 
       });
 
@@ -88,6 +97,7 @@ class ShoppingBagScreen extends Component {
    */
   componentDidMount = async () => {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    this.permissionforlocation()
 
     let userid = await AsyncStorage.getItem('userId')
     console.log("userid", userid)
@@ -107,11 +117,82 @@ class ShoppingBagScreen extends Component {
       this.setState({ isDataLoading: true })
     }
 
+    let shopArray = []
+    let shoplatlong = []
+    getdata.data.map((item)=> shopArray.push(item.shop_id))
+    let uniqshopsid = shopArray.filter(function (item, index, inputArray) {
+      return inputArray.indexOf(item) == index;
+    });
+    let length = shopArray.length;
+    console.log("shopArray", uniqshopsid)
+    uniqshopsid.map(async(item) => {
+      const responseshop = await shopdetails(item)
+      if(responseshop.success){
+        console.log("shop lat long", responseshop.data.shopDetail.shopLatitude, responseshop.data.shopDetail.shopLongitude)
+        shoplatlong.push ( { lat : responseshop.data.shopDetail.shopLatitude , long : responseshop.data.shopDetail.shopLongitude});
+        length--;
+        if(length == 0) {
+          console.log(">>>>>>>>>>>>>>>>>>>>>shoplatlong", shoplatlong)
+          this.getdistance(shoplatlong)
 
-    this.permissionforlocation()
-
+        }
+      }
+    })
+    
+    
   }
 
+  getdistance = async(shoplatlong) => {
+    console.log("customer data lat long", this.state.customerLat, this.state.customerLong, shoplatlong)
+    let km = []
+    // let destination = shoplatlong.startsWith('%7C') ? shoplatlong.replace('%7C','') : ''
+    console.log("destination", shoplatlong)
+    
+    shoplatlong.map((item) => {
+      
+    let data =   this.getkm( this.state.customerLat, this.state.customerLong, item.lat, item.long,  unit = 'K')
+    console.log("final km", data) 
+        km.push(data)
+       })
+
+       console.log("km", km)
+       console.log(
+        km.reduce((a, b) => a + b, 0)
+    
+      )
+
+      let finalchargekm =  km.reduce((a, b) => a + b, 0)
+      if(finalchargekm <= 2) {
+          this.setState({deliveryfee : 20})
+      }else {
+        let charges = finalchargekm -2 
+        console.log("charges", charges * 10)
+        this.setState({ deliveryfee :charges * 10 })
+      }
+   
+  }
+  getkm(lat1, lon1, lat2, lon2, unit = 'K'){
+    if ((lat1 == lat2) && (lon1 == lon2)) {
+      return 0;
+    }
+    else {
+      var radlat1 = Math.PI * lat1/180;
+      var radlat2 = Math.PI * lat2/180;
+      var theta = lon1-lon2;
+      var radtheta = Math.PI * theta/180;
+      var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      if (dist > 1) {
+        dist = 1;
+      }
+      dist = Math.acos(dist);
+      dist = dist * 180/Math.PI;
+      dist = dist * 60 *  1.1515;
+      if (unit=="K") { dist = dist * 1.609344 }
+      if (unit=="N") { dist = dist * 0.8684 }
+      return dist;
+    }
+
+  }
   permissionforlocation = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -141,11 +222,15 @@ class ShoppingBagScreen extends Component {
           longitude: position.coords.longitude,
           latitudeDelta: 0.001,
           longitudeDelta: 0.001
-        };
+        };  
+          
+        this.setState({ customerLat: position.coords.latitude , customerLong: position.coords.longitude})
         this.setState({
           region: region,
           error: null,
         });
+
+
       },
       (error) => {
         alert( error.message);
@@ -163,11 +248,13 @@ class ShoppingBagScreen extends Component {
   onContinuePress = async () => {
     this.setState({ isLoading: true })
     let userid = await AsyncStorage.getItem('userId')
+    const {totalPayamount , taxsCharges , deliveryfee} = this.state
+    let total  = totalPayamount + taxsCharges + deliveryfee
     // this.props.setSubtotalPrice(Number(this.props.totalShoppinBagPrice));
     this.state.allShoppingBag.length &&
       this.props.navigation.navigate("PaymentMethod", {
         appConfig: this.appConfig,
-        totalPrice: this.state.totalPayamount,
+        totalPrice: total,
         customerID: userid,
         product: this.state.allShoppingBag
 
@@ -312,9 +399,15 @@ class ShoppingBagScreen extends Component {
       />
     )
   }
+  gettotalamount () {
+    const  { totalPayamount, taxsCharges, deliveryfee} = this.state
+    let total = parseFloat(totalPayamount) + parseFloat(taxsCharges) + parseFloat(deliveryfee)
+    console.log("toral", total.toFixed(2))
+    return total.toFixed(2)
+  }
 
   render() {
-    const { totalPayamount, isLoading, isShowData, isDataLoading } = this.state
+    const { totalPayamount, isLoading, isShowData, isDataLoading , taxsCharges, deliveryfee} = this.state
 
     if (isShowData == true) {
 
@@ -347,17 +440,17 @@ class ShoppingBagScreen extends Component {
                       </View>
                       <View style={{ flexDirection: 'row', paddingTop: 5 }}>
                         <Text style={styles.text}>Delivery partner fee</Text>
-                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ 0</Text>
+                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ {deliveryfee.toFixed(2)}</Text>
                       </View>
                     </View>
                     <View style={{ flexDirection: 'row', paddingBottom: 10 }}>
                       <Text style={styles.text}>Texes and Charges</Text>
-                      <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ 0</Text>
+                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ {taxsCharges.toFixed(2)}</Text>
                     </View>
                     <View style={styles.dashboarder} />
                     <View style={{ flexDirection: 'row' }}>
                       <Text style={[styles.text, { fontSize: 18 }]}>To Pay</Text>
-                      <Text style={[styles.text, { position: 'absolute', right: 20, fontSize: 18 }]}>₹ {totalPayamount}</Text>
+                      <Text style={[styles.text, { position: 'absolute', right: 20, fontSize: 18 }]}>{this.gettotalamount()}</Text>
                     </View>
                   </View>
                 </View>

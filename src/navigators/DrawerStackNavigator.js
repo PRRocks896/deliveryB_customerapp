@@ -23,6 +23,7 @@ import SearchService from '../screens/SearchScreen/SearchService'
 import ServicebookDetails from '../screens/Order/servicebookScreen'
 import OrderDetailsScreen from '../screens/Order/orderDetails'
 import ViewAllProductsPage from '../components/Home/ViewAllProductsPage'
+import AllSearchPage from '../components/Home/AllSearch'
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: HomeScreen,
@@ -36,7 +37,8 @@ const DrawerNavigator = createDrawerNavigator(
     QRScanner:QRScanner,
     SearchService:SearchService,
     ServicebookDetails:ServicebookDetails,
-    ViewAllProductsPage:ViewAllProductsPage
+    ViewAllProductsPage:ViewAllProductsPage,
+    AllSearchPage:AllSearchPage
     // OrderDetailsScreen:OrderDetailsScreen
   },
   {
@@ -83,7 +85,8 @@ const DrawerNavigator = createDrawerNavigator(
         navigation.state.routes[routeIndex].key == 'MyWallet' && 'My Wallet' || 
         navigation.state.routes[routeIndex].key ==  'ServicebookDetails' && 'Booked Service' ||
         navigation.state.routes[routeIndex].key ==  'SearchService' && 'Search Service' ||
-        navigation.state.routes[routeIndex].key ==  'ViewAllProductsPage' && 'View All'
+        navigation.state.routes[routeIndex].key ==  'ViewAllProductsPage' && 'View All' ||
+        navigation.state.routes[routeIndex].key ==  'AllSearchPage' && 'Search'
       };
     }
   }
@@ -116,6 +119,8 @@ const getDrawerScreenTitle = routeKey => {
       return "AddCards";
     case "ViewAllProductsPage" :
       return "ViewAllProductsPage";  
+    case "AllSearchPage" :
+        return "AllSearchPage";    
     default:
       return "Home";
   }

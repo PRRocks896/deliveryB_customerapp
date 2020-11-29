@@ -10,11 +10,15 @@ import {
 } from "../../redux/";
 import getOrder from "../../services/Order";
 import AsyncStorage from "@react-native-community/async-storage";
-import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl } from 'react-native'
+import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl , Alert} from 'react-native'
 import Appstyle from '../../AppStyles'
 import moment from "moment";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { ActivityIndicator } from "react-native-paper";
+import { SwipeListView } from 'react-native-swipe-list-view';
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import cancelOrderData from "../../services/Order/cancelOrder";
+import Toast from 'react-native-simple-toast';
 
 class OrdersScreen extends Component {
   constructor(props) {
@@ -73,8 +77,8 @@ class OrdersScreen extends Component {
         "page": 1
       }
     })
-console.log("addressid", addressid)
     const data = await getOrder(addressid, body)
+    // console.log("addressid", data)
      
       if (data.success) {
         this.setState({ orderHistory: data.data})
@@ -83,54 +87,94 @@ console.log("addressid", addressid)
     if (data.data.length !== 0) this.setState({ isShowData: true })
     else if (data.data.length == 0 || data.data.length == undefined) this.setState({ isShowData: false })
   }
+ /**
+     * Delete book services
+     * @param {any} id 
+     */
+    deleteOrder = async(id) => {
+      console.log("delete service", id)
+      Alert.alert(
+          "",
+         "Are You Sure You Want To Cancel Order",
+         [{
+          text: 'YES',
+          onPress: () => this.removeorder(id)
+        }, { text: 'NO' }],
+          { cancelable: true }
+        );
 
+     
+  }
+  /**
+   * Remove service api call
+   * @param {any} id 
+   */
+  removeorder = async(id) => {
+      const response = await cancelOrderData(id)
+      console.log("Cancel Order", response)
+      if(response.statusCode == 200){
+          Toast.show(response.data.status, Toast.LONG);
+          this.getOrders()
+      }
+  }
 
   getOrderList = () => {
 
     const { orderHistory ,refreshing} = this.state
     return (
-      <FlatList
-        data={orderHistory}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
-          this.getOrders()
+      <SwipeListView
+      data={orderHistory}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
+        this.getOrders()
       }} />}
-        renderItem={(item, index) => {
-          const orderdate = moment(item.item.createdAt).format('DD/MM/YYYY HH:mm')
-          return (
-          <TouchableOpacity onPress={ () => this.props.navigation.navigate('OrderDetailsScreen', { type:'Order', data: item.item})} style={styles.card}>
-              <View style={styles.row}>
-                <Text style={styles.tital}>Your Order number :  </Text>
-                <Text style={styles.subtitle}>{item.item.order_number}</Text>
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.tital}>Order Status:  </Text>
-                <Text style={[styles.subtitle, { color: '#008000', fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{item.item.status}</Text>
-              </View>
+                
+                renderItem={(item) => {
+                  const orderdate = moment(item.item.createdAt).format('DD/MM/YYYY HH:mm')
 
-              <View style={styles.row}>
-                <Text style={styles.tital}>Total amount:  </Text>
-                <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{item.item.amount}</Text>
-              </View>
+                    return (
+                      <TouchableOpacity onPress={ () => this.props.navigation.navigate('OrderDetailsScreen', { type:'Order', data: item.item})} style={styles.card}>
+                      <View style={styles.row}>
+                        <Text style={styles.tital}>Your Order number :  </Text>
+                        <Text style={styles.subtitle}>{item.item.order_number}</Text>
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.tital}>Order Status:  </Text>
+                        <Text style={[styles.subtitle, { color: '#008000', fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{item.item.status}</Text>
+                      </View>
+                
+                      <View style={styles.row}>
+                        <Text style={styles.tital}>Total amount:  </Text>
+                        <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{item.item.amount}</Text>
+                      </View>
+                
+                      <View style={[styles.row, { position: 'absolute', right: 10, bottom: 10, marginTop: 10 }]}>
+                        <Text style={styles.timedate}>{orderdate}</Text>
+                      </View>
+                
+                      <View>
+                
+                      </View>
+                    </TouchableOpacity>
+                    )
+                }}
+                renderHiddenItem={(item, rowMap) => {
+                    if(item.item.status == 'ORDER_PLACED'){
 
-              <View style={[styles.row, { position: 'absolute', right: 10, bottom: 10, marginTop: 10 }]}>
-                <Text style={styles.timedate}>{orderdate}</Text>
-              </View>
-
-              <View>
-
-              </View>
-            </TouchableOpacity>
-          )
-        }}
-        onEndReachedThreshold={0.8}
-        onEndReached={({ distanceFromEnd }) => {
-            console.log(" ***************** " + distanceFromEnd);
-            this.getOrders();
-
-        }}
-        ListFooterComponent={this.BottomView()}
-
-      />
+                        return(
+                        <View style={[styles.rowBack, { marginTop: 4, backgroundColor: '#fff', alignSelf: 'flex-end' }]}>
+    
+                            <TouchableOpacity
+                                onPress={() => this.deleteOrder(item.item._id)}
+                                style={{ marginRight: 10 }}>
+                                <Icon name={'delete'} size={25} color={'red'} />
+                            </TouchableOpacity>
+                        </View>
+                    )
+                    }}}
+                rightOpenValue={-75}
+               
+            />
+     
     )
   }
   BottomView = () => {
@@ -278,5 +322,14 @@ const styles = StyleSheet.create({
   },
   shopmainSkeleton:{
     flexDirection: "row", alignItems: "center"
-  }
+  }, rowBack: {
+    alignItems: 'center',
+    backgroundColor: '#a3a3a3',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+    marginTop: 10
+},
+
 })

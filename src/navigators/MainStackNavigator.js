@@ -20,7 +20,7 @@ import SaveAddressScreen from "../screens/SaveAddress/saveAddressscreen"
 import ServicePaymentOptions from '../components/Home/ServiceFlow/paymentmethod'
 import PlaceServiceScrren from '../components/Home/ServiceFlow/placeorder'
 import OrderDetailsScreen from '../screens/Order/orderDetails'
-
+import TrackOrderComp from '../components/Order/trackOrder'
 const MainStackNavigator = createStackNavigator(
   {
     Drawer: { screen: DrawerStackNavigator },
@@ -51,6 +51,12 @@ const MainStackNavigator = createStackNavigator(
       screen: SaveAddressScreen,
       navigationOptions: {
         title: 'Add Your Address'
+      }
+    },
+    TrackOrderComp: {
+      screen: TrackOrderComp,
+      navigationOptions: {
+        title: 'Track Order'
       }
     }
   },

@@ -57,14 +57,14 @@ const timedata = [
 function ServiceModelComponent(props) {
     const colorScheme = useColorScheme();
     const styles = dynamicStyles(colorScheme);
-    const [alreadyaddecart, setalreadyaddecart] = useState(false)
+
     const [selecteditemcolor, setselecteditemcolor] = useState('')
     const [selecteditemSize, setselecteditemSize] = useState('')
     const [quentity, setquentity] = useState(1)
     const [shopList, setshopList] = useState([])
     const refRBSheet = useRef();
     const [selectedshopID, setselectedshopID] = useState('')
-    const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, alreadyAddecart, navigation, bookNow } = props;
+    const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, navigation, bookNow } = props;
     const [selectedSlot, setselectedSlot] = useState('')
     const [slotdate, setslotdate] = useState(moment().format('DD/MM/YYYY'))
     const [serviceData, setserviceData] = useState([])

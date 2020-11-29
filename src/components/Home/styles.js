@@ -275,7 +275,8 @@ const dynamicStyles = colorScheme => {
       alignSelf: 'center'
 
 
-    }
+    },
+    
   });
 };
 
