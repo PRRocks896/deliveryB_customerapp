@@ -14,6 +14,8 @@ import { Dialog } from 'react-native-simple-dialogs';
 import styles from "react-native-icon-badge/style";
 import AsyncStorage from "@react-native-community/async-storage";
 import { EventRegister } from 'react-native-event-listeners'
+import RazorpayCheckout from 'react-native-razorpay';
+import createOrderRazorpay from "../../../services/Order/createrazorpayorder";
 
 class ServicePaymentOptions extends Component {
   
@@ -201,6 +203,67 @@ class ServicePaymentOptions extends Component {
     this.setState({ chargeConfirm: 'WALLET' })
   }
 
+  otheroptionsPress = () => {
+    EventRegister.emit("CODdata", "OTHER")
+    
+
+    this.createOrder()
+  }
+
+  createOrder = async () => {
+    let data = this.props.navigation.state.params
+
+    let amount = Math.floor(data.totalammount)
+    console.log("total amount", amount)
+    let body = JSON.stringify({
+      "amount": amount * 100,
+      "currency": "INR",
+      "receipt": 'receipt#' + Math.floor(100000000 + Math.random() * 900000000),
+      "notes": "Test Payment"
+    })
+    console.log("============body", body)
+    const response = await createOrderRazorpay(body)
+    console.log("Response of razor pay order", response)
+   
+    if (response && response.status == 'created') {
+      this.razorpayopen(response.id)
+    }
+  }
+
+  razorpayopen = async(orderid) => {
+
+    let profile = await AsyncStorage.getItem('CurrentUser')
+    let parsedData = JSON.parse(profile)
+    let name =  parsedData.data.name
+    let email = parsedData.data.email
+    let contact = parsedData.data.mobile
+    let data = this.props.navigation.state.params
+    let amount = Math.floor(data.totalammount) * 100
+    var options = {
+      description: 'Tribata',
+      image: 'https://i.imgur.com/3g7nmJC.png',
+      currency: 'INR',
+      key: 'rzp_test_WnyFW6axxBffc1',
+      amount:  amount * 100,
+      name: name,
+      order_id: orderid,
+      prefill: {
+        email: email,
+        contact: contact,
+        name: name
+      },
+      theme: { color: '#53a20e' }
+    }
+    RazorpayCheckout.open(options).then((data) => {
+     console.log("On Success response", data)
+     this.setState({transactionid : data.razorpay_payment_id})
+     this.setState({ chargeConfirm: 'OTHER' })
+    }).catch((error) => {
+      alert(`Error: ${error.code} | ${error.description}`);
+    });
+  }
+
+
   render() {
     const currentTheme =
       AppStyles.navThemeConstants[this.props.screenProps.theme];
@@ -219,7 +282,7 @@ class ServicePaymentOptions extends Component {
           paymentMethods={this.props.paymentMethods}
           totalprice={this.props.navigation.state.params.totalammount}
           onmywalletpress={this.pressmywallet}
-
+          onPressOther={this.otheroptionsPress}
         />
         {/* dialog box open for add new card */}
         <Dialog

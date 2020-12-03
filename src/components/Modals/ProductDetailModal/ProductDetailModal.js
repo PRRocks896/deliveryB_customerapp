@@ -91,7 +91,7 @@ function ProductDetailModal(props) {
       await Share.share({
         title: "Shopertino Product",
         dialogTitle: `Shopertino Product: ${item.name}`,
-        message: item.name + item.description + productDetails.price,
+        message: item.name + item.description + item.productDetail ?productDetails.price : item.productDetail.price ,
         image: item.productImage
 
       });

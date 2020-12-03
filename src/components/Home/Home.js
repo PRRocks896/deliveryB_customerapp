@@ -89,10 +89,8 @@ function Home(props) {
     const response = await getServiceData(0)
     if (response.statusCode == 200) {
       setserviceData(response.data)
-
     }
   }
-
 
   const getCategoryProducts = async () => {
     const data = await getCategory();
@@ -104,9 +102,8 @@ function Home(props) {
     }
   }
 
-
   const getFeaturedProducts = async () => {
-    const data = await getProducts(page);
+    const data = await getProducts(0);
     if (data.success) {
       setisLoadingProduct(false)
       setProducts(data.data)
@@ -132,15 +129,13 @@ function Home(props) {
         style={styles.container} >
         <View style={{ marginLeft: 10, marginRight: 10, marginTop: 5 }}>
           <Searchbar
-            onPress={() => props.navigation.navigate('AllSearchPage', { appConfig: props.appConfig})}
+            onPress={() => props.navigation.navigate('AllSearchPage', { appConfig: props.appConfig })}
             placeholder="Search"
             onChangeText={onChangeSearch}
             value={searchQuery}
             clearIcon={() => <Icon name={'close'} size={20} color={'#808080'} />}
           />
         </View>
-
-
         {
           isLoadingcategory == true ?
             <SkeletonPlaceholder>

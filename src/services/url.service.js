@@ -150,7 +150,13 @@ const api = {
 
     googleapiforkm:{
         googleapiforkm: 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&'
-    }
+    },
+
+    // for Razorpay
+
+    createorder:{
+        createorder : Config.getURL + 'razorpay/order'
+    },
 
 }
 

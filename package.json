@@ -85,6 +85,7 @@
     "react-native-phone-input": "^0.2.4",
     "react-native-progress": "^4.1.2",
     "react-native-raw-bottom-sheet": "^2.2.0",
+    "react-native-razorpay": "^2.2.1",
     "react-native-reanimated": "^1.13.0",
     "react-native-screens": "^1.0.0-alpha.23",
     "react-native-search-box": "0.0.19",

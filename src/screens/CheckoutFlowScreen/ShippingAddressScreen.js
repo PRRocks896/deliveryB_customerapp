@@ -129,7 +129,9 @@ class ShippingAddressScreen extends Component {
     const { address } = this.state
 
     return (
-      <TouchableOpacity style={[styless.row, styless.card]} >
+      <TouchableOpacity 
+      onPress={ () => this.handleUserNavigation()}
+      style={[styless.row, styless.card]} >
         <View style={{ flex: 2, alignItems: 'center', justifyContent: "center", padding: 10 }}>
           <View style={[styless.homeAddressCircle, { backgroundColor: '#686868' }]}>
             <Icon name={'building'} size={25} color='#e7e7e7' />

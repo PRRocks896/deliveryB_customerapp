@@ -15,6 +15,8 @@ import { Dialog } from 'react-native-simple-dialogs';
 import styles from "react-native-icon-badge/style";
 import AsyncStorage from "@react-native-community/async-storage";
 import { EventRegister } from 'react-native-event-listeners'
+import createOrderRazorpay from "../../services/Order/createrazorpayorder";
+import RazorpayCheckout from 'react-native-razorpay';
 
 class PaymentMethodScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
@@ -91,7 +93,7 @@ class PaymentMethodScreen extends Component {
     const { chargeConfirm, transactionid } = this.state
     let data = this.props.navigation.state.params
     let payamount = data.totalPrice
-  
+    console.log("trs id",transactionid , payamount)
     if (chargeConfirm !== '') {
       this.props.navigation.replace("ShippingAddress", {
         appConfig: this.appConfig,
@@ -188,6 +190,9 @@ class PaymentMethodScreen extends Component {
   pressCodMethod = () => {
     EventRegister.emit("CODdata", "COD")
     this.setState({ chargeConfirm: 'COD' })
+    setTimeout(() => {
+      this.setOrderDetails()
+    }, 100);
   }
   /**
    * For Wallet method
@@ -195,6 +200,69 @@ class PaymentMethodScreen extends Component {
   pressmywallet = () => {
     EventRegister.emit("CODdata", "WALLET")
     this.setState({ chargeConfirm: 'WALLET' })
+    setTimeout( () => {
+      this.setOrderDetails()
+
+    }, 100)
+  }
+
+  otheroptionsPress = () => {
+    EventRegister.emit("CODdata", "OTHER")
+    this.createOrder()
+  }
+
+  createOrder = async () => {
+    let data = this.props.navigation.state.params
+
+    let amount = Math.floor(data.totalPrice)
+    console.log("total amount", amount)
+    let body = JSON.stringify({
+      "amount": amount * 100,
+      "currency": "INR",
+      "receipt": 'receipt#' + Math.floor(100000000 + Math.random() * 900000000),
+      "notes": "Test Payment"
+    })
+    console.log("============body", body)
+    const response = await createOrderRazorpay(body)
+    console.log("Response of razor pay order", response)
+   
+    if (response && response.status == 'created') {
+      this.razorpayopen(response.id)
+    }
+  }
+
+  razorpayopen = async(orderid) => {
+
+    let profile = await AsyncStorage.getItem('CurrentUser')
+    let parsedData = JSON.parse(profile)
+    let name =  parsedData.data.name
+    let email = parsedData.data.email
+    let contact = parsedData.data.mobile
+    let data = this.props.navigation.state.params
+    let amount = Math.floor(data.totalPrice) * 100
+    var options = {
+      description: 'Tribata',
+      image: 'https://linkpicture.com/q/logo_227.png',
+      currency: 'INR',
+      key: 'rzp_test_WnyFW6axxBffc1',
+      amount:  amount * 100,
+      name: name,
+      order_id: orderid,
+      prefill: {
+        email: email,
+        contact: contact,
+        name: name
+      },
+      theme: { color: '#53a20e' }
+    }
+    RazorpayCheckout.open(options).then((data) => {
+     console.log("On Success response", data)
+     this.setState({transactionid : data.razorpay_payment_id})
+     this.setState({ chargeConfirm: 'OTHER' })
+     this.setOrderDetails()
+    }).catch((error) => {
+      alert(`Error: ${error.code} | ${error.description}`);
+    });
   }
 
   render() {
@@ -215,6 +283,7 @@ class PaymentMethodScreen extends Component {
           paymentMethods={this.props.paymentMethods}
           totalprice={this.props.navigation.state.params.totalPrice}
           onmywalletpress={this.pressmywallet}
+          onPressOther={this.otheroptionsPress}
 
         />
         {/* dialog box open for add new card */}

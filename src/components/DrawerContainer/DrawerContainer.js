@@ -151,7 +151,7 @@ function DrawerContainer(appConfig) {
               navigation.navigate("ShoppingBag", { appConfig });
             }}
           />
-          <DrawerItem
+          {/* <DrawerItem
             title="SEARCH PRODUCTS"
             source={AppStyles.iconSet.searchDrawer}
             onPress={() => {
@@ -166,7 +166,7 @@ function DrawerContainer(appConfig) {
               navigation.closeDrawer()
               navigation.navigate("SearchService", { appConfig });
             }}
-          />
+          /> */}
           <DrawerItem
             title="ORDERS"
             source={AppStyles.iconSet.orderDrawer}

@@ -240,7 +240,7 @@ console.log("Verify otp", data)
           password: password,
         })
         const data = await signin(body);
-       
+       console.log("sigin response", data)
         AsyncStorage.setItem("LoginData", JSON.stringify(data))
         AsyncStorage.setItem("userId", data.userId)
         AsyncStorage.setItem("UserMobile", dialcode + mobile)

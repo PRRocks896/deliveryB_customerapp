@@ -60,7 +60,7 @@ class CategoryProductGridScreen extends Component {
         typeof navigation.state.params === "undefined" ||
           typeof navigation.state.params.title === "undefined"
           ? "Cartegory Grid"
-          : navigation.state.params.title,
+          : (navigation.state.params.title).replace(/_/g, " "),
     };
   };
 

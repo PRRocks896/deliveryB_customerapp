@@ -12,10 +12,11 @@ import {
   setProducts,
   loadOrderHistory
 } from "../../redux/";
-import { BackHandler } from "react-native";
+import { BackHandler , TouchableOpacity, Text} from "react-native";
 import addToBagProduct from "../../components/AddTobagProduct/addbagproduct";
 import getCategory from "../../services/Products/getCategory";
 import getProducts from "../../services/Products/getproducts";
+import RazorpayCheckout from 'react-native-razorpay';
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -145,8 +146,33 @@ class HomeScreen extends Component {
       isProductDetailVisible: !this.state.isProductDetailVisible
     });
   };
+
+  razorpayfun = () => {
+    var options = {
+      description: 'Credits towards consultation',
+      image: 'https://i.imgur.com/3g7nmJC.png',
+      currency: 'INR',
+      key: 'rzp_live_5dM1OK63yl61hL', // Your api key
+      amount: '5000',
+      name: 'foo',
+      prefill: {
+        email: 'void@razorpay.com',
+        contact: '9191919191',
+        name: 'Razorpay Software'
+      },
+      theme: {color: '#F37254'}
+    }
+    RazorpayCheckout.open(options).then((data) => {
+      // handle success
+      alert(`Success: ${data.razorpay_payment_id}`);
+    }).catch((error) => {
+      // handle failure
+      alert(`Error: ${error.code} | ${error.description}`);
+    });
+  }
   render() {
     return (
+      <>
       <Home
         navigation={this.props.navigation}
         shippingMethods={this.props.shippingMethods}
@@ -164,6 +190,7 @@ class HomeScreen extends Component {
         categoryproducts={this.state.categoryProduct}
         featuredproduct={this.state.fetauredproducts}
       />
+      </>
     );
   }
 }

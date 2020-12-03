@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, Image, TouchableOpacity, FlatList, TextInput, Alert, ActivityIndicator } from "react-native";
+import { Text, View, Image, TouchableOpacity, FlatList, TextInput, Alert, ActivityIndicator, ScrollView } from "react-native";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { useColorScheme } from "react-native-appearance";
@@ -15,12 +15,12 @@ import createStripeCustomer from "../../services/StripeApi/createCustomer";
 import customerCharges from "../../services/StripeApi/customerCharges";
 import { EventRegister } from 'react-native-event-listeners'
 import getamountWallet from "../../services/Wallet/getamountWallet";
-
+import Razorpay from 'react-native-razorpay';
 
 function PaymentOptions(props) {
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(colorScheme);
-  const { paymentMethods, onAddNewCard, onpressCod, onmywalletpress, totalprice } = props;
+  const { paymentMethods, onAddNewCard, onpressCod, onmywalletpress, totalprice, onPressOther } = props;
 
   const [selectedMethodIndex, setSelectedMethodIndex] = useState(0);
   const [getCards, setGetCards] = useState([])
@@ -46,21 +46,29 @@ function PaymentOptions(props) {
         setvalueRadio('')
         setIsSelect('WALLET')
       }
+      else if (data == "OTHER") {
+        setvalueRadio('')
+        setIsSelect('OTHER')
+      }
     })
     EventRegister.addEventListener('SavedCards', (data) => {
       setGetCards(data)
     })
     getSavedCards()
     getwalletvalue()
+
   });
+
+
+
   const getwalletvalue = async () => {
     let mobile = await AsyncStorage.getItem('CurrentUser')
     let mobileParsed = JSON.parse(mobile)
     let phoneno = mobileParsed.data.mobile
-  
+
     const data = await getamountWallet(phoneno)
     if (data.success) {
-     
+
       setwalleteamount(data.data.balance)
       // this.setState({ walleteamount: data.data.balance })
       if (totalprice > data.data.balance) {
@@ -263,7 +271,7 @@ function PaymentOptions(props) {
   }
 
   return (
-    <View>
+    <ScrollView>
       <View style={styles.shippingDetailsContainer}>
       </View>
       <TouchableOpacity
@@ -291,13 +299,26 @@ function PaymentOptions(props) {
         </View>
       </TouchableOpacity>
       {
-        walleterror !== '' ? <View>
-          <Text style={styles.errortxt}> {walleterror}</Text>
-        </View>
+        walleterror !== '' ?
+          <View>
+            <Text style={styles.errortxt}> {walleterror}</Text>
+          </View>
           : null
       }
-
       <TouchableOpacity
+        onPress={onPressOther}
+        style={styles.addNewCardContainer}
+      >
+        <View style={styles.addNewCardIconContainer}>
+          <Icon name={'payment'} size={25} />
+        </View>
+        <View style={{ backgroundColor: isSelect == 'OTHER' ? '#a3a3a3' : '#fff', flexDirection: 'row', flex: 6, padding: 10 }}>
+          <Text style={[styles.addNewCardTitle, { color: isSelect == 'OTHER' ? '#fff' : '#000' }]}>{"Other"}</Text>
+        </View>
+      </TouchableOpacity>
+
+
+      {/* <TouchableOpacity
         onPress={onAddNewCard}
         style={styles.addNewCardContainer}
       >
@@ -312,10 +333,8 @@ function PaymentOptions(props) {
           <Text style={styles.addNewCardTitle}>{"Add New Card..."}</Text>
         </View>
       </TouchableOpacity>
-      {showSavedCards()}
-
-
-    </View>
+      {showSavedCards()} */}
+    </ScrollView>
   );
 }
 

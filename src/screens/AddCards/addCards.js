@@ -253,6 +253,10 @@ export default class AddCards extends Component {
                     { text: "Ok", },
                 ],
             );
+            this.setState({
+                isLoading: false,
+                cvvdialogVisible: false
+            })
         }
     }
 
