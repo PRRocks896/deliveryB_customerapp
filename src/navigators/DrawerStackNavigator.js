@@ -96,7 +96,7 @@ const getDrawerScreenTitle = routeKey => {
 
   switch (routeKey) {
     case "Home":
-      return "Dashboard";
+      return "Tribata";
     case "Shop":
       return "Shop";
     case "Order":

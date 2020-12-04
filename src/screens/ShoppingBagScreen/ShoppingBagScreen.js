@@ -69,7 +69,9 @@ class ShoppingBagScreen extends Component {
       customerLong:'',
 
       taxsCharges:0,
-      deliveryfee:0
+      deliveryfee:0,
+
+      totalkm:0
     }
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.props.navigation.addListener(
@@ -150,7 +152,7 @@ class ShoppingBagScreen extends Component {
     
     shoplatlong.map((item) => {
       
-    let data =   this.getkm( this.state.customerLat, this.state.customerLong, item.lat, item.long,  unit = 'K')
+    let data =   this.getkm( this.state.customerLat, this.state.customerLong, item.lat, item.long,  'K')
     console.log("final km", data) 
         km.push(data)
        })
@@ -162,9 +164,11 @@ class ShoppingBagScreen extends Component {
       )
 
       let finalchargekm =  km.reduce((a, b) => a + b, 0)
+      this.setState({totalkm : finalchargekm})
       if(finalchargekm <= 2) {
-          this.setState({deliveryfee : 20})
-      }else {
+          this.setState({deliveryfee : 30})
+      }
+      else {
         let charges = finalchargekm -2 
         console.log("charges", charges * 10)
         this.setState({ deliveryfee :charges * 10 })
@@ -248,7 +252,7 @@ class ShoppingBagScreen extends Component {
   onContinuePress = async () => {
     this.setState({ isLoading: true })
     let userid = await AsyncStorage.getItem('userId')
-    const {totalPayamount , taxsCharges , deliveryfee} = this.state
+    const {totalPayamount , taxsCharges , deliveryfee, totalkm} = this.state
     let total  = totalPayamount + taxsCharges + deliveryfee
     // this.props.setSubtotalPrice(Number(this.props.totalShoppinBagPrice));
     this.state.allShoppingBag.length &&
@@ -256,8 +260,8 @@ class ShoppingBagScreen extends Component {
         appConfig: this.appConfig,
         totalPrice: total,
         customerID: userid,
-        product: this.state.allShoppingBag
-
+        product: this.state.allShoppingBag,
+        totalkm:totalkm
       });
     this.setState({ isLoading: false })
   };

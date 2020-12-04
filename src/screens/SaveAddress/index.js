@@ -24,6 +24,7 @@ import getAddressviaUSer from "../../services/SavedAddress/getAddressviaUser";
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { ActivityIndicator, RadioButton } from 'react-native-paper';
 import updateAddress from "../../services/SavedAddress/updateAddress";
+import { ScrollView } from "react-native-gesture-handler";
 
 
 class SaveAddress extends Component {
@@ -42,7 +43,8 @@ class SaveAddress extends Component {
             addressid: '',
             radiovalue: '',
             value: '',
-            isLoading: false
+            isLoading: false,
+           
 
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
@@ -64,19 +66,24 @@ class SaveAddress extends Component {
         return true;
     }
     componentDidMount = async () => {
+       
+
+
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.setState({isLoading: true})
+        this.setState({ isLoading: true })
         let userid = await AsyncStorage.getItem('userId')
         // get address via user
         const data = await getAddressviaUSer(userid);
+
+        console.log("All Data get", data.data)
         if (data.data) {
-            this.setState({ address: data.data.address, addressid: data.data._id , isLoading: false})
+            this.setState({ address: data.data.address, addressid: data.data._id, isLoading: false })
             AsyncStorage.setItem("AddressId", data.data._id)
             this.state.address.map((item) => {
                 if (item.isDefault == true) this.setState({ value: item._id })
             })
-        }else{
-            this.setState({isLoading:false})
+        } else {
+            this.setState({ isLoading: false })
         }
     }
     /**
@@ -123,7 +130,7 @@ class SaveAddress extends Component {
                                     <Text style={{ color: '#000', fontSize: 12 }}>{item.item.address_line_1}</Text>
                                     <Text style={{ color: '#000', fontSize: 12 }}>{item.item.address_line_2}</Text>
                                 </View>
-                                <TouchableOpacity style={styles.homeAddEditView} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { mainAddressId: addressid, onClickaddress: item , address: this.state.address, obclickaddressid: item.item._id})}>
+                                <TouchableOpacity style={styles.homeAddEditView} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { mainAddressId: addressid, onClickaddress: item, address: this.state.address, obclickaddressid: item.item._id })}>
                                     <Icon name={'pencil-square-o'} size={25} color='#000' />
                                 </TouchableOpacity>
                             </RadioButton.Group>
@@ -140,11 +147,11 @@ class SaveAddress extends Component {
             <View style={{ flex: 1 }}>
                 <ProcedureImage source={AppStyles.imageSet.box} />
                 {
-                    this.state.isLoading ? <ActivityIndicator size={'small'} color={'#000'}  />
-                    :
-                <View >
-                    {this.getAddress()}
-                </View>
+                    this.state.isLoading ? <ActivityIndicator size={'small'} color={'#000'} />
+                        :
+                        <ScrollView >
+                            {this.getAddress()}
+                        </ScrollView>
                 }
                 <TouchableOpacity style={styles.footerbtn} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { addressLength: this.state.address.length, mainAddressId: this.state.addressid, address: this.state.address })}>
                     <Image style={styles.addicon} source={AppStyles.iconSet.plus} />

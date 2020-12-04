@@ -102,7 +102,8 @@ class PaymentMethodScreen extends Component {
         bagproduct: data.product,
         totalammount: chargeConfirm == 'WALLET' ? payamount : data.totalPrice,
         payment_method: chargeConfirm,
-        order_number: Math.floor(100000000000 + Math.random() * 900000000000)
+        order_number: Math.floor(100000000000 + Math.random() * 900000000000),
+        totalkm:data.totalkm
       });
     }
     else {

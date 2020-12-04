@@ -131,7 +131,7 @@ class OrderDetailsScreen extends Component {
 
                             <View style={styles.row}>
                                 <Text style={styles.tital}>Total amount:  </Text>
-                                <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{data.amount}</Text>
+                                <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{(data.amount).toFixed(2)}</Text>
                             </View>
 
                             {
@@ -205,7 +205,7 @@ class OrderDetailsScreen extends Component {
 
                             <View style={styles.row}>
                                 <Text style={styles.tital}>Total amount:  </Text>
-                                <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{data.amount}</Text>
+                                <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{(data.amount).toFixed(2)}</Text>
                             </View>
 
                             <List.Section>

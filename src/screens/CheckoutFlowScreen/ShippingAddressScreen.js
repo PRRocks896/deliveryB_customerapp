@@ -108,7 +108,8 @@ class ShippingAddressScreen extends Component {
         bagproduct: data.bagproduct,
         totalammount: data.totalammount,
         payment_method: data.payment_method,
-        order_number: data.order_number
+        order_number: data.order_number,
+        totalkm:data.totalkm
       });
       // this.props.setTotalPrice();
     } else {

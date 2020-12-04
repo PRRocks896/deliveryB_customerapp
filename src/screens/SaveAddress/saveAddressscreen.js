@@ -15,18 +15,20 @@ import addAddress from '../../services/SavedAddress/addAddress'
 import getAddress from "../../services/SavedAddress/getAddress";
 import updateAddress from "../../services/SavedAddress/updateAddress";
 import { ScrollView } from "react-native-gesture-handler";
+import GoogleMapComponent from "./googleMap";
+import { EventRegister } from 'react-native-event-listeners'
 
+var latitudedata;
+let longitudedata;
+let addressArray;
+let lat;
+let long;
+let isData;
 class SaveAddressScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
             dialogVisible: false,
-            address_line_1: '',
-            address_line_2: '',
-            district: '',
-            pinCode: '',
-            state: '',
-            country: '',
             name: 'Home',
             mobile: '',
             isParamsData: false,
@@ -40,9 +42,15 @@ class SaveAddressScreen extends Component {
             stateError: '',
             countryError: '',
 
-
+            latitude: '',
+            longitude: ''
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        this.props.navigation.addListener(
+            'didFocus',
+            payload => {
+                this.componentDidMount()
+            });
     }
 
     componentWillUnmount() {
@@ -60,6 +68,21 @@ class SaveAddressScreen extends Component {
      * get address from perticuler clicked address
      */
     componentDidMount = async () => {
+        // For Shop Latitude
+        EventRegister.addEventListener('Lat', (data) => {
+            latitudedata = data
+        })
+
+        // For Shop Longitude
+        EventRegister.addEventListener('Long', (data) => {
+            longitudedata = data
+        })
+        EventRegister.addEventListener('address', (data) => {
+            addressArray = data
+        })
+
+
+
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         let paramsData = this.props.navigation.state.params
         let index = paramsData.onClickaddress.index
@@ -69,6 +92,11 @@ class SaveAddressScreen extends Component {
             const data = await getAddress(paramsData.mainAddressId);
             let address = data.data.address
             if (address[index]._id == paramsData.onClickaddress.item._id) {
+                console.log("address get======================in didmount", address[index]._id, paramsData.onClickaddress.item._id)
+
+                lat = paramsData.onClickaddress.item.lat
+                long = paramsData.onClickaddress.item.long
+                isData = true
                 this.setState({
                     address_line_1: paramsData.onClickaddress.item.address_line_1,
                     address_line_2: paramsData.onClickaddress.item.address_line_2,
@@ -77,11 +105,15 @@ class SaveAddressScreen extends Component {
                     pinCode: paramsData.onClickaddress.item.pinCode,
                     state: paramsData.onClickaddress.item.state,
                     country: paramsData.onClickaddress.item.country,
-                    name: paramsData.onClickaddress.item.name
+                    name: paramsData.onClickaddress.item.name,
+                    latitude: paramsData.onClickaddress.item.lat,
+                    longitude: paramsData.onClickaddress.item.long,
+                    isParamsData: true
                 })
             }
         } else {
             this.setState({ isParamsData: false })
+            isData = false
         }
 
 
@@ -91,12 +123,49 @@ class SaveAddressScreen extends Component {
      */
     addaddress = async () => {
         let userId = await AsyncStorage.getItem('userId')
+        let phoneNo = await AsyncStorage.getItem('UserMobile')
         let id = this.props.navigation.state.params.mainAddressId
-        const { country, address_line_1, address_line_2, district, pinCode, state, name, mobile, addressLength } = this.state
-        
-        if (address_line_1 != '' && district != '' && pinCode != '' && state != '' && mobile != '' && country != '') {
+        const { name, addressLength } = this.state
+
+        EventRegister.addEventListener('Lat', (data) => {
+            latitudedata = data
+        })
+        EventRegister.addEventListener('Long', (data) => {
+            longitudedata = data
+        })
+        EventRegister.addEventListener('address', (data) => {
+            addressArray = data
+        })
+
+        let address_line_1;
+        let address_line_2;
+        let district;
+        let state;
+        let country;
+        let pinCode;
+
+        addressArray.map(item => {
+            console.log(item.types[0])
+            if (item.types.includes('postal_code')) {
+                pinCode = item.long_name
+            } else if (item.types.includes('country')) {
+                country = item.long_name
+            } else if (item.types.includes('administrative_area_level_1')) {
+                state = item.long_name
+            } else if (item.types.includes('locality')) {
+                district = item.long_name
+            } else if (item.types.includes('sublocality_level_1')) {
+                address_line_2 = item.long_name
+            } else if (item.types.includes('sublocality_level_2') || item.types.includes('route')) {
+                address_line_1 = item.long_name
+            } else if (item.types.includes('street_number')) {
+                address_line_1 = address_line_1 + ',' + item.long_name
+            }
+        })
+console.log("lat long",typeof(latitudedata),longitudedata )
+        if (address_line_1 != undefined && address_line_2 !== undefined && district != undefined && pinCode != undefined && state != undefined && country != undefined) {
             if (addressLength == 0) {
-              
+
                 let body = JSON.stringify({
                     user_id: userId,
                     address: [
@@ -108,13 +177,14 @@ class SaveAddressScreen extends Component {
                             state: state,
                             pinCode: pinCode,
                             country: country,
-                            mobile: mobile
+                            mobile: phoneNo,
+                            lat: (latitudedata).toString(),
+                            long: (longitudedata).toString()
                         }
                     ]
                 })
                 // add address from here, call api
                 const data = await addAddress(body);
-               
                 if (data.success) {
                     this.props.navigation.goBack()
                 } else {
@@ -123,7 +193,6 @@ class SaveAddressScreen extends Component {
                 }
             } else {
                 //  if address already available then append address from here
-                
                 let body = JSON.stringify({
                     user_id: userId,
                     address: [
@@ -136,13 +205,14 @@ class SaveAddressScreen extends Component {
                             state: state,
                             pinCode: pinCode,
                             country: country,
-                            mobile: mobile
+                            mobile: phoneNo,
+                            lat: (latitudedata).toString(),
+                            long: (longitudedata).toString()
                         }
                     ]
                 })
-               
+
                 const data = await updateAddress(body, id)
-                
                 if (data.success) {
                     this.props.navigation.goBack()
                 } else {
@@ -150,17 +220,7 @@ class SaveAddressScreen extends Component {
                     this.props.navigation.goBack()
                 }
             }
-
         } else {
-           
-        
-            if (mobile == '') this.setState({ mobilenoError: 'Please Enter Mobile No.' })
-            if (address_line_1 == '') this.setState({ address1Error: "Please Enter Address line 1" })
-            if (address_line_2 == '') this.setState({ address2Error: "Please Enter Address line 2" })
-            if (pinCode == '') this.setState({ pincodeError: "Please Enter Pin Code" })
-            if (state == '') this.setState({ stateError: "Please Enter State" })
-            if (country == '') this.setState({ countryError: "Please Enter Country" })
-            if (district == '') this.setState({ cityError: "Please Enter City" })
 
         }
     }
@@ -169,22 +229,58 @@ class SaveAddressScreen extends Component {
      */
     updateAddress = async () => {
         let userId = await AsyncStorage.getItem('userId')
-       
+        let phoneNo = await AsyncStorage.getItem('UserMobile')
+
         let id = this.props.navigation.state.params.mainAddressId
-        const { country, address_line_1, address_line_2, district, pinCode, state, name, mobile } = this.state
+        const { name } = this.state
         let appendaddress = this.props.navigation.state.params.address
         let clickedaddressid = this.props.navigation.state.params.obclickaddressid
-        
+
+        EventRegister.addEventListener('Lat', (data) => {
+            latitudedata = data
+        })
+        EventRegister.addEventListener('Long', (data) => {
+            longitudedata = data
+        })
+        EventRegister.addEventListener('address', (data) => {
+            addressArray = data
+        })
+        console.log("Lat long data", latitudedata, longitudedata, addressArray)
+        let address_line_1;
+        let address_line_2;
+        let district;
+        let state;
+        let country;
+        let pinCode;
+
+        addressArray.map(item => {
+            console.log(item.types[0])
+            if (item.types.includes('postal_code')) {
+                pinCode = item.long_name
+            } else if (item.types.includes('country')) {
+                country = item.long_name
+            } else if (item.types.includes('administrative_area_level_1')) {
+                state = item.long_name
+            } else if (item.types.includes('locality')) {
+                district = item.long_name
+            } else if (item.types.includes('sublocality_level_1')) {
+                address_line_2 = item.long_name
+            } else if (item.types.includes('sublocality_level_2') || item.types.includes('route')) {
+                address_line_1 = item.long_name
+            } else if (item.types.includes('street_number')) {
+                address_line_1 = address_line_1 + ',' + item.long_name
+            }
+        })
+
 
         let found = appendaddress.some(i => i._id == clickedaddressid)
-      
+
         if (found == true) {
             let index = appendaddress.findIndex(i => i._id == clickedaddressid)
             appendaddress.splice(index, 1)
-           
-        }
 
-        if (address_line_1 != '' && district != '' && pinCode != '' && state != '' && mobile != '' && country != '') {
+        }
+        if (address_line_1 != '' && district != '' && pinCode != '' && state != '' && phoneNo != '' && country != '') {
             let body = JSON.stringify({
                 user_id: userId,
                 address: [
@@ -197,11 +293,14 @@ class SaveAddressScreen extends Component {
                         state: state,
                         pinCode: pinCode,
                         country: country,
-                        mobile: mobile
+                        mobile: phoneNo,
+                        lat: (latitudedata).toString(),
+                        long: (longitudedata).toString()
                     }
                 ]
             })
             const data = await updateAddress(body, id)
+            console.log("Data update address", data)
             if (data.success) {
                 this.props.navigation.goBack()
             } else {
@@ -219,124 +318,22 @@ class SaveAddressScreen extends Component {
         }
     }
     render() {
-        const { name, address_line_1, address_line_2, mobile, district, pinCode, state, country, isParamsData,
+        const { name, latitude, longitude, mobile, district, pinCode, state, country, isParamsData,
             mobilenoError, address1Error, address2Error, pincodeError, cityError, stateError, countryError } = this.state
+        console.log("paramsdata", isParamsData)
         return (
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={{ marginLeft: 10, marginRightL: 10 }}>
-                    <TextInput
-                        style={styles.InputContainer}
-                        keyboardType='number-pad'
-                        placeholder="Mobile No."
-                        maxLength={10}
-                        value={mobile}
-                        onChangeText={(text) => this.setState({ mobile: text })}
-                    />
-                    {
-                        mobilenoError !== '' ?
-                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: 'red', textAlign: 'center' }}>{mobilenoError}</Text>
-                            </View>
-                            : null
-                    }
-                    <TextInput
-                        style={styles.InputContainer}
-                        keyboardType='default'
-                        autoCapitalize='none'
-                        value={address_line_1}
-                        maxLength={100}
-                        placeholder="Enter Address 1"
-                        onChangeText={(text) => this.setState({ address_line_1: text })}
-                    />
+                    <View style={{ marginTop: 20 }}>
 
-                    {
-                        address1Error !== '' ?
-                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: 'red', textAlign: 'center' }}>{address1Error}</Text>
-                            </View>
-                            : null
-                    }
-                    <TextInput
-                        style={styles.InputContainer}
-                        keyboardType='default'
-                        autoCapitalize='none'
-                        value={address_line_2}
-                        placeholder="Enter Address 2"
-                        maxLength={100}
-                        onChangeText={(text) => this.setState({ address_line_2: text })}
-                    />
-                    {
-                        address2Error !== '' ?
-                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: 'red', textAlign: 'center' }}>{address2Error}</Text>
-                            </View>
-                            : null
-                    }
-                    <TextInput
-                        style={styles.InputContainer}
-                        keyboardType='number-pad'
-                        autoCapitalize='none'
-                        value={pinCode}
-                        placeholder="Pin code"
-                        maxLength={6}
-                        onChangeText={(text) => this.setState({ pinCode: text })}
-                    />
-                    {
-                        pincodeError !== '' ?
-                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: 'red', textAlign: 'center' }}>{pincodeError}</Text>
-                            </View>
-                            : null
-                    }
-                    <TextInput
-                        style={styles.InputContainer}
-                        keyboardType='default'
-                        autoCapitalize='none'
-                        value={district}
-                        placeholder="City"
-                        maxLength={50}
-                        onChangeText={(text) => this.setState({ district: text })}
-                    />
-                    {
-                        cityError !== '' ?
-                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: 'red', textAlign: 'center' }}>{cityError}</Text>
-                            </View>
-                            : null
-                    }
+                        <View style={{ height: 500, marginTop: 10 }}>
+                            {/* For Load Google Map for get user's Location */}
 
-                    <TextInput
-                        style={styles.InputContainer}
-                        keyboardType='default'
-                        autoCapitalize='none'
-                        value={state}
-                        placeholder="State"
-                        maxLength={50}
-                        onChangeText={(text) => this.setState({ state: text })}
-                    />
-                    {
-                        stateError !== '' ?
-                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: 'red', textAlign: 'center' }}>{stateError}</Text>
-                            </View>
-                            : null
-                    }
-                    <TextInput
-                        style={styles.InputContainer}
-                        keyboardType='default'
-                        autoCapitalize='none'
-                        value={country}
-                        placeholder="Country"
-                        maxLength={50}
-                        onChangeText={(text) => this.setState({ country: text })}
-                    />
-                    {
-                        countryError !== '' ?
-                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ color: 'red', textAlign: 'center' }}>{countryError}</Text>
-                            </View>
-                            : null
-                    }
+                            <GoogleMapComponent latitude={parseFloat(lat)} longitude={parseFloat(long)} isparamsData={isData} />
+
+                        </View>
+                    </View>
+
                     <Picker
                         selectedValue={name}
                         style={styles.picker}

@@ -37,7 +37,9 @@ class CheckoutScreen extends Component {
       radioValue: '',
       isLoading: false,
 
-      clickOk: false
+      clickOk: false,
+      totalkm: this.props.navigation.state.params.totalkm
+
     };
     this.appConfig =
       props.navigation.state.params.appConfig ||
@@ -62,7 +64,7 @@ class CheckoutScreen extends Component {
    * @param {any} uniqshopsid uniqe shop id array
    */
   placeorderfromWallet = async (uniqshopsid) => {
-   
+
     let paramdata = this.props.navigation.state.params
     let bagData = paramdata.bagproduct
     let mobile = await AsyncStorage.getItem('CurrentUser')
@@ -70,31 +72,31 @@ class CheckoutScreen extends Component {
     let phoneno = mobileParsed.data.mobile
     let filterProduct = []
 
-  
+
     uniqshopsid.map(async (item) => {
-     
+
       // For get shop details from shop id
       const shopDetailsres = await shopdetails(item)
-      
+
       if (shopDetailsres.success) {
-      
+
         let shopMobile = shopDetailsres.data.mobile
 
         let body = JSON.stringify({
           shop_mobile: shopMobile,
           amount: paramdata.totalammount
         })
-       
+
         //For Pay amount from wallet
         const paydata = await payfromwallet(body, phoneno)
-        
+
         if (paydata.statusCode == 200) {
-        
+
 
           //make data for place order
           bagData.map((productsdata) => {
             if (item == productsdata.products[0].product_id.shop_id) {
-            
+
               filterProduct.push({
                 'customer_id': paramdata.customerID,
                 'shop_id': item,
@@ -107,7 +109,7 @@ class CheckoutScreen extends Component {
               })
             }
           })
-         
+
           // Make unique result 
           var result = filterProduct.reduce((unique, o) => {
             if (!unique.some(obj => obj.shop_id === o.shop_id)) {
@@ -115,7 +117,7 @@ class CheckoutScreen extends Component {
             }
             return unique;
           }, []);
-         
+
           result.map((item, indexOfResult) => {
             let obj = [];
             bagData.map((productitem, indexOfBagdata) => {
@@ -131,33 +133,33 @@ class CheckoutScreen extends Component {
           })
 
 
-         
+
           //Call Place order api
           const placeorderresponse = await placeOrder(JSON.stringify(result));
-         
 
-          if(placeorderresponse == undefined){
+
+          if (placeorderresponse == undefined) {
             this.setState({ dialogVisible: false, isLoading: false })
             Alert.alert(
               "",
-             "Internal Server Error",
+              "Internal Server Error",
               [
                 { text: "OK" }
               ],
               { cancelable: true }
             );
           }
-         else if (placeorderresponse.statusCode == 200) {
-           console.log("placeorderresponse,", placeorderresponse)
+          else if (placeorderresponse.statusCode == 200) {
+            console.log("placeorderresponse,", placeorderresponse)
             this.setState({ dialogVisible: false, isLoading: false })
-           
+
             bagData.map(async (item) => {
-             
+
               // After place order make statis true for placed products
               const cartStatus = await changeCartStatus(item._id)
               console.log("cartStatus=============", cartStatus)
               if (cartStatus.statusCode == 200) {
-              
+
                 this.props.navigation.navigate("Order", { appConfig: this.appConfig });
               } else {
                 this.setState({ dialogVisible: false, isLoading: false })
@@ -200,7 +202,7 @@ class CheckoutScreen extends Component {
    * @param {any} uniqshopsid unique shop array 
    */
   placeorderwithoutWallet = async (uniqshopsid) => {
-   
+
     let paramdata = this.props.navigation.state.params
     let bagData = paramdata.bagproduct
     let mobile = await AsyncStorage.getItem('CurrentUser')
@@ -208,7 +210,7 @@ class CheckoutScreen extends Component {
     let phoneno = mobileParsed.data.mobile
     let filterProduct = []
 
-    
+
     uniqshopsid.map(item => {
       bagData.map((productsdata) => {
         if (item == productsdata.products[0].product_id.shop_id) {
@@ -226,7 +228,7 @@ class CheckoutScreen extends Component {
       })
     })
 
-    
+
     // Make unique result 
     var result = filterProduct.reduce((unique, o) => {
       if (!unique.some(obj => obj.shop_id === o.shop_id)) {
@@ -255,11 +257,11 @@ class CheckoutScreen extends Component {
     //Call Place order api
     const placeorderresponse = await placeOrder(JSON.stringify(result));
     console.log("placeorderresponse", placeorderresponse)
-    if(placeorderresponse == undefined){
+    if (placeorderresponse == undefined) {
       this.setState({ dialogVisible: false, isLoading: false })
       Alert.alert(
         "",
-       "Internal Server Error",
+        "Internal Server Error",
         [
           { text: "OK" }
         ],
@@ -273,7 +275,7 @@ class CheckoutScreen extends Component {
         const cartStatus = await changeCartStatus(item._id)
 
         if (cartStatus.statusCode == 200) {
-         
+
           this.props.navigation.navigate("Order", { appConfig: this.appConfig });
         } else {
           this.setState({ dialogVisible: false, isLoading: false })
@@ -310,7 +312,7 @@ class CheckoutScreen extends Component {
     let mobileParsed = JSON.parse(mobile)
     let phoneno = mobileParsed.data.mobile
 
-    
+
     //For shopid array
     bagData.map((item) => {
       shopsid.push(item.products[0].product_id.shop_id);
@@ -322,7 +324,7 @@ class CheckoutScreen extends Component {
     });
     let filterProduct = []
 
-   
+
 
     if (paramdata.payment_method == 'WALLET') {
       this.placeorderfromWallet(uniqshopsid)
@@ -333,6 +335,8 @@ class CheckoutScreen extends Component {
   };
 
   render() {
+
+    console.log(">>>>>>>>>>>>>>>>>>>", this.state.totalkm)
     return (
       <View style={{ flex: 1, backgroundColor: AppStyles.navThemeConstants.light.backgroundColor }}>
         <Header
@@ -373,22 +377,33 @@ class CheckoutScreen extends Component {
           onTouchOutside={() => this.setState({ dialogVisible: false })} >
           <View>
             <RadioButton.Group onValueChange={value => this.setState({ radioValue: value })} value={this.state.radioValue}>
-              <RadioButton.Item label="Delivery in 2 hours" value="2_HOURS" disabled={this.state.clickOk} />
-              <RadioButton.Item label="Delivery in 4 hours" value="4_HOURS" disabled={this.state.clickOk}/>
-              <RadioButton.Item label="Self Pickup" value="SELF_PICKED" disabled={this.state.clickOk}/>
+              {
+                this.state.totalkm >= 15 ?
+                  <>
+                  
+                    <RadioButton.Item label="Delivery in 3 to 4 Days" value="3_OR_4_DAYS" disabled={this.state.clickOk} />
+                    <RadioButton.Item label="Self Pickup" value="SELF_PICKED" disabled={this.state.clickOk} />
+                  </>
+                  :
+                  <>
+                    <RadioButton.Item label="Delivery in 2 hours" value="2_HOURS" disabled={this.state.clickOk} />
+                    <RadioButton.Item label="Delivery in 4 hours" value="4_HOURS" disabled={this.state.clickOk} />
+                    <RadioButton.Item label="Self Pickup" value="SELF_PICKED" disabled={this.state.clickOk} />
+                  </>
+              }
             </RadioButton.Group>
             <View style={{ flexDirection: 'row' }}>
-              <View style={{ flex: 6 ,justifyContent:'center',alignItems:'center'}}>
-               
-                  <TouchableOpacity style={[styles.adddeviverybtn, { width: '50%' }]} onPress={() => this.setState({ dialogVisible: false, clickOk: false })}>
+              <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center' }}>
 
-                    <Text style={styles.addtext}>Cancel</Text>
+                <TouchableOpacity style={[styles.adddeviverybtn, { width: '50%' }]} onPress={() => this.setState({ dialogVisible: false, clickOk: false })}>
 
-                  </TouchableOpacity>
-               
+                  <Text style={styles.addtext}>Cancel</Text>
+
+                </TouchableOpacity>
+
               </View>
-              <View style={{ flex: 6,justifyContent:'center', alignItems:'center' }}>
-                <TouchableOpacity style={styles.adddeviverybtn} onPress={() => [this.onFooterPress(), this.setState({clickOk: true})]}>
+              <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity style={styles.adddeviverybtn} onPress={() => [this.onFooterPress(), this.setState({ clickOk: true })]}>
                   {
                     !this.state.isLoading ?
                       <Text style={[styles.text, { fontSize: 18 }]}>Ok</Text>
