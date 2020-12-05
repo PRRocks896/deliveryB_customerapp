@@ -22,8 +22,8 @@ function ShoppingBagButton(props) {
   const getcartProductlength = async () => {
     let userid = await AsyncStorage.getItem('userId')
     const getdata = await getbagproduct(userid)
-    if(getdata.data !== null) {
-      setbagItemsdata(getdata.data.length)
+    if(getdata.data.data !== null) {
+      setbagItemsdata(getdata.data.data.length)
           EventRegister.addEventListener('cartlength', (data) => {
             console.log("data=========", data)
             setbagItemsdata(data)

@@ -61,7 +61,7 @@ function ProductDetailModal(props) {
   const checkalreadyaddtocart = async () => {
     let userid = await AsyncStorage.getItem('userId')
     const getdata = await getbagproduct(userid)
-    let found = getdata.data.some(i => i.products[0].product_id.productMasterId == item._id)
+    let found = getdata.data.data.some(i => i.products[0].product_id.productMasterId == item._id)
 
     if (found == true) {
       setalreadyaddecart(true)

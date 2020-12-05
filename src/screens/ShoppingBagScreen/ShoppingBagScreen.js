@@ -107,13 +107,13 @@ class ShoppingBagScreen extends Component {
     const getdata = await getbagproduct(userid)
     if (getdata.statusCode == 200) {
       this.setState({ isDataLoading: false })
-      this.setState({ allShoppingBag: getdata.data })
+      this.setState({ allShoppingBag: getdata.data.data })
 
       console.log("Data=========================bag", getdata)
-      if (getdata.data.length !== 0) this.setState({ isShowData: true })
-      else if (getdata.data.length == 0) this.setState({ isShowData: false })
+      if (getdata.data.data.length !== 0) this.setState({ isShowData: true })
+      else if (getdata.data.data.length == 0) this.setState({ isShowData: false })
       this.props.setTotalShoppingBagPrice();
-      const total = getdata.data.map(item => item.amount).reduce((prev, next) => prev + next);
+      const total = getdata.data.data.map(item => item.amount).reduce((prev, next) => prev + next);
       this.setState({ totalPayamount: total })
     } else {
       this.setState({ isDataLoading: true })
@@ -121,7 +121,7 @@ class ShoppingBagScreen extends Component {
 
     let shopArray = []
     let shoplatlong = []
-    getdata.data.map((item)=> shopArray.push(item.shop_id))
+    getdata.data.data.map((item)=> shopArray.push(item.shop_id))
     let uniqshopsid = shopArray.filter(function (item, index, inputArray) {
       return inputArray.indexOf(item) == index;
     });
@@ -346,7 +346,7 @@ class ShoppingBagScreen extends Component {
     let userid = await AsyncStorage.getItem('userId')
     const getdata = await getbagproduct(userid)
     if (getdata.success) {
-      EventRegister.emit('cartlength', getdata.data.length)
+      EventRegister.emit('cartlength', getdata.data.data.length)
     }
 
     this.componentDidMount()
