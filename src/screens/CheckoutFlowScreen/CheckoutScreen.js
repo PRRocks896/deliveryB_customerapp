@@ -14,6 +14,7 @@ import { RadioButton } from 'react-native-paper';
 import shopdetails from "../../services/ShopDetails/shopdetails";
 import payfromwallet from "../../services/Wallet/payfromwallet";
 import AsyncStorage from "@react-native-community/async-storage";
+import Toast from 'react-native-simple-toast';
 
 class CheckoutScreen extends Component {
   static navigationOptions = ({ screenProps }) => {
@@ -303,6 +304,13 @@ class CheckoutScreen extends Component {
   }
 
   onFooterPress = async () => {
+
+
+    if(this.state.totalkm >= 15){
+      Toast.show('This delivery taking 3 to 4 Days to deliver', Toast.LONG, [
+        'UIAlertController',
+      ]);
+    }
     this.setState({ isLoading: true })
     let paramdata = this.props.navigation.state.params
     let bagData = paramdata.bagproduct
@@ -352,7 +360,7 @@ class CheckoutScreen extends Component {
           </View>
           <View style={{ flexDirection: 'row' }}>
             <Text style={styles.title}>Total pay:</Text>
-            <Text style={styles.subtitle}>{this.state.totalammount}</Text>
+            <Text style={styles.subtitle}>{(this.state.totalammount).toFixed(2)}</Text>
           </View>
 
         </View>
@@ -377,20 +385,11 @@ class CheckoutScreen extends Component {
           onTouchOutside={() => this.setState({ dialogVisible: false })} >
           <View>
             <RadioButton.Group onValueChange={value => this.setState({ radioValue: value })} value={this.state.radioValue}>
-              {
-                this.state.totalkm >= 15 ?
-                  <>
+             
+                    <RadioButton.Item label="Delivery" value="3_OR_4_DAYS" disabled={this.state.clickOk} />
+                    <RadioButton.Item label="Self Pickup" value="SELF_PICKED" disabled={this.state.clickOk} />
                   
-                    <RadioButton.Item label="Delivery in 3 to 4 Days" value="3_OR_4_DAYS" disabled={this.state.clickOk} />
-                    <RadioButton.Item label="Self Pickup" value="SELF_PICKED" disabled={this.state.clickOk} />
-                  </>
-                  :
-                  <>
-                    <RadioButton.Item label="Delivery in 2 hours" value="2_HOURS" disabled={this.state.clickOk} />
-                    <RadioButton.Item label="Delivery in 4 hours" value="4_HOURS" disabled={this.state.clickOk} />
-                    <RadioButton.Item label="Self Pickup" value="SELF_PICKED" disabled={this.state.clickOk} />
-                  </>
-              }
+            
             </RadioButton.Group>
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center' }}>

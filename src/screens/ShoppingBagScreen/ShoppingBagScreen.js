@@ -71,7 +71,11 @@ class ShoppingBagScreen extends Component {
       taxsCharges:0,
       deliveryfee:0,
 
-      totalkm:0
+      totalkm:0,
+      basecharge:'',
+      chargesPerKm:''
+
+
     }
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.props.navigation.addListener(
@@ -108,13 +112,15 @@ class ShoppingBagScreen extends Component {
     if (getdata.statusCode == 200) {
       this.setState({ isDataLoading: false })
       this.setState({ allShoppingBag: getdata.data.data })
-
-      console.log("Data=========================bag", getdata)
+      console.log("Data=========================bag", getdata.data.charges)
+      this.setState({basecharge: getdata.data.charges.base_charge, chargesPerKm : getdata.data.charges.charge_per_km})
       if (getdata.data.data.length !== 0) this.setState({ isShowData: true })
       else if (getdata.data.data.length == 0) this.setState({ isShowData: false })
       this.props.setTotalShoppingBagPrice();
-      const total = getdata.data.data.map(item => item.amount).reduce((prev, next) => prev + next);
-      this.setState({ totalPayamount: total })
+      const total = getdata.data.data.map(item => parseInt(item.amount)).reduce((prev, next) => prev + next);
+      const taxcharges =  getdata.data.data.map(item => item.products[0].product_id.taxes_and_charges).reduce((prev, next) => prev + next);
+      console.log("tax charges======================",total, taxcharges)
+      this.setState({ totalPayamount: total, taxsCharges:taxcharges })
     } else {
       this.setState({ isDataLoading: true })
     }
@@ -133,11 +139,12 @@ class ShoppingBagScreen extends Component {
         console.log("shop lat long", responseshop.data.shopDetail.shopLatitude, responseshop.data.shopDetail.shopLongitude)
         shoplatlong.push ( { lat : responseshop.data.shopDetail.shopLatitude , long : responseshop.data.shopDetail.shopLongitude});
         length--;
-        if(length == 0) {
-          console.log(">>>>>>>>>>>>>>>>>>>>>shoplatlong", shoplatlong)
-          this.getdistance(shoplatlong)
+        this.getdistance(shoplatlong)
+        console.log("length===============", length)
+        // if(length == 0) {
+        //   console.log(">>>>>>>>>>>>>>>>>>>>>shoplatlong", shoplatlong)
 
-        }
+        // }
       }
     })
     
@@ -166,12 +173,12 @@ class ShoppingBagScreen extends Component {
       let finalchargekm =  km.reduce((a, b) => a + b, 0)
       this.setState({totalkm : finalchargekm})
       if(finalchargekm <= 2) {
-          this.setState({deliveryfee : 30})
+          this.setState({deliveryfee : parseInt(this.state.basecharge)})
       }
       else {
-        let charges = finalchargekm -2 
-        console.log("charges", charges * 10)
-        this.setState({ deliveryfee :charges * 10 })
+        let charges = finalchargekm - 2 
+        console.log("charges", charges * parseInt(this.state.chargesPerKm))
+        this.setState({ deliveryfee: charges * parseInt(this.state.chargesPerKm) })
       }
    
   }

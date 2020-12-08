@@ -17,6 +17,8 @@ import getServiceData from "../../services/ShopServices/getservices";
 import getbestSellerService from '../../services/Products/bestSellerProducts'
 import { Searchbar } from 'react-native-paper';
 import Icon from "react-native-vector-icons/MaterialIcons";
+import ShowDeliveryBoyList from "./Deliveryboy";
+import ShopList from "./ShopDataShow/shopList";
 
 function Home(props) {
   const colorScheme = useColorScheme();
@@ -264,6 +266,16 @@ function Home(props) {
             />
         }
 
+        <ShopList
+          title={"Shop List"}
+          navigation={navigation}
+          appConfig={appConfig}
+        />
+        <ShowDeliveryBoyList
+          title={"Hire Delivery Boy"}
+          navigation={navigation}
+          appConfig={appConfig}
+        />
 
         <ProductDetailModal
           item={product}

@@ -3,8 +3,8 @@ import AppStyles from "../../AppStyles";
 const { width, height } = Dimensions.get("window");
 
 const featuredTextPadding = 3;
-
 const dynamicStyles = colorScheme => {
+
   return new StyleSheet.create({
     container: {
       backgroundColor: AppStyles.colorSet[colorScheme].mainThemeBackgroundColor,
@@ -276,7 +276,63 @@ const dynamicStyles = colorScheme => {
 
 
     },
-    
+    delievryboyimg:{
+      width:90,
+      height:90,
+      borderRadius:360,
+      justifyContent:'center',
+      alignItems:'center'
+    },
+    dboyContainer:{
+      width: "100%",
+      height: "50%",
+      alignSelf:'center',
+      justifyContent:'center'
+    },
+    dboyView:{
+      width: 0.30 * width,
+      height: 0.28 * height,
+      margin: 10,
+      overflow: "visible",
+      marginLeft: 7
+      
+    },
+    card:{
+      marginTop: 5,
+      backgroundColor: AppStyles.colorSet[colorScheme].mainThemeBackgroundColor,
+      padding: 5,
+      marginBottom: 5,
+      borderWidth: 1,
+      borderColor: '#fff',
+      borderRadius: 5,
+      elevation: 5,
+    },
+    categoryTextContainerView: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      // backgroundColor: "rgba(0,0,0,.55)",
+      backgroundColor: '#e7e7e7',
+      borderRadius: 6,
+      borderColor: 'black',
+      borderWidth: 1
+    },
+    categoryText: {
+      color: "black",
+      textAlign: "center",
+      justifyContent: "center",
+      opacity: 1.0,
+      fontFamily: AppStyles.fontFamily.semiBoldFont
+    },
+    bottomsheet:{
+      // padding:10,
+      paddingLeft:15,
+      paddingTop:20
+    },
+    shopname:{
+      fontSize:15,
+      fontFamily: AppStyles.fontFamily.regularFont,
+    },
   });
 };
 

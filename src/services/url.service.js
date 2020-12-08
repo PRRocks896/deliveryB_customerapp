@@ -109,6 +109,15 @@ const api = {
     allSearch:{
         allSearch:Config.getURL + 'customer/shop/search/all?order=desc&'
     },
+    shopTypelist:{
+        shopTypelist : Config.getURL + 'customer/shop/type/list'
+    },
+    shoplistbyType:{
+        shoplistbyType : Config.getURL + 'customer/shop/listByTypeId/'
+    },
+    productsbyshop:{
+        productsbyshop : Config.getURL + 'customer/shop/search/all?words=&'
+    },
     
 
     // services

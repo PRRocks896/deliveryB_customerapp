@@ -21,6 +21,8 @@ import ServicePaymentOptions from '../components/Home/ServiceFlow/paymentmethod'
 import PlaceServiceScrren from '../components/Home/ServiceFlow/placeorder'
 import OrderDetailsScreen from '../screens/Order/orderDetails'
 import TrackOrderComp from '../components/Order/trackOrder'
+import DBoyDetails from '../components/Home/Deliveryboy/deliveryboyDetails'
+import ShopWiseProduct from '../components/Home/ShopDataShow/shopProduct'
 const MainStackNavigator = createStackNavigator(
   {
     Drawer: { screen: DrawerStackNavigator },
@@ -58,7 +60,20 @@ const MainStackNavigator = createStackNavigator(
       navigationOptions: {
         title: 'Track Order'
       }
-    }
+    },
+    DBoyDetails: {
+      screen: DBoyDetails,
+      navigationOptions: {
+        title: 'Details'
+      }
+    },
+    
+    ShopWiseProduct: {
+      screen: ShopWiseProduct,
+      navigationOptions: {
+        header: null
+      }
+    },
   },
   {
     initialRouteName: "Drawer",

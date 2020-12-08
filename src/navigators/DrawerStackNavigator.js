@@ -24,6 +24,7 @@ import ServicebookDetails from '../screens/Order/servicebookScreen'
 import OrderDetailsScreen from '../screens/Order/orderDetails'
 import ViewAllProductsPage from '../components/Home/ViewAllProductsPage'
 import AllSearchPage from '../components/Home/AllSearch'
+
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: HomeScreen,
@@ -38,7 +39,7 @@ const DrawerNavigator = createDrawerNavigator(
     SearchService:SearchService,
     ServicebookDetails:ServicebookDetails,
     ViewAllProductsPage:ViewAllProductsPage,
-    AllSearchPage:AllSearchPage
+    AllSearchPage:AllSearchPage,
     // OrderDetailsScreen:OrderDetailsScreen
   },
   {
@@ -86,7 +87,7 @@ const DrawerNavigator = createDrawerNavigator(
         navigation.state.routes[routeIndex].key ==  'ServicebookDetails' && 'Booked Service' ||
         navigation.state.routes[routeIndex].key ==  'SearchService' && 'Search Service' ||
         navigation.state.routes[routeIndex].key ==  'ViewAllProductsPage' && 'View All' ||
-        navigation.state.routes[routeIndex].key ==  'AllSearchPage' && 'Search'
+        navigation.state.routes[routeIndex].key ==  'AllSearchPage' && 'Search' 
       };
     }
   }
@@ -120,7 +121,7 @@ const getDrawerScreenTitle = routeKey => {
     case "ViewAllProductsPage" :
       return "ViewAllProductsPage";  
     case "AllSearchPage" :
-        return "AllSearchPage";    
+        return "AllSearchPage";     
     default:
       return "Home";
   }
