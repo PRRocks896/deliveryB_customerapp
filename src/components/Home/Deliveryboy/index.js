@@ -3,43 +3,10 @@ import { ScrollView, View, Dimensions, FlatList, TouchableOpacity, Image, Text, 
 import dynamicStyles from "../styles";
 import { useColorScheme } from "react-native-appearance";
 
-let dBoy = [
-
-    {
-        id: 0,
-        name: 'john',
-        km: '2 km away'
-    },
-    {
-        id: 1,
-        name: 'john',
-        km: '2 km away'
-    },
-    {
-        id: 2,
-        name: 'john',
-        km: '2 km away'
-    },
-    {
-        id: 3,
-        name: 'john',
-        km: '2 km away'
-    },
-    {
-        id: 4,
-        name: 'john',
-        km: '2 km away'
-    },
-    {
-        id: 5,
-        name: 'john',
-        km: '2 km away'
-    }
-]
 
 function ShowDeliveryBoyList(props) {
 
-    const { title } = props
+    const { title, dboylist } = props
 
     const colorScheme = useColorScheme();
     const styles = dynamicStyles(colorScheme);
@@ -49,15 +16,14 @@ function ShowDeliveryBoyList(props) {
             <FlatList
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
-                data={dBoy}
+                data={dboylist}
                 renderItem={(item) => {
                     return (
                         <TouchableOpacity
                             activeOpacity={0.7}
                             style={styles.dboyView}
-                            onPress={ () => props.navigation.navigate('DBoyDetails')}
+                            onPress={ () => props.navigation.navigate('DBoyDetails', {details: item.item.})}
                         >
-
                             <View style={[styles.dboyContainer, { marginLeft: 5}]}>
                                 <ActivityIndicator size={'small'} color={'#000'}
                                     style={{
@@ -69,13 +35,13 @@ function ShowDeliveryBoyList(props) {
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }} />
-                                <Image style={styles.delievryboyimg} source={require('../../../../assets/icons/user.png')} />
+                                <Image style={styles.delievryboyimg} source={item.item.deliveryboy.hasOwnProperty('profilePicture')  ? {uri:item.item.deliveryboy.profilePicture }  : require('../../../../assets/icons/user.png')} />
                             </View>
                             <View >
 
                                 <Text style={[styles.productCardPrice, { marginLeft: 5,}]}
-                                >{item.item.name}</Text>
-                                <Text style={styles.productCardDescription}> {item.item.km} </Text>
+                                >{item.item.deliveryboy.user_id.name}</Text>
+                                <Text style={styles.productCardDescription}> {(item.item.distance).toFixed(2)} </Text>
                             </View>
                             <View style={[styles.applybutton, {width:'90%'}]}>
                                 <Text style={{color:'#fff'}}>{'Hire'}</Text>
@@ -97,7 +63,7 @@ function ShowDeliveryBoyList(props) {
                 <Text style={styles.unitTitle}>{title}</Text>
             </View>
             {
-                dBoy.length && displaydboylist()
+                dboylist.length && displaydboylist()
             }
         </View>
     );

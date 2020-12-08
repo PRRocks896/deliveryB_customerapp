@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { ScrollView, View, BackHandler, Alert, RefreshControl, Text, FlatList, Dimensions, TouchableOpacity, ActivityIndicator, Image, Content, SafeAreaView } from "react-native";
+import { ScrollView, View, BackHandler, Alert, RefreshControl, Text, FlatList, Dimensions, PermissionsAndroid, sTouchableOpacity, ActivityIndicator, Image, Content, SafeAreaView } from "react-native";
 import { useColorScheme } from "react-native-appearance";
 import Categories from "./Categories";
 import NewArrivals from "./NewArrivals";
@@ -19,7 +19,12 @@ import { Searchbar } from 'react-native-paper';
 import Icon from "react-native-vector-icons/MaterialIcons";
 import ShowDeliveryBoyList from "./Deliveryboy";
 import ShopList from "./ShopDataShow/shopList";
-
+import Geolocation from 'react-native-geolocation-service';
+import { connect, disconnect } from '../../utils/socket'
+const { width, height } = Dimensions.get('window')
+const ASPECT_RATIO = width / height
+const LATITUDE_DELTA = 0.0922
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
 function Home(props) {
   const colorScheme = useColorScheme();
   const [category, setCategory] = useState([])
@@ -40,6 +45,16 @@ function Home(props) {
   const { width } = Dimensions.get("window");
   const styles = dynamicStyles(colorScheme);
   const [searchQuery, setSearchQuery] = useState('');
+  const [customerLat, setcustomerLat] = useState(22.2856)
+  const [customerLong, setcustomerLong] = useState(70.7561)
+  const [dboyArray, setdboyArray] = useState([])
+
+  const [region, setregion] = useState({
+    latitude: 22.2856,
+    longitude: 70.7561,
+    latitudeDelta: LATITUDE_DELTA,
+    longitudeDelta: LONGITUDE_DELTA
+  })
   const {
     navigation,
     shippingMethods,
@@ -84,9 +99,67 @@ function Home(props) {
     getCategoryProducts() // For get categories
     getFeaturedProducts() // For get products
     getServices() // For get Service of shop
-
+    permissionforlocation()
     return () => [backHandler.remove(), unsubscribe()]
   }, []);
+
+  const permissionforlocation = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          'title': 'Tribata shop app',
+          'message': 'Example App access to your location '
+        }
+      )
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        // Get Current Location 
+        getLocation();
+
+      } else {
+        alert("Location permission denied");
+      }
+    } catch (err) {
+      console.warn(err)
+    }
+  }
+  const getLocation = async () => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log("Position", position.coords.latitude, position.coords.longitude)
+        setcustomerLat(position.coords.latitude)
+        setcustomerLong(position.coords.longitude)
+        getDeliveryboyList(position.coords.latitude, position.coords.longitude)
+      },
+      (error) => {
+        Alert.alert(error.message);
+      },
+      { enableHighAccuracy: false, timeout: 200000, maximumAge: 5000 },
+    );
+  }
+
+  const getDeliveryboyList = async (lat, long) => {
+    console.log("Lat Long for d boy", lat, long)
+    this.socket = connect();
+    let body = {
+      lat: lat,
+      long: long
+    }
+    const result = await new Promise(async (resolve, reject) => {
+      await this.socket.emit('getNearByDeliveryBoys', body, function (data) {
+        console.log("On customer app socket response", data)
+        if (data.status) {
+          resolve(data.deliveryboyDetails);
+
+      } else {
+          reject(data.message);
+      }
+      });
+    })
+    // console.log('Result: ', result);
+    setdboyArray(result)
+  }
+
   const getServices = async () => {
     const response = await getServiceData(0)
     if (response.statusCode == 200) {
@@ -271,11 +344,16 @@ function Home(props) {
           navigation={navigation}
           appConfig={appConfig}
         />
-        <ShowDeliveryBoyList
-          title={"Hire Delivery Boy"}
-          navigation={navigation}
-          appConfig={appConfig}
-        />
+        {
+          dboyArray.length ?
+          <ShowDeliveryBoyList
+            title={"Hire Delivery Boy"}
+            navigation={navigation}
+            appConfig={appConfig}
+            dboylist={dboyArray}
+          />
+          : null
+        }
 
         <ProductDetailModal
           item={product}
