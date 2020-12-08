@@ -200,6 +200,7 @@ function Home(props) {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
           getCategoryProducts() // For get categories
           getFeaturedProducts() //
+          permissionforlocation()
         }} />}
         style={styles.container} >
         <View style={{ marginLeft: 10, marginRight: 10, marginTop: 5 }}>
@@ -351,6 +352,8 @@ function Home(props) {
             navigation={navigation}
             appConfig={appConfig}
             dboylist={dboyArray}
+            customerLat={customerLat}
+            customerLong={customerLong}
           />
           : null
         }

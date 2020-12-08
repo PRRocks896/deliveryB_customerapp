@@ -281,7 +281,8 @@ console.log("Verify otp", data)
     const data = await getAddressviaUSer(userid);
     
     if (data.data) {
-    
+      let dataAddress =  data.data.address.filter(item => item.isDefault == true)
+     AsyncStorage.setItem("CustomerAddress", JSON.stringify(dataAddress[0]))
       AsyncStorage.setItem("AddressId", data.data._id)
     }
   }

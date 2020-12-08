@@ -73,7 +73,8 @@ class ShoppingBagScreen extends Component {
 
       totalkm:0,
       basecharge:'',
-      chargesPerKm:''
+      chargesPerKm:'',
+      normal_charge:0
 
 
     }
@@ -112,8 +113,8 @@ class ShoppingBagScreen extends Component {
     if (getdata.statusCode == 200) {
       this.setState({ isDataLoading: false })
       this.setState({ allShoppingBag: getdata.data.data })
-      console.log("Data=========================bag", getdata.data.charges)
-      this.setState({basecharge: getdata.data.charges.base_charge, chargesPerKm : getdata.data.charges.charge_per_km})
+      console.log("Data=========================bag", getdata.data)
+      this.setState({basecharge: getdata.data.charges.base_charge, chargesPerKm : getdata.data.charges.charge_per_km, normal_charge: getdata.data.charges.normal_charge})
       if (getdata.data.data.length !== 0) this.setState({ isShowData: true })
       else if (getdata.data.data.length == 0) this.setState({ isShowData: false })
       this.props.setTotalShoppingBagPrice();
@@ -175,12 +176,19 @@ class ShoppingBagScreen extends Component {
       if(finalchargekm <= 2) {
           this.setState({deliveryfee : parseInt(this.state.basecharge)})
       }
+      else if( this.state.totalPayamount > 15){
+        let charges = finalchargekm - 2 
+        console.log("normal_charge", charges * parseInt(this.state.normal_charge))
+        this.setState({ deliveryfee: charges * parseInt(this.state.normal_charge) })
+      }
       else {
         let charges = finalchargekm - 2 
         console.log("charges", charges * parseInt(this.state.chargesPerKm))
         this.setState({ deliveryfee: charges * parseInt(this.state.chargesPerKm) })
       }
-   
+
+      console.log("totalPayamount>>>>>>>>>>>>>>>>>>>>", this.state.totalPayamount)
+      
   }
   getkm(lat1, lon1, lat2, lon2, unit = 'K'){
     if ((lat1 == lat2) && (lon1 == lon2)) {

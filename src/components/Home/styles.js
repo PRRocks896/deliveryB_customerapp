@@ -333,6 +333,44 @@ const dynamicStyles = colorScheme => {
       fontSize:15,
       fontFamily: AppStyles.fontFamily.regularFont,
     },
+      marginTop: {
+        marginTop: 10
+    },
+    tital: {
+        fontFamily: AppStyles.fontFamily.regularFont,
+        fontSize: 18
+    },
+    subtitle: {
+        fontFamily: AppStyles.fontFamily.lightFont,
+        fontSize: 16
+    },
+    row: {
+        flexDirection: 'row'
+    },
+    buttoncontainer: {
+        padding: 5,
+        borderRadius: 5,
+        borderWidth: 1,
+        marginTop: 10,
+        margin: 10,
+        backgroundColor: AppStyles.colorSet[colorScheme].mainThemeForegroundColor,
+    },
+    buttontxt:{
+      fontFamily: AppStyles.fontFamily.regularFont,
+      color: AppStyles.colorSet[colorScheme].mainSubtextColor,
+      fontSize:18,
+      textAlign:'center'
+    },
+    dialogtxt:{
+      fontFamily: AppStyles.fontFamily.regularFont,
+      color: AppStyles.colorSet[colorScheme].mainSubtextColor,
+      fontSize:15
+    },
+    dialogtitle:{
+      fontFamily: AppStyles.fontFamily.regularFont,
+      color: AppStyles.colorSet[colorScheme].mainSubtextColor,
+      fontSize:18
+    }
   });
 };
 

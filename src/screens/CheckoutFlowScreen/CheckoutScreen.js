@@ -307,7 +307,7 @@ class CheckoutScreen extends Component {
 
 
     if(this.state.totalkm >= 15){
-      Toast.show('This delivery taking 3 to 4 Days to deliver', Toast.LONG, [
+      Toast.show('This delivery taking 3 to 4 Days to deliver and It will carry up to 15kg.', Toast.LONG, [
         'UIAlertController',
       ]);
     }
