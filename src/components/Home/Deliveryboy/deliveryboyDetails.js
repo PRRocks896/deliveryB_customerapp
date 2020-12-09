@@ -37,9 +37,11 @@ function DBoyDetails(props) {
             if(response.statusCode == 200){
                 setisLoading(false)
                 setrealise(true)
+                setdialogVisible(false)
             }else{
                 setamountError(response.message)
                 setisLoading(false)
+                setdialogVisible(false)
             }
         }
 
