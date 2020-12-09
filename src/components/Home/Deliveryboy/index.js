@@ -14,13 +14,17 @@ function ShowDeliveryBoyList(props) {
     const colorScheme = useColorScheme();
     const styles = dynamicStyles(colorScheme);
     const [dialogVisible, setdialogVisible] = useState(false)
+    const [detailshoreDboy, setdetailshoreDboy] = useState([])
+    const [isAccept, setisAccept] = useState(false)
 
     /**
      * Hire Delivery Boy
      * @param {any} dBoyid 
      * @param {number} distance 
      */
-    const hiredBoy = async (dBoyid, distance) => {
+    const hiredBoy = async (dBoyid, distance, datadboy) => {
+
+      
         setdialogVisible(false)
         let userid = await AsyncStorage.getItem('userId')
         let profile = await AsyncStorage.getItem('CurrentUser')
@@ -28,7 +32,7 @@ function ShowDeliveryBoyList(props) {
 
         let address = await AsyncStorage.getItem('CustomerAddress')
         let parsedAddress = JSON.parse(address)
-
+        console.log("dboyid=============",dBoyid )
         let cAddress = parsedAddress.address_line_1 + ',' + parsedAddress.address_line_2 + ',' + parsedAddress.district + ',' + parsedAddress.state
         let body = {
             customerName: parsedProfileData.data.name,
@@ -36,18 +40,44 @@ function ShowDeliveryBoyList(props) {
             customerKM: distance,
             customerLat: customerLat,
             customerLong: customerLong,
-            customerAddress: cAddress
+            customerAddress: cAddress,
+            deliveryboyID:dBoyid, 
+            customerID:userid
         }
 
         let socket = connect()
-        socket.emit(`sendPickupRequestToDeliveryBoy-${dBoyid}`, body, function (data) {
-            console.log("On Hire Call Function", data)
+        socket.emit('hireDeliveryBoy', dBoyid, body)
+
+        socket.on(`notifyCustomer-${userid}`,  function (data) {
+            console.log("Response from Delivery boy", data)
+            if(data) {
+                if(data.message == 'Accept'){
+                    console.log("detailshoreDboy", datadboy)
+                    setisAccept(true)
+                    props.navigation.navigate('DBoyDetails', { details: datadboy })
+                }else if (data.message == 'Ignor'){
+                    console.log("call else if", data)
+                    setisAccept(false)
+                    Alert.alert(
+                        "Delivery boy is not available",
+                        "Please try to choose another Delivery boy.",
+                        [
+                          {
+                            text: "Cancel",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                          },
+                          { text: "OK", onPress: () => console.log("OK Pressed") }
+                        ],
+                        { cancelable: false }
+                      );
+                }
+            }
         })
 
-        socket.on(`responseFromDeliveryboy-${userid}`, function (data) {
-            console.log("Response from Delivery boy", data)
-        })
     }
+
+    // cid 
 
     const displaydboylist = () => {
         return (
@@ -62,7 +92,7 @@ function ShowDeliveryBoyList(props) {
                         <TouchableOpacity
                             activeOpacity={0.7}
                             style={styles.dboyView}
-                            onPress={() => props.navigation.navigate('DBoyDetails', { details: item.item.deliveryboy })}
+                            onPress={() =>  [ isAccept ? props.navigation.navigate('DBoyDetails', { details: item.item.deliveryboy }): setdetailshoreDboy(item.item.deliveryboy)]}
                         >
                             <View style={[styles.dboyContainer, { marginLeft: 5 }]}>
                                 <ActivityIndicator size={'small'} color={'#000'}
@@ -104,7 +134,7 @@ function ShowDeliveryBoyList(props) {
                                  <TouchableOpacity onPress={() => setdialogVisible(false)} style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
                                      <Text style={styles.buttontxt}>Cancel</Text>
                                  </TouchableOpacity>
-                                 <TouchableOpacity onPress={() => hiredBoy(item.item.deliveryboy._id, item.item.distance)} style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
+                                 <TouchableOpacity onPress={() => hiredBoy(item.item.deliveryboy.user_id._id, item.item.distance, item.item.deliveryboy)} style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
                                      <Text style={styles.buttontxt}>Agree</Text>
                                  </TouchableOpacity>
                              </View>

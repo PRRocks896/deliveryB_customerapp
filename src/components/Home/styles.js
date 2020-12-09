@@ -370,7 +370,34 @@ const dynamicStyles = colorScheme => {
       fontFamily: AppStyles.fontFamily.regularFont,
       color: AppStyles.colorSet[colorScheme].mainSubtextColor,
       fontSize:18
-    }
+    },
+    cvvinput: {
+      borderBottomWidth: 1,
+      borderBottomColor: '#a3a3a3'
+  },
+  errortxt: {
+    color: 'red'
+},
+addbtnContainer: {
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: 10
+},
+addcvvbutton: {
+  borderColor: '#a3a3a3',
+  borderRadius: 5,
+  width: '90%',
+  height: 30,
+  borderWidth: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingLeft:15,
+  paddingRight:15,
+  padding:15
+},
+addtext: {
+  fontSize: 20
+},
   });
 };
 

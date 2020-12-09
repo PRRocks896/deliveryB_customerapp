@@ -118,6 +118,9 @@ const api = {
     productsbyshop:{
         productsbyshop : Config.getURL + 'customer/shop/search/all?words=&'
     },
+    sendmoneytodBoy:{
+        sendmoneytodBoy: Config.getURL + 'wallet/send/money'
+    },
     
 
     // services
