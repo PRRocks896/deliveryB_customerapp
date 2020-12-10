@@ -78,7 +78,7 @@ function ServiceModelComponent(props) {
         console.log("===================get shop", id, item)
         if (id) {
             const response = await getallShopList(id)
-            console.log("Response For shop details", response)
+            console.log("Response For shop details", response, response.data, response.data.length)
             if (response.statusCode == 200) {
                 setshopList(response.data)
             }
@@ -109,6 +109,7 @@ function ServiceModelComponent(props) {
             <FlatList
                 data={shopList}
                 renderItem={(item) => {
+                    console.log("item>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", item)
                     return (
                         <TouchableOpacity onPress={() => setselectedshopID(item.item._id)}>
                             <View style={[styles.bottomsheet, { flexDirection: 'row' }]}>
@@ -116,7 +117,7 @@ function ServiceModelComponent(props) {
                                     <Text style={styles.shopname}>{item.item.name}  </Text>
                                     {
                                         item.item.isVerified ?
-                                            <Icons name='check-decagram' size={18} color={'#36D8FF'} style={{ textAlign: 'center', alignSelf: 'center', marginTop:5 }} />
+                                            <Icons name='check-decagram' size={18} color={'#36D8FF'} style={{ textAlign: 'center', alignSelf: 'center', marginTop: 5 }} />
                                             : null
                                     }
                                 </View>
@@ -137,6 +138,7 @@ function ServiceModelComponent(props) {
         )
     }
 
+    console.log("================================service modeal", item.serviceImage, item)
     if (item) {
         return (
             <>
@@ -278,13 +280,21 @@ function ServiceModelComponent(props) {
                     }}
                 >
                     <View>
-                        {displayshopList()}
 
-                        <TouchableOpacity
-                            onPress={ () => [onAddToBag(item, selectedSlot, selectedshopID,slotdate ),refRBSheet.current.close() ]}
-                            style={styles.applybutton}>
-                            <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
-                        </TouchableOpacity>
+                        {
+                            shopList.length ?
+                                <>
+                                    {displayshopList()}
+
+                                    <TouchableOpacity
+                                        onPress={() => [onAddToBag(item, selectedSlot, selectedshopID, slotdate), refRBSheet.current.close()]}
+                                        style={styles.applybutton}>
+                                        <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
+                                    </TouchableOpacity>
+                                </>
+                                : <View style={{justifyContent:'center', alignItems:'center'}}>
+                                    <Text>{'No Shop List Found'}</Text>
+                                    </View>}
                     </View>
                 </RBSheet>
             </>

@@ -113,7 +113,7 @@ class OrderDetailsScreen extends Component {
     render() {
         const { slottime } = this.state
         const data = this.props.navigation.state.params.data // Data from params (orderscreen and servicebookscreen)
-        console.log("==============================", data.hasOwnProperty('delivery_boy'))
+        console.log("==============================data", data,data.hasOwnProperty('delivery_boy'))
         if (this.props.navigation.state.params.type == 'Order') {
             console.log("order", data.status)
             if (data.status == 'PICKUP_READY' || data.status == 'ORDER_PICKED') {
@@ -149,6 +149,8 @@ class OrderDetailsScreen extends Component {
                                     </>
                                     : null
                             }
+                            {
+                                data.hasOwnProperty('shop_id') && data.shop_id !== null ? 
                               <List.Section>
                                 <List.Accordion
                                     style={{ padding: 0 }}
@@ -166,6 +168,10 @@ class OrderDetailsScreen extends Component {
                                     </View>
                                 </List.Accordion>
                             </List.Section>
+                            :   <View style={{marginTop:10}}>
+                            <Text>{'Shop Details Not Found!'}</Text>
+                        </View> 
+                            }
 
                             {
                                 data.deliveryType == 'SELF_PICKED' ?
@@ -207,7 +213,9 @@ class OrderDetailsScreen extends Component {
                                 <Text style={styles.tital}>Total amount:  </Text>
                                 <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{(data.amount).toFixed(2)}</Text>
                             </View>
-
+                        {
+                             data.hasOwnProperty('shop_id') && data.shop_id !== null ? 
+                     
                             <List.Section>
                                 <List.Accordion
                                     style={{ padding: 0 }}
@@ -234,6 +242,9 @@ class OrderDetailsScreen extends Component {
                                     </View>
                                 </List.Accordion>
                             </List.Section>
+                            :   <View style={{marginTop:10}}>
+                            <Text>{'Shop Details Not Found!'}</Text>
+                        </View> }
                         </View>
                     </View>
                 );
@@ -262,14 +273,16 @@ class OrderDetailsScreen extends Component {
 
                         <View style={styles.row}>
                             <Text style={styles.tital}>Total amount:  </Text>
-                            <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{data.amount}</Text>
+                            <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{(data.amount).toFixed(2)}</Text>
                         </View>
 
                         <View style={styles.row}>
                             <Text style={styles.tital}>Payment:  </Text>
                             <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{data.payment_method == 'COD' ? 'He/She has to pay to shop' : 'Already paid'}</Text>
                         </View>
-
+                {
+                    data.hasOwnProperty('shop_id') && data.shop_id !== null ? 
+            
                         <List.Section>
                             <List.Accordion
                                 style={{ padding: 0 }}
@@ -294,6 +307,11 @@ class OrderDetailsScreen extends Component {
                                 </View>
                             </List.Accordion>
                         </List.Section>
+                        : 
+                        <View style={{marginTop:10}}>
+                            <Text>{'Shop Details Not Found!'}</Text>
+                        </View> 
+                }
                     </View>
                 </View>
             );

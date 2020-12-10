@@ -24,7 +24,7 @@ import ServicebookDetails from '../screens/Order/servicebookScreen'
 import OrderDetailsScreen from '../screens/Order/orderDetails'
 import ViewAllProductsPage from '../components/Home/ViewAllProductsPage'
 import AllSearchPage from '../components/Home/AllSearch'
-
+import DBoyOrdersScreen from '../screens/Order/dBoyOrderScreen'
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: HomeScreen,
@@ -40,6 +40,7 @@ const DrawerNavigator = createDrawerNavigator(
     ServicebookDetails:ServicebookDetails,
     ViewAllProductsPage:ViewAllProductsPage,
     AllSearchPage:AllSearchPage,
+    DBoyOrdersScreen:DBoyOrdersScreen
     // OrderDetailsScreen:OrderDetailsScreen
   },
   {
@@ -122,6 +123,8 @@ const getDrawerScreenTitle = routeKey => {
       return "ViewAllProductsPage";  
     case "AllSearchPage" :
         return "AllSearchPage";     
+    case "DBoyOrdersScreen": 
+          return "Boking"    
     default:
       return "Home";
   }

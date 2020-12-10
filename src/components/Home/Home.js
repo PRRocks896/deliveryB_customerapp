@@ -162,6 +162,8 @@ function Home(props) {
 
   const getServices = async () => {
     const response = await getServiceData(0)
+    // console.log("getServices response", response)
+
     if (response.statusCode == 200) {
       setserviceData(response.data)
     }
@@ -170,6 +172,7 @@ function Home(props) {
   const getCategoryProducts = async () => {
     const data = await getCategory();
     if (data.success) {
+      // console.log("category response", data)
       setisLoadingcategory(false)
       setCategory(data.data)
     } else {
@@ -180,6 +183,7 @@ function Home(props) {
   const getFeaturedProducts = async () => {
     const data = await getProducts(0);
     if (data.success) {
+      // console.log("getProducts response", data)
       setisLoadingProduct(false)
       setProducts(data.data)
     } else {

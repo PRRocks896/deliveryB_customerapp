@@ -212,7 +212,7 @@ function ViewAllProductsPage(props) {
     setmodalVisible(false)
     setservicemodalVisible(false)
     if (selectedSlot !== '') {
-     
+
       props.navigation.navigate('ServicePaymentOptions',
         {
           appConfig: props.navigation.state.params.appConfig,
@@ -241,7 +241,7 @@ function ViewAllProductsPage(props) {
 
     setservicePage(0)
     setserviceData([])
-    if (bestseelerpage == 0 && bestSellerProducts.length == 0) {
+    if (bestseelerpage == 0) {
       let order = isSelectSort == 'lowTohigh' ? 'asc' : 'desc'
       let data = `page=${bestseelerpage}&limit=10&sort=productDetail.price&priceLow=10&priceHigh=100000&order=${order}`
       refRBSheet.current.close()
@@ -255,8 +255,8 @@ function ViewAllProductsPage(props) {
     }
 
 
-
-    if (servicePage == 0 && serviceData.length == 0) {
+    console.log("service page", servicePage, serviceData.length)
+    if (servicePage == 0) {
       let order = isSelectSort == 'lowTohigh' ? 'asc' : 'desc'
       let data = `page=${servicePage}&limit=10&sort=serviceDetail.price&priceLow=10&priceHigh=100000&order=${order}`
       refRBSheet.current.close()
@@ -285,29 +285,32 @@ function ViewAllProductsPage(props) {
 
   if (key == 'service') {
     return (
-      <>
+      <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.container} >
           {
             serviceData.length ?
               <View>
                 <View>
-                {displayserviceData()}
-                  </View>
-               
-                  <TouchableOpacity onPress={() => refRBSheet.current.open()} style={styles.filtercontainer}>
-                    <Icon name={'filter-list'} color={'#000'} size={20} />
-                  </TouchableOpacity>
-                
+                  {displayserviceData()}
+                </View>
+
+
               </View>
-              : null
+              :
+              <View style={{ marginBottom: 10 }}>
+                <Text>{'No Data Found...'}</Text>
+              </View>
           }
         </View>
+        <TouchableOpacity onPress={() => [refRBSheet.current.open(), setservicePage(0)]} style={styles.filtercontainer}>
+          <Icon name={'filter-list'} color={'#000'} size={20} />
+        </TouchableOpacity>
 
         <ServiceModelComponent
           item={service}
           shippingMethods={props.shippingMethods}
           visible={servicemodalVisible}
-          onAddToBag={(item, selectedSlot, selectedshopID,slotdate) => booknow(item, selectedSlot, selectedshopID,slotdate)}
+          onAddToBag={(item, selectedSlot, selectedshopID, slotdate) => booknow(item, selectedSlot, selectedshopID, slotdate)}
           onCancelPress={() => setservicemodalVisible(!servicemodalVisible)}
           appConfig={props.appConfig}
           navigation={props.navigation}
@@ -364,32 +367,36 @@ function ViewAllProductsPage(props) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => applysorting()}
+              onPress={() => [applysorting(), setservicePage(0), setserviceData([])]}
               style={styles.applybutton}>
               <Text style={{ color: '#fff', fontSize: 15 }}>{"Apply"}</Text>
             </TouchableOpacity>
 
           </View>
         </RBSheet>
-       
-      </>
+
+      </SafeAreaView>
     )
   } else if (key == 'BestSeller') {
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.unitContainer}>
           {
             bestSellerProducts.length ?
 
-              <View style={{ marginBottom: 0 }}>
+              <View style={{ marginBottom: 10 }}>
                 {displaybestproducts()}
               </View>
 
-              : null
+              :
+              <View style={{ marginBottom: 10 }}>
+                <Text>{'No Data Found...'}</Text>
+              </View>
+
           }
-          <TouchableOpacity onPress={() => refRBSheet.current.open()} style={styles.filtercontainer} s>
+          {/* <TouchableOpacity onPress={() => refRBSheet.current.open()} style={styles.filtercontainer} s>
             <Icon name={'filter-list'} color={'#000'} size={28} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <ProductDetailModal
             item={clickproduct}
@@ -401,6 +408,9 @@ function ViewAllProductsPage(props) {
             navigation={props.navigation}
           />
         </View>
+        <TouchableOpacity onPress={() => [refRBSheet.current.open(), setbestseelerpage(0)]} style={styles.filtercontainer}>
+          <Icon name={'filter-list'} color={'#000'} size={28} />
+        </TouchableOpacity>
 
         <RBSheet
           ref={refRBSheet}
@@ -452,7 +462,7 @@ function ViewAllProductsPage(props) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => applysorting()}
+              onPress={() => [applysorting(), setbestseelerpage(0), setbestSellerProducts([])]}
               style={styles.applybutton}>
               <Text style={{ color: '#fff', fontSize: 15 }}>{"Apply"}</Text>
             </TouchableOpacity>

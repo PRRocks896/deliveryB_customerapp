@@ -116,7 +116,7 @@ class ServicebookDetails extends Component {
 
                             <View style={styles.row}>
                                 <Text style={styles.tital}>Total amount:  </Text>
-                                <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{item.item.amount}</Text>
+                                <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{(item.item.amount).toFixed(2)}</Text>
                             </View>
 
                             <View style={[styles.row, { position: 'absolute', right: 10, bottom: 10, marginTop: 10 }]}>

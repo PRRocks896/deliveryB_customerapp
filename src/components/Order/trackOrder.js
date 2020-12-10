@@ -130,9 +130,8 @@ export default class TrackOrderComp extends Component {
                     minZoomLevel={15}
                 >
                     <Marker draggable coordinate={source} title='You' onDragEnd={(e) => console.log("dreg marker", e.nativeEvent.coordinate)} >
-                    <Image source={require('../../../assets/images/dboy.png')} style={{ height: 75, width: 75 }} />
-
-                        </Marker>
+                        <Image source={require('../../../assets/images/dboy.png')} style={{ height: 75, width: 75 }} />
+                    </Marker>
 
                     <Marker key={`coordinate_destination`} title='ABC medical' coordinate={this.state.destination} />
                     <MapViewDirections

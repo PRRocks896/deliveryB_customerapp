@@ -32,8 +32,8 @@ function ShowDeliveryBoyList(props) {
 
         let address = await AsyncStorage.getItem('CustomerAddress')
         let parsedAddress = JSON.parse(address)
-        console.log("dboyid=============",dBoyid )
-        let cAddress = parsedAddress.address_line_1 + ',' + parsedAddress.address_line_2 + ',' + parsedAddress.district + ',' + parsedAddress.state
+        console.log("dboyid=============",dBoyid , address)
+        let cAddress =  parsedAddress.address_line_1 + ',' + parsedAddress.address_line_2 + ',' + parsedAddress.district + ',' + parsedAddress.state
         let body = {
             customerName: parsedProfileData.data.name,
             customerContact: parsedProfileData.data.mobile,
@@ -51,11 +51,11 @@ function ShowDeliveryBoyList(props) {
         socket.on(`notifyCustomer-${userid}`,  function (data) {
             console.log("Response from Delivery boy", data)
             if(data) {
-                if(data.message == 'Accept'){
+                if(data.message == 'ACCEPT'){
                     console.log("detailshoreDboy", datadboy)
                     setisAccept(true)
                     props.navigation.navigate('DBoyDetails', { details: datadboy })
-                }else if (data.message == 'Ignor'){
+                }else if (data.message == 'REJECT'){
                     console.log("call else if", data)
                     setisAccept(false)
                     Alert.alert(

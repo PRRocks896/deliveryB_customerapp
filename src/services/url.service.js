@@ -121,6 +121,15 @@ const api = {
     sendmoneytodBoy:{
         sendmoneytodBoy: Config.getURL + 'wallet/send/money'
     },
+    dboybookingCustomerId:{
+        dboybookingCustomerId: Config.getURL + 'customer/delivery/boy/bookingsByCustomerId/'
+    },
+    getdboyDetails:{
+        getdboyDetails: Config.getURL + 'customer/deliveryboy/'
+    },
+    cancelBooking:{
+        cancelBooking: Config.getURL + 'customer/delivery/boy/booking/cancel/'
+    },
     
 
     // services

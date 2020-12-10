@@ -19,6 +19,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import cancelOrderData from "../../services/Order/cancelOrder";
 import Toast from 'react-native-simple-toast';
+import getAddressviaUSer from "../../services/SavedAddress/getAddressviaUser";
 
 class OrdersScreen extends Component {
   constructor(props) {
@@ -47,6 +48,7 @@ class OrdersScreen extends Component {
   }
 
   componentDidMount() {
+    this.getAddressid()
     this.getOrders()
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
 
@@ -61,6 +63,23 @@ class OrdersScreen extends Component {
     this.props.navigation.goBack(null);
     return true;
 
+  }
+
+  /**
+   * Get Address id 
+   * For get Orders
+   */
+   getAddressid = async () => {
+    let userid = await AsyncStorage.getItem('userId')
+    
+    // get address via user
+    const data = await getAddressviaUSer(userid);
+    
+    if (data.data) {
+      let dataAddress =  data.data.address.filter(item => item.isDefault == true)
+      AsyncStorage.setItem("CustomerAddress", JSON.stringify(dataAddress[0]))
+      AsyncStorage.setItem("AddressId", data.data._id)
+    }
   }
   getOrders = async () => {
     var that = this;

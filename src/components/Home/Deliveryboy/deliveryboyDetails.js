@@ -11,7 +11,7 @@ function DBoyDetails(props) {
 
     const colorScheme = useColorScheme();
     const styles = dynamicStyles(colorScheme);
-    
+
     const details = props.navigation.state.params.details
 
     const [dialogVisible, setdialogVisible] = useState(false)
@@ -25,27 +25,27 @@ function DBoyDetails(props) {
         let usermobile = await AsyncStorage.getItem('UserMobile')
         let dBoymobile = details.user_id.mobile
         setisLoading(true)
-        if(amount !== '') {
+        if (amount !== '') {
             let body = JSON.stringify({
                 from_mobile: usermobile,
                 to_mobile: dBoymobile,
                 amount: parseFloat(amount),
-                purpose:purpose
+                purpose: purpose
             })
             const response = await paytoDBoyService(body)
             console.log("Response of pay", response)
-            if(response.statusCode == 200){
+            if (response.statusCode == 200) {
                 setisLoading(false)
                 setrealise(true)
                 setdialogVisible(false)
-            }else{
+            } else {
                 setamountError(response.message)
                 setisLoading(false)
                 setdialogVisible(false)
             }
         }
 
-        if(amount == '') setamountError("Please Enter Amount")
+        if (amount == '') setamountError("Please Enter Amount")
     }
 
     const realiseDBoy = async () => {
@@ -80,67 +80,67 @@ function DBoyDetails(props) {
                     <Text style={styles.buttontxt}>Call</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => [realise ? realiseDBoy() :  setdialogVisible(true)]}
+                    onPress={() => [realise ? realiseDBoy() : setdialogVisible(true)]}
                     style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
-                    <Text style={styles.buttontxt}>{realise ? 'Release' :'Pay'}</Text>
+                    <Text style={styles.buttontxt}>{realise ? 'Release' : 'Pay'}</Text>
                 </TouchableOpacity>
             </View>
 
             <Dialog
-                        visible={dialogVisible}
-                        title={`Pay to ${details.user_id.name}`}
-                        onTouchOutside={() =>  setdialogVisible(false)}>
-                        <View>
-                            <TextInput
-                                keyboardType='number-pad'
-                                underlineColorAndroid="transparent"
-                                placeholder='Enter Amount'
-                                style={styles.cvvinput}
-                                maxLength={5}
-                                onChangeText={(text) =>  setamount(text)}
-                            />
-                            {
-                                amountError !== '' ?
-                                    <View>
-                                        <Text style={styles.errortxt}>{amountError}</Text>
-                                    </View>
-                                    : null
-                            }
-                             <TextInput
-                                underlineColorAndroid="transparent"
-                                placeholder='Enter Message'
-                                style={styles.cvvinput}
-                                
-                                onChangeText={(text) =>  setpurpose(text)}
-                            />
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ flex: 6 }}>
+                visible={dialogVisible}
+                title={`Pay to ${details.user_id.name}`}
+                onTouchOutside={() => setdialogVisible(false)}>
+                <View>
+                    <TextInput
+                        keyboardType='number-pad'
+                        underlineColorAndroid="transparent"
+                        placeholder='Enter Amount'
+                        style={styles.cvvinput}
+                        maxLength={5}
+                        onChangeText={(text) => setamount(text)}
+                    />
+                    {
+                        amountError !== '' ?
+                            <View>
+                                <Text style={styles.errortxt}>{amountError}</Text>
+                            </View>
+                            : null
+                    }
+                    <TextInput
+                        underlineColorAndroid="transparent"
+                        placeholder='Enter Message'
+                        style={styles.cvvinput}
 
-                                    <View style={styles.addbtnContainer}>
-                                        <TouchableOpacity style={styles.addcvvbutton}  onPress={() =>  [setamountError(''), setdialogVisible(false)]}>
+                        onChangeText={(text) => setpurpose(text)}
+                    />
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flex: 6 }}>
 
-                                            <Text style={styles.addtext}>Cancel</Text>
+                            <View style={styles.addbtnContainer}>
+                                <TouchableOpacity style={styles.addcvvbutton} onPress={() => [setamountError(''), setdialogVisible(false)]}>
 
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                                <View style={{ flex: 6 }}>
+                                    <Text style={styles.addtext}>Cancel</Text>
 
-                                    <View style={styles.addbtnContainer}>
-                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() =>  paydata()}>
-                                            {
-                                                isLoading ?
-                                                    <ActivityIndicator color={'#000'} size="small" />
-                                                    :
-                                                    <Text style={styles.addtext}>{'Pay'}</Text>
-                                            }
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
+                        <View style={{ flex: 6 }}>
 
-                    </Dialog>
+                            <View style={styles.addbtnContainer}>
+                                <TouchableOpacity style={styles.addcvvbutton} onPress={() => paydata()}>
+                                    {
+                                        isLoading ?
+                                            <ActivityIndicator color={'#000'} size="small" />
+                                            :
+                                            <Text style={styles.addtext}>{'Pay'}</Text>
+                                    }
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+
+            </Dialog>
         </View>
     );
 

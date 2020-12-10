@@ -184,6 +184,14 @@ function DrawerContainer(appConfig) {
             }}
           />
            <DrawerItem
+            title="DELIVERY BOY BOOKING"
+            source={AppStyles.iconSet.orderDrawer}
+            onPress={() => {
+              navigation.closeDrawer()
+              navigation.navigate("DBoyOrdersScreen", { appConfig });
+            }}
+          />
+           <DrawerItem
             title="ADD CARDS"
             source={AppStyles.imageSet.creditCard}
             onPress={() => {

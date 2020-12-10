@@ -197,7 +197,7 @@ function AllSearchPage(props) {
                     onPress={() => props.navigation.navigate('AllSearchPage')}
                     placeholder="Search"
                     onChangeText={onChangeSearch}
-                    value={searchQuery}
+                    // value={searchQuery}
                     clearIcon={() => <Icon name={'close'} size={20} color={'#808080'} onPress={() => setAllData([], setSearchQuery(''))}/>}
                 />
             </View>
