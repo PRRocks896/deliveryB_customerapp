@@ -41,7 +41,8 @@ class DBoyOrdersScreen extends Component {
             fetchingStatus: false,
             setOnLoad: false,
             isLoading: true,
-            filter: 'COMPLETED'
+            filter: 'COMPLETED',
+            isLoadingcategory: true
         }
         this.page = 0
         this.props.navigation.addListener(

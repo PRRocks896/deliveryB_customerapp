@@ -11,7 +11,7 @@ import Toast from 'react-native-simple-toast';
 
 function ShowDeliveryBoyList(props) {
 
-    const { title, dboylist, customerLat, customerLong } = props
+    const { title, dboylist, customerLat, customerLong ,callFunction} = props
 
     const colorScheme = useColorScheme();
     const styles = dynamicStyles(colorScheme);
@@ -20,6 +20,8 @@ function ShowDeliveryBoyList(props) {
     const [isAccept, setisAccept] = useState(false)
     const [issocketAccept, setissocketAccept] = useState(false)
 
+    const [isAggreeLoading, setisAggreeLoading] = useState(false)
+
 
     /**
      * Hire Delivery Boy
@@ -27,9 +29,9 @@ function ShowDeliveryBoyList(props) {
      * @param {number} distance 
      */
     const hiredBoy = async (dBoyid, distance, datadboy, bookingid) => {
-
-    //  onAccept(datadboy,dBoyid)
-        setdialogVisible(false)
+        setisAggreeLoading(true)
+        //  onAccept(datadboy,dBoyid)
+        setdialogVisible(true)
         let userid = await AsyncStorage.getItem('userId')
         let profile = await AsyncStorage.getItem('CurrentUser')
         let parsedProfileData = JSON.parse(profile)
@@ -46,7 +48,7 @@ function ShowDeliveryBoyList(props) {
             customerAddress: cAddress,
             deliveryboyID: dBoyid,
             customerID: userid,
-            booking_id:bookingid
+            booking_id: bookingid
         }
         let socket = connect()
         socket.emit('hireDeliveryBoy', dBoyid, body)
@@ -56,7 +58,7 @@ function ShowDeliveryBoyList(props) {
     }
 
     const acceptSocketcall = async (datadboy, dBoyid) => {
-       
+
         console.log("call================================acceptSocketcall")
         let userid = await AsyncStorage.getItem('userId')
         let socket = connect()
@@ -64,44 +66,46 @@ function ShowDeliveryBoyList(props) {
             console.log("Response from Delivery boy", data)
             if (data) {
 
-                    if (data.message == 'ACCEPT') {
-                        console.log("call if", data)
-                        setisAccept(true)
-                        props.navigation.navigate('DBoyDetails', { details: datadboy, bookingid: data.booking_id })
-                      
+                if (data.message == 'ACCEPT') {
+                    console.log("call if", data)
+                    setisAccept(true)
+                    props.navigation.navigate('DBoyDetails', { details: datadboy, bookingid: data.booking_id })
+                    setisAggreeLoading(false)
 
 
-                    } else if (data.message == 'REJECT') {
-                        console.log("call else if", data)
-                        setisAccept(false)
-                        Alert.alert(
-                            "Delivery boy is not available",
-                            "Please try to choose another Delivery boy.",
-                            [
-                                {
-                                    text: "Cancel",
-                                    onPress: () => console.log("Cancel Pressed"),
-                                    style: "cancel"
-                                },
-                                { text: "OK", onPress: () => console.log("OK Pressed") }
-                            ],
-                            { cancelable: false }
-                        );
-                    }else{
-                        console.log("call else ", data.message)
-                        Toast.show(data.message, Toast.LONG, [
-                            'UIAlertController',
-                        ]);
-                    }
+                } else if (data.message == 'REJECT') {
+                    console.log("call else if", data)
+                    setisAccept(false)
+                    setisAggreeLoading(false)
+                    Alert.alert(
+                        "Delivery boy is not available",
+                        "Please try to choose another Delivery boy.",
+                        [
+                            {
+                                text: "Cancel",
+                                onPress: () => console.log("Cancel Pressed"),
+                                style: "cancel"
+                            },
+                            { text: "OK", onPress: () => console.log("OK Pressed") }
+                        ],
+                        { cancelable: false }
+                    );
+                } else {
+                    setisAggreeLoading(false)
+                    console.log("call else ", data.message)
+                    Toast.show(data.message, Toast.LONG, [
+                        'UIAlertController',
+                    ]);
+                }
 
-                
+
 
             }
         })
         // disconnect()
     }
 
-    const onAccept = async (dboyid,distance,datadboy ) => {
+    const onAccept = async (dboyid, distance, datadboy) => {
         let userid = await AsyncStorage.getItem('userId')
         const bodydata = JSON.stringify({
             "customer_id": userid,
@@ -112,13 +116,13 @@ function ShowDeliveryBoyList(props) {
         const acceptresponse = await onBookinAcceptService(bodydata)
         console.log("response of acceot", acceptresponse)
         if (acceptresponse.statusCode == 200) {
-            hiredBoy(dboyid,distance,datadboy ,acceptresponse.data._id )
+            hiredBoy(dboyid, distance, datadboy, acceptresponse.data._id)
         } else {
             Toast.show(acceptresponse.message, Toast.LONG, [
                 'UIAlertController',
             ]);
         }
-        
+
     }
 
     // cid 
@@ -130,7 +134,7 @@ function ShowDeliveryBoyList(props) {
                 showsHorizontalScrollIndicator={false}
                 data={dboylist}
                 renderItem={(item) => {
-// console.log(":::::::::::::::::::::::::::::::::::::::::::::", item.item.deliveryboy.user_id._id, item.item)
+                    // console.log(":::::::::::::::::::::::::::::::::::::::::::::", item.item.deliveryboy.user_id._id, item.item)
                     return (
                         <>
                             <TouchableOpacity
@@ -175,18 +179,24 @@ function ShowDeliveryBoyList(props) {
                                         <Text style={styles.dialogtxt}>  {'Within 2km charge is 30 Rs and above 2 km charge 10 Rs per km.'}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
-                                        <TouchableOpacity onPress={() => setdialogVisible(false)} style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
+                                        <TouchableOpacity onPress={() => [setdialogVisible(false), setisAggreeLoading(false)]} style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
                                             <Text style={styles.buttontxt}>Cancel</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => [
-                                            onAccept(item.item.deliveryboy._id, item.item.distance, item.item.deliveryboy),
-                                            // hiredBoy(item.item.deliveryboy.user_id._id, item.item.distance, item.item.deliveryboy),
-                                            acceptSocketcall(item.item.deliveryboy, item.item.deliveryboy._id)
-                                        ]}
-                                            style={[styles.buttoncontainer, { flex: 6, width: '90%' }
-                                            ]}>
-                                            <Text style={styles.buttontxt}>Agree</Text>
-                                        </TouchableOpacity>
+                                        {
+                                            isAggreeLoading ?
+                                                <TouchableOpacity style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
+                                                    <ActivityIndicator color={'#fff'} size={'small'} />
+                                                </TouchableOpacity>
+                                                :
+                                                <TouchableOpacity onPress={() => [
+                                                    onAccept(item.item.deliveryboy._id, item.item.distance, item.item.deliveryboy),
+                                                    acceptSocketcall(item.item.deliveryboy, item.item.deliveryboy._id)
+                                                ]}
+                                                    style={[styles.buttoncontainer, { flex: 6, width: '90%' }
+                                                    ]}>
+                                                    <Text style={styles.buttontxt}>Agree</Text>
+                                                </TouchableOpacity>
+                                        }
                                     </View>
                                 </View>
                             </Dialog>
@@ -202,7 +212,12 @@ function ShowDeliveryBoyList(props) {
 
         <View style={styles.container} >
             <View style={[styles.unitContainer, { flexDirection: 'row' }]}>
-                <Text style={styles.unitTitle}>{title}</Text>
+                <View style={{ flex: 9 }}>
+                    <Text style={styles.unitTitle}>{title}</Text>
+                </View>
+                <TouchableOpacity onPress={callFunction} style={{ flex: 3 }}>
+                    <Icon name={'refresh'} color={'#a3a3a3'} size={26} style={{ textAlign: 'center', textAlignVertical: 'center', marginTop: 3 }} />
+                </TouchableOpacity>
             </View>
             {
                 dboylist.length && displaydboylist()

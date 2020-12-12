@@ -99,8 +99,15 @@ function Home(props) {
     getCategoryProducts() // For get categories
     getFeaturedProducts() // For get products
     getServices() // For get Service of shop
+    // setInterval ( () =>  permissionforlocation(), 30000)
+   
     permissionforlocation()
-    return () => [backHandler.remove(), unsubscribe()]
+    const unsubscribenavigation = props.navigation.addListener('focus', () => {
+      permissionforlocation()
+  });
+
+  
+    return () => [backHandler.remove(), unsubscribe(),unsubscribenavigation]
   }, []);
 
   const permissionforlocation = async () => {
@@ -358,6 +365,7 @@ function Home(props) {
             dboylist={dboyArray}
             customerLat={customerLat}
             customerLong={customerLong}
+            callFunction={() =>  permissionforlocation()}
           />
           : null
         }

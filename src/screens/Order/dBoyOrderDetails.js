@@ -172,6 +172,7 @@ class DBoyOrderDetailsScreen extends Component {
                                 </View>
                                 {
                                     this.state.isshowPaybtn ?
+                                    data.status == 'BOOKING_ACCEPTED' ?
                                         <View style={{ flexDirection: 'row' }}>
                                             <TouchableOpacity onPress={() => Linking.openURL(`tel:${dPhone}`)} style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
                                                 <Text style={styles.buttontxt}>Call</Text>
@@ -182,6 +183,7 @@ class DBoyOrderDetailsScreen extends Component {
                                                 <Text style={styles.buttontxt}>{realise ? 'Release' : 'Pay'}</Text>
                                             </TouchableOpacity>
                                         </View>
+                                        : null
                                         : null
                                 }
 
