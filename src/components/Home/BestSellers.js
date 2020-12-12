@@ -24,6 +24,7 @@ import {
 } from "react-native";
 import addToBagProduct from "../AddTobagProduct/addbagproduct";
 import ProductDetailModal from "../Modals/ProductDetailModal/ProductDetailModal";
+import { checktype } from "../../utils/utilis";
 const { width } = Dimensions.get("window");
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height;
@@ -80,7 +81,7 @@ function BestSellers(props) {
               </View>
               <Text
                 style={styles.productCardPrice}
-              >₹ {item.item.productDetail.price}</Text>
+              >₹ {checktype(item.item.productDetail.price)}</Text>
               <Text style={styles.productCardDescription} numberOfLines={1}>
                 {item.item.name}
               </Text>

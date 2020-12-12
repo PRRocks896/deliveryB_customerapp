@@ -25,6 +25,7 @@ import addToBagProduct from "../../AddTobagProduct/addbagproduct";
 import AsyncStorage from "@react-native-community/async-storage";
 import { Header } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { checktype } from "../../../utils/utilis";
 const { width } = Dimensions.get("window");
 function ShopWiseProduct(props) {
 
@@ -121,7 +122,7 @@ function ShopWiseProduct(props) {
                                 </View>
 
                                 <Text style={styles.productCardPrice}
-                                >₹ {item.item.serviceDetail.price}</Text>
+                                >₹ {checktype(item.item.serviceDetail.price)}</Text>
                                 <Text style={styles.productCardDescription} numberOfLines={1}>
                                     {item.item.name}
                                 </Text>
@@ -149,7 +150,7 @@ function ShopWiseProduct(props) {
                                 </View>
                                 <Text
                                     style={styles.productCardPrice}
-                                >₹ {item.item.productDetail.price}</Text>
+                                >₹ {checktype(item.item.productDetail.price)}</Text>
                                 <Text style={styles.productCardDescription} numberOfLines={1}>
                                     {item.item.name}
                                 </Text>

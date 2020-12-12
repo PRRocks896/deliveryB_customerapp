@@ -3,6 +3,7 @@ import { Alert } from "react-native";
 import { EventRegister } from "react-native-event-listeners";
 import addtobag from "../../services/AddToBag";
 import getbagproduct from "../../services/AddToBag/getbagProduct"
+import { checktype } from "../../utils/utilis";
 
 
 
@@ -20,8 +21,8 @@ const addToBagProduct = async(item, alreadyAddecart, color, size, quentity, sele
       if (found == false) {
         products.push({
           product_id: item.productDetail._id,
-          price: item.productDetail.price,
-          discount_price:item.productDetail.discount_price ? item.productDetail.discount_price : item.productDetail.price, 
+          price: checktype(item.productDetail.price),
+          discount_price: checktype(item.productDetail.discount_price) ? checktype(item.productDetail.discount_price) : checktype(item.productDetail.price), 
           quantity: quentity,
           size:size,
           color:color,
@@ -31,7 +32,7 @@ const addToBagProduct = async(item, alreadyAddecart, color, size, quentity, sele
         let body = {
           customer_id: userid,
           shop_id: selectedshopID,
-          amount: item.productDetail.price,
+          amount: checktype(item.productDetail.price),
           products: products
         }
         const data = await addtobag(JSON.stringify(body))
@@ -54,7 +55,7 @@ const addToBagProduct = async(item, alreadyAddecart, color, size, quentity, sele
     } else {
       products.push({
         product_id: item.productDetail._id,
-        price: item.productDetail.price,
+        price: checktype(item.productDetail.price),
         quantity: 1,
         name: item.name,
         productImage: item.productImage
@@ -62,7 +63,7 @@ const addToBagProduct = async(item, alreadyAddecart, color, size, quentity, sele
       let body = {
         customer_id: userid,
         shop_id: item.productDetail.shop_id,
-        amount: item.productDetail.price,
+        amount: checktype(item.productDetail.price),
         products: products
       }
       const data = await addtobag(JSON.stringify(body))

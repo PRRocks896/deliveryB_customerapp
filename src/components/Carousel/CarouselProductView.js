@@ -11,6 +11,7 @@ import {
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
 import PropTypes from "prop-types";
+import { checktype } from "../../utils/utilis";
 
 // const { width: screenWidth } = Dimensions.get("window");
 // const width = screenWidth * 0.7;
@@ -46,7 +47,7 @@ function CarouselProductView(props) {
       </Text>
       <Text
         style={styles.carouselProductViewPrice}
-      >₹ {price}</Text>
+      >₹ {checktype(price)}</Text>
     </TouchableOpacity>
   );
 }

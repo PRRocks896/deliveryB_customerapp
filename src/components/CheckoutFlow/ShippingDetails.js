@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
 import AppStyles from "../../AppStyles";
+import { checktype } from "../../utils/utilis";
 
 let name = {
   id: 1,
@@ -232,7 +233,7 @@ function ShippingDetails(props) {
         </View>
         <View style={styles.priceContainer}>
           <Text style={styles.price}>
-            {Number(item.amount) > 0 ? item.amount : "free"}
+            {checktype(item.amount) > 0 ? checktype(item.amount) : "free"}
           </Text>
         </View>
         <View style={styles.methodIconContainer}>

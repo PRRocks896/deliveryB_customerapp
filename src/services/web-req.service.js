@@ -55,10 +55,10 @@ const WebReq = {
                     Headers
             // console.log("body", url, body, headers)
             const res = await fetch(url, { headers: headers, method: 'POST', body: body });
+            // console.log("In WEB REQ service:", res)
             if (res && res.status === 200) {
                 const authToken = res.headers.map['x-auth-token'];
                 const data = await res.json();
-                // console.log("In WEB REQ service:", data)
                 return { 'xauthtoken': authToken, ...data };
             } else if (res && res.status === 404) {
                 return await res.json()

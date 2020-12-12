@@ -37,6 +37,7 @@ import { sortingProducts } from '../../services/Products/getsubCategory'
 import ProductDetailModal from "../Modals/ProductDetailModal/ProductDetailModal";
 import addToBagProduct from "../AddTobagProduct/addbagproduct";
 import ServiceModelComponent from "../Modals/ProductDetailModal/ServiceModel";
+import { checktype } from "../../utils/utilis";
 
 
 function ViewAllProductsPage(props) {
@@ -138,7 +139,7 @@ function ViewAllProductsPage(props) {
               </View>
               <Text
                 style={styles.productCardPrice}
-              >₹ {item.item.productDetail.price}</Text>
+              >₹ {checktype(item.item.productDetail.price)}</Text>
               <Text style={styles.productCardDescription} numberOfLines={1}>
                 {item.item.name}
               </Text>
@@ -182,7 +183,7 @@ function ViewAllProductsPage(props) {
               </View>
 
               <Text style={styles.productCardPrice}
-              >₹ {item.item.serviceDetail.price}</Text>
+              >₹ {checktype(item.item.serviceDetail.price)}</Text>
               <Text style={styles.productCardDescription} numberOfLines={1}>
                 {item.item.name}
               </Text>

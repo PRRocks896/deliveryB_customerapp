@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { View, TouchableOpacity, Text, Image, ImageBackground, ActivityIndicator } from "react-native";
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
+import { checktype } from "../../utils/utilis";
 
 function ProductCard(props) {
   const colorScheme = useColorScheme();
@@ -36,10 +37,10 @@ function ProductCard(props) {
         productDetails ?
           <Text
             style={styles.productCardPrice}
-          >₹ {productDetails.price}</Text>
+          >₹ {checktype(productDetails.price)}</Text>
           : <Text
             style={styles.productCardPrice}
-          > ₹ {price}</Text>
+          > ₹ {checktype(price)}</Text>
       }
       <Text style={styles.productCardDescription} numberOfLines={1}>
         {item.name}

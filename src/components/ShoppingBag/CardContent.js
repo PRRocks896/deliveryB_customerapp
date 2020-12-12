@@ -5,6 +5,7 @@ import ColorCheckBox from "../ColorCheckBox/ColorCheckBox";
 import SizeCheckBox from "../SizeCheckBox/SizeCheckBox";
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
+import { checktype } from "../../utils/utilis";
 
 function CardContent(props) {
   const colorScheme = useColorScheme();
@@ -32,7 +33,7 @@ function CardContent(props) {
   return (
     <View style={{ flexDirection: 'column', justifyContent: 'center', marginTop: 20 }}>
       <Text style={[styles.title, { fontSize: 20 }]}>{item.name}</Text>
-      <Text style={styles.price}>{price}</Text>
+      <Text style={styles.price}>{ checktype(price)}</Text>
     </View>
   );
 }

@@ -6,6 +6,7 @@ import CarouselProductView from "../Carousel/CarouselProductView";
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
 import getProducts from "../../services/Products/getproducts";
+import { checktype } from "../../utils/utilis";
 
 function NewArrivals(props) {
   const colorScheme = useColorScheme();
@@ -21,7 +22,7 @@ function NewArrivals(props) {
       item={item}
       index={index}
       appConfig={appConfig}
-      price={item.productDetail.price}
+      price={checktype(item.productDetail.price)}
     />
   );
 

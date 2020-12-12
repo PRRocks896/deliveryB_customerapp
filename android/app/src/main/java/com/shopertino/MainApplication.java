@@ -21,6 +21,7 @@ import io.invertase.firebase.storage.RNFirebaseStoragePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader; 
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -57,6 +58,7 @@ public class MainApplication extends Application implements ReactApplication {
           packages.add(new RNFirebaseAuthPackage());
           packages.add(new RNFirebaseFirestorePackage());
           packages.add(new RNFirebaseStoragePackage());
+          packages.add(new RNFirebaseMessagingPackage()); 
           return packages;
     }
 

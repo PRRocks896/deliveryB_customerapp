@@ -57,7 +57,8 @@ class DBoyOrderDetailsScreen extends Component {
     }
 
     componentDidMount = async () => {
-        console.log("id============",  this.props.navigation.state.params.data)
+        
+
         let id = this.props.navigation.state.params.data.delivery_boy.user_id
         const response = await detailsdboyService(id)
         console.log("response dboy details", response)

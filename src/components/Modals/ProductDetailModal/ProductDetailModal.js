@@ -26,6 +26,7 @@ import { getallShopList } from "../../../services/Products/getsubCategory";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { checktype } from "../../../utils/utilis";
 function ProductDetailModal(props) {
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(colorScheme);
@@ -198,11 +199,11 @@ function ProductDetailModal(props) {
                 productDetails ?
                   <Text
                     style={styles.price}
-                  >₹ {productDetails.price}</Text>
+                  >₹ {checktype(productDetails.price)}</Text>
                   :
                   <Text
                     style={styles.price}
-                  >₹ {item.productDetail ? item.productDetail.price : null}</Text>
+                  >₹ {item.productDetail ? checktype(item.productDetail.price) : null}</Text>
               }
 
               {

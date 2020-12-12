@@ -6,6 +6,7 @@ import moment from 'moment'
 import styles from './styles'
 import AsyncStorage from "@react-native-community/async-storage";
 import ServiceModelComponent from "../../components/Modals/ProductDetailModal/ServiceModel";
+import { checktype } from "../../utils/utilis";
 
 class SearchService extends Component {
   constructor(props) {
@@ -108,7 +109,7 @@ class SearchService extends Component {
                     <TouchableOpacity onPress={() => this.setState({ modalVisible: true, productData: item.item })} style={styles.card}>
                       <Image source={{ uri: item.item.serviceImage[0] }} style={styles.serviceImage} />
                       <View>
-                        <Text style={styles.productCardPrice}>₹ {item.item.serviceDetail.price}</Text>
+                        <Text style={styles.productCardPrice}>₹ {checktype(item.item.serviceDetail.price)}</Text>
                         <Text style={styles.productCardDescription} numberOfLines={1}>
                           {item.item.name}
                         </Text>

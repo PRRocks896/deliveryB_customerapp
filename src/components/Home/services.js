@@ -12,6 +12,7 @@ const deviceHeight = Dimensions.get("window").height;
 import DatePicker from 'react-native-datepicker'
 import moment from 'moment'
 import ServiceModelComponent from "../Modals/ProductDetailModal/ServiceModel";
+import { checktype } from "../../utils/utilis";
 const timedata = [
     { id: 1, item: '01 : 00 Am' },
     { id: 2, item: '02 : 00 Am' },
@@ -76,7 +77,7 @@ function ServicesScreen(props) {
                             </View>
 
                             <Text style={styles.productCardPrice}
-                            >₹ {item.item.serviceDetail.price}</Text>
+                            >₹ {checktype(item.item.serviceDetail.price)}</Text>
                             <Text style={styles.productCardDescription} numberOfLines={1}>
                                 {item.item.name}
                             </Text>

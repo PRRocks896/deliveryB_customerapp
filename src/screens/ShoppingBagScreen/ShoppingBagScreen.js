@@ -22,7 +22,7 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Geolocation from 'react-native-geolocation-service';
 import shopdetails from "../../services/ShopDetails/shopdetails";
 import getkmgoogleapi from "../../services/Googleapi/googleapi";
-
+import checktype from '../../utils/utilis'
 const { width, height } = Dimensions.get('window')
 const ASPECT_RATIO = width / height
 const LATITUDE_DELTA = 0.0922
@@ -459,17 +459,17 @@ class ShoppingBagScreen extends Component {
                       </View>
                       <View style={{ flexDirection: 'row', paddingTop: 5 }}>
                         <Text style={styles.text}>Delivery partner fee</Text>
-                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ {deliveryfee.toFixed(2)}</Text>
+                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ { deliveryfee}</Text>
                       </View>
                     </View>
                     <View style={{ flexDirection: 'row', paddingBottom: 10 }}>
                       <Text style={styles.text}>Texes and Charges</Text>
-                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ {taxsCharges.toFixed(2)}</Text>
+                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ {taxsCharges}</Text>
                     </View>
                     <View style={styles.dashboarder} />
                     <View style={{ flexDirection: 'row' }}>
                       <Text style={[styles.text, { fontSize: 18 }]}>To Pay</Text>
-                      <Text style={[styles.text, { position: 'absolute', right: 20, fontSize: 18 }]}>{this.gettotalamount()}</Text>
+                      <Text style={[styles.text, { position: 'absolute', right: 20, fontSize: 18 }]}> ₹ {this.gettotalamount()}</Text>
                     </View>
                   </View>
                 </View>

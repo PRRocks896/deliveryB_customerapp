@@ -38,6 +38,7 @@ import allSearchData from "../../services/Search/AllSearch";
 import ProductDetailModal from "../Modals/ProductDetailModal/ProductDetailModal";
 import ServiceModelComponent from "../Modals/ProductDetailModal/ServiceModel";
 import addToBagProduct from "../AddTobagProduct/addbagproduct";
+import { checktype } from "../../utils/utilis";
 
 
 function AllSearchPage(props) {
@@ -147,7 +148,7 @@ function AllSearchPage(props) {
                                 </View>
 
                                 <Text style={styles.productCardPrice}
-                                >₹ {item.item.serviceDetail.price}</Text>
+                                >₹ {checktype(item.item.serviceDetail.price)}</Text>
                                 <Text style={styles.productCardDescription} numberOfLines={1}>
                                     {item.item.name}
                                 </Text>
@@ -175,7 +176,7 @@ function AllSearchPage(props) {
                                 </View>
                                 <Text
                                     style={styles.productCardPrice}
-                                >₹ {item.item.productDetail.price}</Text>
+                                >₹ {checktype(item.item.productDetail.price)}</Text>
                                 <Text style={styles.productCardDescription} numberOfLines={1}>
                                     {item.item.name}
                                 </Text>

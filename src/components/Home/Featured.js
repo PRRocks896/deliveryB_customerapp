@@ -4,6 +4,7 @@ import { View, FlatList, Text } from "react-native";
 import ProductCard from "../ProductCard/ProductCard";
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
+import { checktype } from "../../utils/utilis";
 
 
 function Featured(props) {
@@ -19,7 +20,7 @@ function Featured(props) {
           key={index + ""}
           item={item}
           appConfig={props.appConfig}
-          price={item.productDetail.price}
+          price={checktype(item.productDetail.price)}
 
         />
       );

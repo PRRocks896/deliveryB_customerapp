@@ -124,7 +124,7 @@ const getDrawerScreenTitle = routeKey => {
     case "AllSearchPage" :
         return "AllSearchPage";     
     case "DBoyOrdersScreen": 
-          return "Boking"    
+          return "Booking"    
     default:
       return "Home";
   }

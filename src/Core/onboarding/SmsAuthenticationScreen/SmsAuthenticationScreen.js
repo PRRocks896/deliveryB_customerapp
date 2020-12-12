@@ -6,7 +6,7 @@ import {
   Alert,
   Image,
   TouchableOpacity,
-  AsyncStorage,
+
 } from 'react-native';
 import Button from 'react-native-button';
 import PhoneInput from 'react-native-phone-input';
@@ -27,8 +27,10 @@ import deviceStorage from '../../../utils/deviceStorage';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import getAddressviaUSer from '../../../services/SavedAddress/getAddressviaUser';
 import Toast from 'react-native-simple-toast';
+import firebase from 'react-native-firebase';
 
 import IntlPhoneInput from 'react-native-intl-phone-input';
+import AsyncStorage from '@react-native-community/async-storage';
 
 function SmsAuthenticationScreen(props) {
 
@@ -65,9 +67,41 @@ function SmsAuthenticationScreen(props) {
     if (phoneRef && phoneRef.current) {
       setCountriesPickerData(phoneRef.current.getPickerData());
     }
+    checkPermission()
   }, [phoneRef]);
 
+  const checkPermission = async () => {
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+      getToken();
+    } else {
+      requestPermission();
+    }
+  }
 
+
+  const getToken = async () => {
+    let fcmToken = await AsyncStorage.getItem('fcmToken');
+    console.log("fcm token===================", fcmToken)
+    if (!fcmToken) {
+      fcmToken = await firebase.messaging().getToken();
+      if (fcmToken) {
+        console.log("fcm token============================", fcmToken)
+        await AsyncStorage.setItem('fcmToken', fcmToken);
+      }
+    }
+  }
+
+  const requestPermission = async () => {
+    try {
+      await firebase.messaging().requestPermission();
+      // User has authorised
+      getToken();
+    } catch (error) {
+      // User has rejected permissions
+      console.log('permission rejected');
+    }
+  }
   /**
    * For show & hide Password
    */
@@ -81,17 +115,17 @@ function SmsAuthenticationScreen(props) {
    * for Sign up user
    */
   const signInWithPhoneNumber = async () => {
-  
+
 
     if (mobile !== '') {
       setLoading(true);
       let body = JSON.stringify({ mobile: dialcode + mobile })
 
-      
+
       const data = await signup(body);
 
       console.log("signup======================", data)
-     
+
       if (data.success) {
         props.setUserData({
           user: data.data,
@@ -119,12 +153,12 @@ function SmsAuthenticationScreen(props) {
    * For Otp verification
    */
   const signUpWithPhoneNumber = async (smsCode) => {
-  
+
     // props.navigation.navigate('AddProfileScreen');
     let body = JSON.stringify({ id: useridsignup, otp: smsCode })
     const data = await verifyOTP(body);
-    
-console.log("Verify otp", data)
+
+    console.log("Verify otp", data)
     AsyncStorage.setItem('reqToken', data.data.reqToken)
     if (data.success) {
       setLoading(false);
@@ -137,16 +171,16 @@ console.log("Verify otp", data)
 
   const onPressSend = () => {
 
-   
+
     if (!isSigningUp) {
     } else {
       // Sign up user
       signInWithPhoneNumber();
     }
-    
+
   };
 
- 
+
 
   /**
    * 
@@ -154,7 +188,7 @@ console.log("Verify otp", data)
    * for otp verification check
    */
   const onFinishCheckingCode = async (newCode) => {
-   
+
     setLoading(true);
     if (isSigningUp) {
       signUpWithPhoneNumber(newCode);
@@ -206,7 +240,7 @@ console.log("Verify otp", data)
     );
   };
 
-  
+
 
   const renderAsSignUpState = () => {
     return (
@@ -223,13 +257,15 @@ console.log("Verify otp", data)
    */
   const loginfun = async () => {
     let userId = await AsyncStorage.getItem('userId')
+    let fcmToken = await AsyncStorage.getItem('fcmToken');
+    console.log("login fcm================", fcmToken)
     // let mobileNo = phoneRef.current.getValue()
-    if (mobile != '' && password != '') {
+    if (mobile != '' && password != '' && fcmToken !== null) {
       setLoading(true)
-      
+
       if (mobile.length < 10 || mobile.length > 10) {
         setLoading(false)
-      
+
         Toast.show('Please enter a valid phone number.', Toast.LONG);
 
       }
@@ -238,15 +274,16 @@ console.log("Verify otp", data)
         let body = JSON.stringify({
           mobile: dialcode + mobile,
           password: password,
+          fcmToken:fcmToken
         })
         const data = await signin(body);
-       console.log("sigin response", data)
+        console.log("sigin response", data)
         AsyncStorage.setItem("LoginData", JSON.stringify(data))
         AsyncStorage.setItem("userId", data.userId)
         AsyncStorage.setItem("UserMobile", dialcode + mobile)
         if (data.success == false) {
           setLoading(false)
-        
+
           Toast.show(data.message, Toast.LONG);
 
         } else {
@@ -259,12 +296,12 @@ console.log("Verify otp", data)
 
     } else {
       setLoading(false)
-     
+
       // Toast.show('Please enter a details.', Toast.LONG);
 
-      if(mobile == '') setmobileError('Please Enter Mobile No.')
-      if(password == '') setpasswordError('Please Enter Password')
-
+      if (mobile == '') setmobileError('Please Enter Mobile No.')
+      if (password == '') setpasswordError('Please Enter Password')
+      if (fcmToken == null) setpasswordError('Somthing Went Wrong')
 
     }
 
@@ -276,13 +313,13 @@ console.log("Verify otp", data)
    */
   const getAddressid = async () => {
     let userid = await AsyncStorage.getItem('userId')
-    
+
     // get address via user
     const data = await getAddressviaUSer(userid);
-    
+
     if (data.data) {
-      let dataAddress =  data.data.address.filter(item => item.isDefault == true)
-     AsyncStorage.setItem("CustomerAddress", JSON.stringify(dataAddress[0]))
+      let dataAddress = data.data.address.filter(item => item.isDefault == true)
+      AsyncStorage.setItem("CustomerAddress", JSON.stringify(dataAddress[0]))
       AsyncStorage.setItem("AddressId", data.data._id)
     }
   }
@@ -298,7 +335,7 @@ console.log("Verify otp", data)
       reqToken: details.reqToken,
     })
     const data = await getProfileDetails(body);
-   
+
     if (data.success) {
 
       let user = data.data
@@ -328,12 +365,12 @@ console.log("Verify otp", data)
           <IntlPhoneInput onChangeText={onChangeTextlogin} defaultCountry="IN" />
         </View>
         {
-            mobileError !== '' ?
-              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ color: 'red', textAlign: 'center' }}>{mobileError}</Text>
-              </View>
-              : null
-          }
+          mobileError !== '' ?
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ color: 'red', textAlign: 'center' }}>{mobileError}</Text>
+            </View>
+            : null
+        }
         <View style={[styles.InputContainer, { flexDirection: 'row' }]}>
           <TextInput
             style={{ flex: 8 }}
@@ -343,7 +380,7 @@ console.log("Verify otp", data)
             placeholderTextColor='#aaaaaa'
             onChangeText={(text) => setPassword(text)}
           />
-          
+
           <TouchableOpacity style={{ flex: 1, justifyContent: 'center' }} onPress={() => checkVisibility()}>
             {
               visibility ?
@@ -353,13 +390,13 @@ console.log("Verify otp", data)
             }
           </TouchableOpacity>
         </View>
-          {
-            passwordError !== '' ?
-              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ color: 'red', textAlign: 'center' }}>{passwordError}</Text>
-              </View>
-              : null
-          }
+        {
+          passwordError !== '' ?
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ color: 'red', textAlign: 'center' }}>{passwordError}</Text>
+            </View>
+            : null
+        }
         <TouchableOpacity style={styles.forgotview} onPress={() => props.navigation.navigate('ForgotPasswordScreen')}>
           <Text style={styles.forgottext}>Forgot Password ?</Text>
         </TouchableOpacity>

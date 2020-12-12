@@ -28,6 +28,7 @@ import { getallShopList } from "../../../services/Products/getsubCategory";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { checktype } from "../../../utils/utilis";
 const timedata = [
     { id: 1, item: '01 : 00 Am' },
     { id: 2, item: '02 : 00 Am' },
@@ -247,7 +248,7 @@ function ServiceModelComponent(props) {
                                         }
                                     </Picker>
                                 </View>
-                                <Text style={styles.price}>₹ {item.serviceDetail ? item.serviceDetail.price : null}</Text>
+                                <Text style={styles.price}>₹ {item.serviceDetail ? checktype(item.serviceDetail.price) : null}</Text>
                                 <View style={styles.borderLine} />
                                 <TouchableOpacity
                                     onPress={() => [refRBSheet.current.open(), getShopList()]}
