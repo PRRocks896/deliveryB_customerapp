@@ -41,7 +41,7 @@ class DBoyOrdersScreen extends Component {
             fetchingStatus: false,
             setOnLoad: false,
             isLoading: true,
-            filter: 'BOOKING_PLACED'
+            filter: 'COMPLETED'
         }
         this.page = 0
         this.props.navigation.addListener(
@@ -85,9 +85,9 @@ class DBoyOrdersScreen extends Component {
                 "page": 1
             }
         })
-    
+
         const data = await BookDboy(body, userid)
-        // console.log("orders==============================BookDboy", data)
+        console.log("orders==============================BookDboy", data)
 
         if (data.success) {
             this.setState({ orderHistory: data.data, isLoadingcategory: false })
@@ -201,129 +201,130 @@ class DBoyOrdersScreen extends Component {
         )
     }
     render() {
-        const { filter } = this.state
-        if (this.state.isShowData == true) {
-            if (this.state.isLoadingcategory == true) {
-                return (
-                    <SkeletonPlaceholder>
-                        <View style={styles.shopmainSkeleton}>
-                            <View style={styles.shopCategorySkeleton} />
-                        </View>
-                        <View style={styles.shopmainSkeleton}>
-                            <View style={styles.shopCategorySkeleton} />
-                        </View>
-                        <View style={styles.shopmainSkeleton}>
-                            <View style={styles.shopCategorySkeleton} />
-                        </View>
-                        <View style={styles.shopmainSkeleton}>
-                            <View style={styles.shopCategorySkeleton} />
-                        </View>
-                    </SkeletonPlaceholder>
-                )
-            } else {
-                return (
-                    <SafeAreaView style={{ flex: 1 }}>
-                        {this.getOrderList()}
-                        <TouchableOpacity onPress={() => this.RBSheet.open()} style={styles.filtercontainer}>
-                            <Icon name={'filter-list'} color={'#000'} size={28} />
-                        </TouchableOpacity>
-                        <RBSheet
-                            ref={ref => {
-                                this.RBSheet = ref;
-                            }}
-                            height={300}
-                            openDuration={250}
-                            closeOnDragDown={true}
-                            closeOnPressMask={false}
-                            customStyles={{
-                                container: {
-                                    borderTopLeftRadius: 50,
-                                    borderTopRightRadius: 50
-                                },
-                                draggableIcon: {
-                                    backgroundColor: "#000"
-                                }
-                            }}
-                        >
-                            <View style={{ marginLeft: 10, marginRight: 10, marginTop: 10 }}>
-                                <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_PLACED' })}>
-                                    <View style={{ flex: 10 }}>
-                                        <Text style={styles.filtertxt}>{'BOOKING_PLACED'}</Text>
-                                    </View>
-                                    {
-                                        filter == 'BOOKING_PLACED' ?
-                                            <View style={{ flex: 2 }}>
-                                                <Icon name={'done'} color={'#000'} size={30} style={{ marginTop: 5 }} />
-                                            </View>
-                                            : null
-                                    }
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_ACCEPTED' })}>
-                                    <View style={{ flex: 10 }}>
-                                        <Text style={styles.filtertxt}>{'BOOKING_ACCEPTED'}</Text>
-                                    </View>
-                                    {
-                                        filter == 'BOOKING_ACCEPTED' ?
-                                            <View style={{ flex: 2 }}>
-                                                <Icon name={'done'} color={'#000'} size={30} style={{ marginTop: 5 }} />
-                                            </View>
-                                            : null
-                                    }
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_REJECTED' })}>
-                                    <View style={{ flex: 10 }}>
-                                        <Text style={styles.filtertxt}>{'BOOKING_REJECTED'}</Text>
-                                    </View>
-                                    {
-                                        filter == 'BOOKING_REJECTED' ?
-                                            <View style={{ flex: 2 }}>
-                                                <Icon name={'done'} color={'#000'} size={30} style={{ marginTop: 5 }} />
-                                            </View>
-                                            : null
-                                    }
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'COMPLETED' })}>
-                                    <View style={{ flex: 10 }}>
-                                        <Text style={styles.filtertxt}>{'COMPLETED'}</Text>
-                                    </View>
-                                    {
-                                        filter == 'COMPLETED' ?
-                                            <View style={{ flex: 2 }}>
-                                                <Icon name={'done'} color={'#000'} size={30} style={{ marginTop: 5 }} />
-                                            </View>
-                                            : null
-                                    }
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_CANCELLED' })}>
-                                    <View style={{ flex: 10 }}>
-                                        <Text style={styles.filtertxt}>{'BOOKING_CANCELLED'}</Text>
-                                    </View>
-                                    {
-                                        filter == 'BOOKING_CANCELLED' ?
-                                            <View style={{ flex: 2 }}>
-                                                <Icon name={'done'} color={'#000'} size={30} style={{ marginTop: 5 }} />
-                                            </View>
-                                            : null
-                                    }
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                        onPress={() => [ this.getOrders() ,this.RBSheet.close()]}
-                                        style={styles.applybutton}>
-                                        <Text style={{ color: '#a3a3a3', fontSize: 15 }}>{"Proceed"}</Text>
-                                    </TouchableOpacity>
-                            </View>
-                        </RBSheet>
-                    </SafeAreaView>
-                );
-            }
+        const { filter, orderHistory } = this.state
+
+        if (this.state.isLoadingcategory == true) {
+            return (
+                <SkeletonPlaceholder>
+                    <View style={styles.shopmainSkeleton}>
+                        <View style={styles.shopCategorySkeleton} />
+                    </View>
+                    <View style={styles.shopmainSkeleton}>
+                        <View style={styles.shopCategorySkeleton} />
+                    </View>
+                    <View style={styles.shopmainSkeleton}>
+                        <View style={styles.shopCategorySkeleton} />
+                    </View>
+                    <View style={styles.shopmainSkeleton}>
+                        <View style={styles.shopCategorySkeleton} />
+                    </View>
+                </SkeletonPlaceholder>
+            )
         } else {
             return (
-                <View style={styles.emptyView}>
-                    <Text style={[styles.text, { fontSize: 20 }]}>No any Booking Found</Text>
-
-                </View>
-            )
+                <SafeAreaView style={{ flex: 1 }}>
+                    { orderHistory.length ?
+                        this.getOrderList()
+                        :
+                        <View style={styles.emptyView}>
+                            <Text style={[styles.text, { fontSize: 20 }]}>No any Booking Found</Text>
+                        </View>
+                    }
+                    <TouchableOpacity onPress={() => this.RBSheet.open()} style={styles.filtercontainer}>
+                        <Icon name={'filter-list'} color={'#000'} size={28} />
+                    </TouchableOpacity>
+                    <RBSheet
+                        ref={ref => {
+                            this.RBSheet = ref;
+                        }}
+                        height={300}
+                        openDuration={250}
+                        closeOnDragDown={true}
+                        closeOnPressMask={false}
+                        customStyles={{
+                            container: {
+                                borderTopLeftRadius: 50,
+                                borderTopRightRadius: 50
+                            },
+                            draggableIcon: {
+                                backgroundColor: "#000"
+                            }
+                        }}
+                    >
+                        <View style={{ marginLeft: 10, marginRight: 10, marginTop: 10 }}>
+                            <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_PLACED' })}>
+                                <View style={{ flex: 10 }}>
+                                    <Text style={styles.filtertxt}>{'BOOKING_PLACED'}</Text>
+                                </View>
+                                {
+                                    filter == 'BOOKING_PLACED' ?
+                                        <View style={{ flex: 2 }}>
+                                            <Icon name={'done'} color={'#000'} size={30} style={{ marginTop: 5 }} />
+                                        </View>
+                                        : null
+                                }
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_ACCEPTED' })}>
+                                <View style={{ flex: 10 }}>
+                                    <Text style={styles.filtertxt}>{'BOOKING_ACCEPTED'}</Text>
+                                </View>
+                                {
+                                    filter == 'BOOKING_ACCEPTED' ?
+                                        <View style={{ flex: 2 }}>
+                                            <Icon name={'done'} color={'#000'} size={30} style={{ marginTop: 5 }} />
+                                        </View>
+                                        : null
+                                }
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_REJECTED' })}>
+                                <View style={{ flex: 10 }}>
+                                    <Text style={styles.filtertxt}>{'BOOKING_REJECTED'}</Text>
+                                </View>
+                                {
+                                    filter == 'BOOKING_REJECTED' ?
+                                        <View style={{ flex: 2 }}>
+                                            <Icon name={'done'} color={'#000'} size={30} style={{ marginTop: 5 }} />
+                                        </View>
+                                        : null
+                                }
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'COMPLETED' })}>
+                                <View style={{ flex: 10 }}>
+                                    <Text style={styles.filtertxt}>{'COMPLETED'}</Text>
+                                </View>
+                                {
+                                    filter == 'COMPLETED' ?
+                                        <View style={{ flex: 2 }}>
+                                            <Icon name={'done'} color={'#000'} size={30} style={{ marginTop: 5 }} />
+                                        </View>
+                                        : null
+                                }
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_CANCELLED' })}>
+                                <View style={{ flex: 10 }}>
+                                    <Text style={styles.filtertxt}>{'BOOKING_CANCELLED'}</Text>
+                                </View>
+                                {
+                                    filter == 'BOOKING_CANCELLED' ?
+                                        <View style={{ flex: 2 }}>
+                                            <Icon name={'done'} color={'#000'} size={30} style={{ marginTop: 5 }} />
+                                        </View>
+                                        : null
+                                }
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => [this.getOrders(), this.RBSheet.close()]}
+                                style={styles.applybutton}>
+                                <Text style={{ color: '#a3a3a3', fontSize: 15 }}>{"Proceed"}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </RBSheet>
+                </SafeAreaView>
+            );
         }
+
+
+
     }
 }
 
@@ -420,17 +421,17 @@ const styles = StyleSheet.create({
         paddingLeft: 15
 
     },
-    applybutton:{
-        height:40,
-        marginLeft:20,
-        marginRight:20,
-        justifyContent:'center',
-        alignItems:'center',
-        marginTop:10,
-        width:'40%',
-        alignSelf:'center',
-        borderColor:'#000',
-        borderWidth:1
-  
-      }
+    applybutton: {
+        height: 40,
+        marginLeft: 20,
+        marginRight: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 10,
+        width: '40%',
+        alignSelf: 'center',
+        borderColor: '#000',
+        borderWidth: 1
+
+    }
 })

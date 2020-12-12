@@ -130,6 +130,15 @@ const api = {
     cancelBooking:{
         cancelBooking: Config.getURL + 'customer/delivery/boy/booking/cancel/'
     },
+    onbookinAccept:{
+        onbookinAccept: Config.getURL + 'customer/delivery/boy/booking'
+    },
+    bookingCharge:{
+        bookingCharge: Config.getURL + 'customer/delivery/boy/changes/'
+    },
+    changeBookingStatus:{
+        changeBookingStatus: Config.getURL + 'customer/delivery/boy/booking/'
+    },
     
 
     // services

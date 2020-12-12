@@ -138,7 +138,7 @@ function ServiceModelComponent(props) {
         )
     }
 
-    console.log("================================service modeal", item.serviceImage, item)
+    // console.log("================================service modeal", item.serviceImage, item)
     if (item) {
         return (
             <>

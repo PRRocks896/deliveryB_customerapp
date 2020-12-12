@@ -6,6 +6,9 @@ import { Dialog } from 'react-native-simple-dialogs';
 import AsyncStorage from "@react-native-community/async-storage";
 import paytoDBoyService from "../../../services/Wallet/sendtoDBoy";
 import { connect } from "../../../utils/socket";
+import bookingChargeService from "../../../services/Order/bookingchargepat";
+import bookingStatusService from "../../../services/Order/changeBookingStatus";
+import Toast from 'react-native-simple-toast';
 
 function DBoyDetails(props) {
 
@@ -21,9 +24,12 @@ function DBoyDetails(props) {
     const [purpose, setpurpose] = useState('')
     const [realise, setrealise] = useState(false)
 
+    // console.log("details", details)
+
     const paydata = async () => {
         let usermobile = await AsyncStorage.getItem('UserMobile')
         let dBoymobile = details.user_id.mobile
+        let bookingid = props.navigation.state.params.bookingid
         setisLoading(true)
         if (amount !== '') {
             let body = JSON.stringify({
@@ -35,11 +41,22 @@ function DBoyDetails(props) {
             const response = await paytoDBoyService(body)
             console.log("Response of pay", response)
             if (response.statusCode == 200) {
-                setisLoading(false)
-                setrealise(true)
-                setdialogVisible(false)
+                let databody = JSON.stringify({
+                    "delivery_charges": parseFloat(amount)
+                })
+                console.log("body of pay", databody)
+                const responsedata = await bookingChargeService(databody, bookingid)
+                console.log("response=========of pay ", responsedata)
+                if (responsedata.statusCode == 200) {
+                    setisLoading(false)
+                    setrealise(true)
+                    setdialogVisible(false)
+
+                } else {
+                    Alert.alert("", responsedata.message)
+                }
             } else {
-                setamountError(response.message)
+                Alert.alert("", response.message)
                 setisLoading(false)
                 setdialogVisible(false)
             }
@@ -50,13 +67,25 @@ function DBoyDetails(props) {
 
     const realiseDBoy = async () => {
         let id = details.user_id._id
+        let bookingid = props.navigation.state.params.bookingid
         let socket = connect()
         let databody = {
             userID: id,
             isOccupied: false,
         }
         socket.emit('deliveryboyHired', databody)
-        this.props.navigation.goBack()
+        const body = JSON.stringify({
+            "status": "COMPLETED"
+        })
+        const response = await bookingStatusService(body, bookingid)
+        if (response.statusCode == 200) {
+            props.navigation.goBack()
+
+        } else {
+            Toast.show(response.message, Toast.LONG, [
+                'UIAlertController',
+            ]);
+        }
     }
     return (
 
