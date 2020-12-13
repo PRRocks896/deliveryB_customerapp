@@ -30,6 +30,7 @@ function DBoyDetails(props) {
         let usermobile = await AsyncStorage.getItem('UserMobile')
         let dBoymobile = details.user_id.mobile
         let bookingid = props.navigation.state.params.bookingid
+        console.log("booking id========================",  props.navigation.state.params)
         setisLoading(true)
         if (amount !== '') {
             let body = JSON.stringify({
@@ -146,7 +147,7 @@ function DBoyDetails(props) {
                         <View style={{ flex: 6 }}>
 
                             <View style={styles.addbtnContainer}>
-                                <TouchableOpacity style={styles.addcvvbutton} onPress={() => [setamountError(''), setdialogVisible(false)]}>
+                                <TouchableOpacity style={styles.addcvvbutton} onPress={() => [setamountError(''), setdialogVisible(false),    setisLoading(false)]}>
 
                                     <Text style={styles.addtext}>Cancel</Text>
 

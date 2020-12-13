@@ -143,7 +143,7 @@ function ProductDetailModal(props) {
     )
   }
 
-
+console.log("item.productDetail.color.length",item.productDetail&& item.productDetail.color)
   return (
     <>
       <Modal
@@ -207,7 +207,7 @@ function ProductDetailModal(props) {
               }
 
               {
-                item.productDetail && item.productDetail.hasOwnProperty('color') ? item.productDetail.color.length ?
+                item.productDetail && item.productDetail.hasOwnProperty('color') ? item.productDetail.color !== null && item.productDetail.color.length ?
                   <View style={{ flexDirection: 'row' }}>
                     <Text style={styles.titlecolor}>{'Colors'}</Text>
                     {
@@ -224,7 +224,7 @@ function ProductDetailModal(props) {
                   : null
               }
               {
-                item.productDetail && item.productDetail.hasOwnProperty('size') ? item.productDetail.size.length ?
+                item.productDetail && item.productDetail.hasOwnProperty('size') ? item.productDetail.size !== null && item.productDetail.size.length ?
                   <View style={{ flexDirection: 'row' }}>
                     <Text style={styles.titlecolor}>{'Size'}    </Text>
                     {item.productDetail.size.map((item) => {

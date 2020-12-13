@@ -11,7 +11,7 @@ import Toast from 'react-native-simple-toast';
 
 function ShowDeliveryBoyList(props) {
 
-    const { title, dboylist, customerLat, customerLong ,callFunction} = props
+    const { title, dboylist, customerLat, customerLong, callFunction } = props
 
     const colorScheme = useColorScheme();
     const styles = dynamicStyles(colorScheme);
@@ -22,6 +22,8 @@ function ShowDeliveryBoyList(props) {
 
     const [isAggreeLoading, setisAggreeLoading] = useState(false)
 
+    const [clickdboyData, setclickdboyData] = useState({})
+
 
     /**
      * Hire Delivery Boy
@@ -29,13 +31,12 @@ function ShowDeliveryBoyList(props) {
      * @param {number} distance 
      */
     const hiredBoy = async (dBoyid, distance, datadboy, bookingid) => {
-        setisAggreeLoading(true)
+        setisAggreeLoading(false)
         //  onAccept(datadboy,dBoyid)
-        setdialogVisible(true)
+        setdialogVisible(false)
         let userid = await AsyncStorage.getItem('userId')
         let profile = await AsyncStorage.getItem('CurrentUser')
         let parsedProfileData = JSON.parse(profile)
-
         let address = await AsyncStorage.getItem('CustomerAddress')
         let parsedAddress = JSON.parse(address)
         let cAddress = parsedAddress.address_line_1 + ',' + parsedAddress.address_line_2 + ',' + parsedAddress.district + ',' + parsedAddress.state
@@ -50,6 +51,7 @@ function ShowDeliveryBoyList(props) {
             customerID: userid,
             booking_id: bookingid
         }
+        console.log("call=========================================", userid, body)
         let socket = connect()
         socket.emit('hireDeliveryBoy', dBoyid, body)
         // disconnect()
@@ -106,6 +108,8 @@ function ShowDeliveryBoyList(props) {
     }
 
     const onAccept = async (dboyid, distance, datadboy) => {
+        console.log("dboyid============", dboyid)
+        setisAggreeLoading(true)
         let userid = await AsyncStorage.getItem('userId')
         const bodydata = JSON.stringify({
             "customer_id": userid,
@@ -118,6 +122,9 @@ function ShowDeliveryBoyList(props) {
         if (acceptresponse.statusCode == 200) {
             hiredBoy(dboyid, distance, datadboy, acceptresponse.data._id)
         } else {
+            // hiredBoy(dboyid, distance, datadboy, acceptresponse.data._id)
+
+            setisAggreeLoading(false)
             Toast.show(acceptresponse.message, Toast.LONG, [
                 'UIAlertController',
             ]);
@@ -134,7 +141,7 @@ function ShowDeliveryBoyList(props) {
                 showsHorizontalScrollIndicator={false}
                 data={dboylist}
                 renderItem={(item) => {
-                    // console.log(":::::::::::::::::::::::::::::::::::::::::::::", item.item.deliveryboy.user_id._id, item.item)
+                    // console.log(":::::::::::::::::::::::::::::::::::::::::::::", item.item)
                     return (
                         <>
                             <TouchableOpacity
@@ -159,47 +166,12 @@ function ShowDeliveryBoyList(props) {
                                     <Text style={[styles.productCardPrice, { marginLeft: 5, }]}> {item.item.deliveryboy.user_id.name} </Text>
                                     <Text style={styles.productCardDescription}> {(item.item.distance).toFixed(2)} km </Text>
                                 </View>
-                                <TouchableOpacity onPress={() => setdialogVisible(true)} style={[styles.applybutton, { width: '90%' }]}>
+                                <TouchableOpacity onPress={() => [setdialogVisible(true), setclickdboyData(item.item)]} style={[styles.applybutton, { width: '90%' }]}>
                                     <Text style={{ color: '#fff' }}>{'Hire'}</Text>
 
                                 </TouchableOpacity>
                             </TouchableOpacity>
-                            <Dialog
-                                visible={dialogVisible}
-                                title="Terms and Conditions"
-                                onTouchOutside={() => setdialogVisible(false)}
-                                titleStyle={styles.dialogtitle}>
-                                <View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Icon name={'fiber-manual-record'} size={12} color={'#a3a3a3'} style={{ marginTop: 5 }} />
-                                        <Text style={styles.dialogtxt}>  {'It will carry up to 15 kg.'}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Icon name={'fiber-manual-record'} size={12} color={'#a3a3a3'} style={{ marginTop: 5 }} />
-                                        <Text style={styles.dialogtxt}>  {'Within 2km charge is 30 Rs and above 2 km charge 10 Rs per km.'}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <TouchableOpacity onPress={() => [setdialogVisible(false), setisAggreeLoading(false)]} style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
-                                            <Text style={styles.buttontxt}>Cancel</Text>
-                                        </TouchableOpacity>
-                                        {
-                                            isAggreeLoading ?
-                                                <TouchableOpacity style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
-                                                    <ActivityIndicator color={'#fff'} size={'small'} />
-                                                </TouchableOpacity>
-                                                :
-                                                <TouchableOpacity onPress={() => [
-                                                    onAccept(item.item.deliveryboy._id, item.item.distance, item.item.deliveryboy),
-                                                    acceptSocketcall(item.item.deliveryboy, item.item.deliveryboy._id)
-                                                ]}
-                                                    style={[styles.buttoncontainer, { flex: 6, width: '90%' }
-                                                    ]}>
-                                                    <Text style={styles.buttontxt}>Agree</Text>
-                                                </TouchableOpacity>
-                                        }
-                                    </View>
-                                </View>
-                            </Dialog>
+
                         </>
                     )
                 }}
@@ -207,7 +179,7 @@ function ShowDeliveryBoyList(props) {
             />
         )
     }
-
+   
     return (
 
         <View style={styles.container} >
@@ -222,6 +194,42 @@ function ShowDeliveryBoyList(props) {
             {
                 dboylist.length && displaydboylist()
             }
+
+            <Dialog
+                visible={dialogVisible}
+                title="Terms and Conditions"
+                onTouchOutside={() => setdialogVisible(false)}
+                titleStyle={styles.dialogtitle}>
+                <View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Icon name={'fiber-manual-record'} size={12} color={'#a3a3a3'} style={{ marginTop: 5 }} />
+                        <Text style={styles.dialogtxt}>  {'It will carry up to 15 kg.'}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Icon name={'fiber-manual-record'} size={12} color={'#a3a3a3'} style={{ marginTop: 5 }} />
+                        <Text style={styles.dialogtxt}>  {'Within 2km charge is 30 Rs and above 2 km charge 10 Rs per km.'}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity onPress={() => [setdialogVisible(false), setisAggreeLoading(false)]} style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
+                            <Text style={styles.buttontxt}>Cancel</Text>
+                        </TouchableOpacity>
+                        {
+                            isAggreeLoading ?
+                                <TouchableOpacity style={[styles.buttoncontainer, { flex: 6, width: '90%' }]}>
+                                    <ActivityIndicator color={'#fff'} size={'small'} />
+                                </TouchableOpacity>
+                                :
+                                <TouchableOpacity onPress={() => [
+                                    onAccept(clickdboyData.deliveryboy._id, clickdboyData.distance, clickdboyData.deliveryboy),
+                                    acceptSocketcall(clickdboyData.deliveryboy, clickdboyData.deliveryboy._id)]}
+                                    style={[styles.buttoncontainer, { flex: 6, width: '90%' }
+                                    ]}>
+                                    <Text style={styles.buttontxt}>Agree</Text>
+                                </TouchableOpacity>
+                        }
+                    </View>
+                </View>
+            </Dialog>
 
         </View>
     );
