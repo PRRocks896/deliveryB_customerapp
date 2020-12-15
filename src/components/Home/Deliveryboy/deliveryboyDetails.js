@@ -32,7 +32,7 @@ function DBoyDetails(props) {
         let bookingid = props.navigation.state.params.bookingid
         console.log("booking id========================",  props.navigation.state.params)
         setisLoading(true)
-        if (amount !== '') {
+        if (amount !== 0) {
             let body = JSON.stringify({
                 from_mobile: usermobile,
                 to_mobile: dBoymobile,
@@ -127,6 +127,7 @@ function DBoyDetails(props) {
                         placeholder='Enter Amount'
                         style={styles.cvvinput}
                         maxLength={5}
+                        keyboardType={'number-pad'}
                         onChangeText={(text) => setamount(text)}
                     />
                     {

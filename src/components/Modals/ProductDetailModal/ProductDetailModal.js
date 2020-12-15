@@ -37,16 +37,16 @@ function ProductDetailModal(props) {
   const [shopList, setshopList] = useState([])
   const refRBSheet = useRef();
   const [selectedshopID, setselectedshopID] = useState('')
-  
+
   useEffect(() => {
     checkalreadyaddtocart()
   })
-  
+
   /**
    * Get Shop All List by Product Master id
    */
   const getShopList = async () => {
-    setselectedshopID(item.productDetail ? item.productDetail.shop_id: '')
+    setselectedshopID(item.productDetail ? item.productDetail.shop_id : '')
     let id = item.productDetail.productMasterId ? item.productDetail.productMasterId : ''
     console.log("===================get shop", id, item)
     if (id) {
@@ -63,13 +63,15 @@ function ProductDetailModal(props) {
     let userid = await AsyncStorage.getItem('userId')
     const getdata = await getbagproduct(userid)
     let found = getdata.data.data.some(i => i.products[0].product_id.productMasterId == item._id)
-
+    // console.log("Found===============================================", found)
     if (found == true) {
       setalreadyaddecart(true)
+    } else {
+      setalreadyaddecart(false)
     }
   }
 
-  const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, alreadyAddecart, navigation } = props;
+  const { visible, onCancelPress, item, onAddToBag, appConfig, productDetails, navigation } = props;
   const onShare = async () => {
     const fs = RNFetchBlob.fs;
 
@@ -92,7 +94,7 @@ function ProductDetailModal(props) {
       await Share.share({
         title: "Shopertino Product",
         dialogTitle: `Shopertino Product: ${item.name}`,
-        message: item.name + item.description + item.productDetail ?productDetails.price : item.productDetail.price ,
+        message: item.name + item.description + item.productDetail ? productDetails.price : item.productDetail.price,
         image: item.productImage
 
       });
@@ -113,24 +115,24 @@ function ProductDetailModal(props) {
   const displayshopList = () => {
     return (
       <FlatList
-      data={shopList}
-      renderItem={(item) => {
+        data={shopList}
+        renderItem={(item) => {
           return (
             <TouchableOpacity onPress={() => setselectedshopID(item.item._id)}>
               <View style={[styles.bottomsheet, { flexDirection: 'row' }]}>
-                <View style={{ flex: 8, flexDirection:'row' }}>
+                <View style={{ flex: 8, flexDirection: 'row' }}>
                   <Text style={styles.shopname}>{item.item.name}  </Text>
                   {
-                    item.item.isVerified ? 
-                    <Icons name='check-decagram' size={18} color={'#36D8FF'} style={{textAlign:'center',alignSelf:'center', marginTop:3}} />
-                    : null 
+                    item.item.isVerified ?
+                      <Icons name='check-decagram' size={18} color={'#36D8FF'} style={{ textAlign: 'center', alignSelf: 'center', marginTop: 3 }} />
+                      : null
                   }
                 </View>
                 <View style={{ flex: 3 }}>
                   {
-                    selectedshopID == item.item._id ? 
-                    <Icon name={'done'} size={20} color={'#000'} />
-                    : null
+                    selectedshopID == item.item._id ?
+                      <Icon name={'done'} size={20} color={'#000'} />
+                      : null
                   }
                 </View>
               </View>
@@ -143,7 +145,7 @@ function ProductDetailModal(props) {
     )
   }
 
-console.log("item.productDetail.color.length",item.productDetail&& item.productDetail.color)
+  // console.log("item.productDetail.color.length",item.productDetail&& item.productDetail.color)
   return (
     <>
       <Modal
@@ -267,13 +269,22 @@ console.log("item.productDetail.color.length",item.productDetail&& item.productD
 
 
               <View style={styles.borderLine} />
+              {
+                alreadyaddecart ?
+                  <TouchableOpacity
+                    onPressIn={() => navigation.navigate("Bag", { appConfig: appConfig })}
+                    onPress={onCancelPress}
+                    style={styles.addToBagContainerStyle}>
+                    <Text style={{ color: '#fff', fontSize: 20 }}>{"GO TO CART"}</Text>
+                  </TouchableOpacity>
+                  :
+                  <TouchableOpacity
+                    onPress={() => [refRBSheet.current.open(), getShopList()]}
+                    style={styles.addToBagContainerStyle}>
+                    <Text style={{ color: '#fff', fontSize: 20 }}>{"ADD TO BAG"}</Text>
+                  </TouchableOpacity>
+              }
 
-              <TouchableOpacity
-
-                onPress={() => [refRBSheet.current.open(), getShopList()]}
-                style={styles.addToBagContainerStyle}>
-                <Text style={{ color: '#fff', fontSize: 20 }}>{alreadyAddecart == true || alreadyaddecart == true ? "Added in Bag" : "ADD TO BAG"}</Text>
-              </TouchableOpacity>
             </ScrollView>
           </View>
         </View>
@@ -300,13 +311,23 @@ console.log("item.productDetail.color.length",item.productDetail&& item.productD
         }}
       >
         <View>
-          {displayshopList()}
+          {
+            shopList.length ?
+              <>
+                {displayshopList()}
 
-          <TouchableOpacity
-            onPress={() => [onAddToBag(item, selecteditemcolor, selecteditemSize, quentity, selectedshopID), refRBSheet.current.close()]}
-            style={styles.applybutton}>
-            <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
-          </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => [onAddToBag(item, selecteditemcolor, selecteditemSize, quentity, selectedshopID), refRBSheet.current.close()]}
+                  style={styles.applybutton}>
+                  <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
+                </TouchableOpacity>
+
+              </> 
+              : 
+              <View style={{justifyContent:'center', alignItems:'center'}}>
+              <Text>{'No Shop List Found'}</Text>
+              </View>
+          }
         </View>
       </RBSheet>
     </>

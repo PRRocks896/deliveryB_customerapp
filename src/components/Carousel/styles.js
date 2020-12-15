@@ -45,7 +45,14 @@ const dynamicStyles = colorScheme => {
       fontSize: 14,
       fontFamily: AppStyles.fontFamily.mediumFont,
       marginTop: 4
-    }
+    },
+    dummycardimg:{
+      width: "50%",
+      height: "50%",
+      borderRadius: 6,
+      resizeMode: 'contain',
+      zIndex:1
+    },
   });
 };
 

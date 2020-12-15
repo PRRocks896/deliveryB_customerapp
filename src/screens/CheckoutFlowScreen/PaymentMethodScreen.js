@@ -262,7 +262,8 @@ class PaymentMethodScreen extends Component {
      this.setState({ chargeConfirm: 'OTHER' })
      this.setOrderDetails()
     }).catch((error) => {
-      alert(`Error: ${error.code} | ${error.description}`);
+      console.log("Error",error.code, error.description )
+      // alert(`Error: ${error.code} | ${error.description}`);
     });
   }
 

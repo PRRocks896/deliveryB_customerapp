@@ -27,7 +27,19 @@ function CarouselProductView(props) {
       onPress={onCardPress}
     >
       <View style={styles.carouselProductViewContainer}>
-      <ActivityIndicator size={'small'} color={'#000'}
+      {/* <View
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+          <Image style={styles.dummycardimg} source={require('../../../assets/images/logo.png')} />
+        </View> */}
+         <ActivityIndicator size={'small'} color={'#000'}
           style={{
             position: 'absolute',
             left: 0,
@@ -39,7 +51,7 @@ function CarouselProductView(props) {
           }} />
         <Image
           style={[styles.carouselProductViewImage, {zIndex:1}]}
-          source={{ uri: item.productImage[0] }}
+          source={ item.productImage.length == 0 ? require('../../../assets/images/logo.png') :{ uri: item.productImage[0] }}
         />
       </View>
       <Text numberOfLines={2} style={[styles.carouselProductViewTitle]}>

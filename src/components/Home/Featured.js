@@ -13,6 +13,8 @@ function Featured(props) {
 
 
   const renderItem = ({ item, index }) => {
+
+    // console.log("item===================>>>>>>>>>>>>>", item)
     if (index < 10) {
       return (
         <ProductCard

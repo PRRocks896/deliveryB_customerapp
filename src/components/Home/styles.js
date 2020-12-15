@@ -114,7 +114,8 @@ const dynamicStyles = colorScheme => {
       width: "100%",
       height: "100%",
       borderRadius: 6,
-      resizeMode: 'contain'
+      resizeMode: 'contain',
+      zIndex:1
     },
     productCardPrice: {
       textAlign: "left",
@@ -238,8 +239,8 @@ const dynamicStyles = colorScheme => {
       backgroundColor: '#e7e7e7',
       bottom: 10,
       right: 10,
-      justifyContent:'center',
-      alignItems:'center'
+      justifyContent: 'center',
+      alignItems: 'center'
     },
     filtertxt: {
       fontFamily: AppStyles.fontFamily.regularFont,
@@ -276,28 +277,28 @@ const dynamicStyles = colorScheme => {
 
 
     },
-    delievryboyimg:{
-      width:90,
-      height:90,
-      borderRadius:360,
-      justifyContent:'center',
-      alignItems:'center'
+    delievryboyimg: {
+      width: 90,
+      height: 90,
+      borderRadius: 360,
+      justifyContent: 'center',
+      alignItems: 'center'
     },
-    dboyContainer:{
+    dboyContainer: {
       width: "100%",
       height: "50%",
-      alignSelf:'center',
-      justifyContent:'center'
+      alignSelf: 'center',
+      justifyContent: 'center'
     },
-    dboyView:{
+    dboyView: {
       width: 0.30 * width,
       height: 0.28 * height,
       margin: 10,
       overflow: "visible",
       marginLeft: 7
-      
+
     },
-    card:{
+    card: {
       marginTop: 5,
       backgroundColor: AppStyles.colorSet[colorScheme].mainThemeBackgroundColor,
       padding: 5,
@@ -324,80 +325,88 @@ const dynamicStyles = colorScheme => {
       opacity: 1.0,
       fontFamily: AppStyles.fontFamily.semiBoldFont
     },
-    bottomsheet:{
+    bottomsheet: {
       // padding:10,
-      paddingLeft:15,
-      paddingTop:20
+      paddingLeft: 15,
+      paddingTop: 20
     },
-    shopname:{
-      fontSize:15,
+    shopname: {
+      fontSize: 15,
       fontFamily: AppStyles.fontFamily.regularFont,
     },
-      marginTop: {
-        marginTop: 10
+    marginTop: {
+      marginTop: 10
     },
     tital: {
-        fontFamily: AppStyles.fontFamily.regularFont,
-        fontSize: 18
+      fontFamily: AppStyles.fontFamily.regularFont,
+      fontSize: 18
     },
     subtitle: {
-        fontFamily: AppStyles.fontFamily.lightFont,
-        fontSize: 16
+      fontFamily: AppStyles.fontFamily.lightFont,
+      fontSize: 16
     },
     row: {
-        flexDirection: 'row'
+      flexDirection: 'row'
     },
     buttoncontainer: {
-        padding: 5,
-        borderRadius: 5,
-        borderWidth: 1,
-        marginTop: 10,
-        margin: 10,
-        backgroundColor: AppStyles.colorSet[colorScheme].mainThemeForegroundColor,
+      padding: 5,
+      borderRadius: 5,
+      borderWidth: 1,
+      marginTop: 10,
+      margin: 10,
+      backgroundColor: AppStyles.colorSet[colorScheme].mainThemeForegroundColor,
     },
-    buttontxt:{
+    buttontxt: {
       fontFamily: AppStyles.fontFamily.regularFont,
       color: AppStyles.colorSet[colorScheme].mainSubtextColor,
-      fontSize:18,
-      textAlign:'center'
+      fontSize: 18,
+      textAlign: 'center'
     },
-    dialogtxt:{
+    dialogtxt: {
       fontFamily: AppStyles.fontFamily.regularFont,
       color: AppStyles.colorSet[colorScheme].mainSubtextColor,
-      fontSize:15
+      fontSize: 15
     },
-    dialogtitle:{
+    dialogtitle: {
       fontFamily: AppStyles.fontFamily.regularFont,
       color: AppStyles.colorSet[colorScheme].mainSubtextColor,
-      fontSize:18
+      fontSize: 18
     },
     cvvinput: {
       borderBottomWidth: 1,
       borderBottomColor: '#a3a3a3'
-  },
-  errortxt: {
-    color: 'red'
-},
-addbtnContainer: {
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginTop: 10
-},
-addcvvbutton: {
-  borderColor: '#a3a3a3',
-  borderRadius: 5,
-  width: '90%',
-  height: 30,
-  borderWidth: 1,
-  alignItems: 'center',
-  justifyContent: 'center',
-  paddingLeft:15,
-  paddingRight:15,
-  padding:15
-},
-addtext: {
-  fontSize: 20
-},
+    },
+    errortxt: {
+      color: 'red'
+    },
+    addbtnContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 10
+    },
+    addcvvbutton: {
+      borderColor: '#a3a3a3',
+      borderRadius: 5,
+      width: '90%',
+      height: 30,
+      borderWidth: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingLeft: 15,
+      paddingRight: 15,
+      padding: 15
+    },
+    addtext: {
+      fontSize: 20
+    },
+    dummycardimg: {
+      width: "50%",
+      height: "50%",
+      borderRadius: 6,
+      resizeMode: 'contain',
+      zIndex:1
+    },
+    
   });
 };
 

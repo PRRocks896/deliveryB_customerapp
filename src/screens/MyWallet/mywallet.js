@@ -35,8 +35,8 @@ export default class MyWallet extends Component {
             qrdialodvisible: false,
             qramount: '',
             qramountError: '',
-            qrLoading:false,
-            page:1
+            qrLoading: false,
+            page: 1
         };
         this.props.navigation.addListener(
             'didFocus',
@@ -45,7 +45,7 @@ export default class MyWallet extends Component {
 
             });
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
-      
+
     }
     onOpenlink() {
         //Function to open URL, If scanned 
@@ -53,7 +53,7 @@ export default class MyWallet extends Component {
         //Linking used to open the URL in any browser that you have installed
     }
     onBarcodeScan = async (qrvalue) => {
-       
+
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", qrvalue)
 
         //called after te successful scanning of QRCode/Barcode
@@ -105,7 +105,7 @@ export default class MyWallet extends Component {
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
-    loadwalletdata = async() => {
+    loadwalletdata = async () => {
         EventRegister.addEventListener('WalletRefresh', (data) => this.setState({ walleteamount: data }))
         EventRegister.addEventListener('WalletRefreshTransaction', (data) => this.setState({ transctionslist: data }))
 
@@ -114,7 +114,7 @@ export default class MyWallet extends Component {
         let phoneno = mobileParsed.data.mobile
 
         const data = await getamountWallet(phoneno)
-       
+
         if (data.success) {
 
             this.setState({ walleteamount: data.data.balance })
@@ -139,7 +139,7 @@ export default class MyWallet extends Component {
     componentDidMount = async () => {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         this.loadwalletdata()
-       
+
     }
     orderDetails = () => {
         const { transctionslist, refreshing } = this.state
@@ -187,9 +187,9 @@ export default class MyWallet extends Component {
     }
     LoadMoreRandomData = () => {
         this.setState({
-          page: this.state.page + 1
+            page: this.state.page + 1
         }, () => this.loadwalletdata())
-      }
+    }
     BottomView = () => {
         return (
             <View>
@@ -203,33 +203,33 @@ export default class MyWallet extends Component {
             </View>
         )
     }
-    addqramount = async() => {
+    addqramount = async () => {
         let mobileno = await AsyncStorage.getItem('UserMobile')
         // console.log("USer Mobile no", mobileno)
-        const {qramount, qramountError, qrdialodvisible, walleteamount, qrvalue} = this.state
+        const { qramount, qramountError, qrdialodvisible, walleteamount, qrvalue } = this.state
         // console.log("Add Qr amount", this.state.walleteamount, this.state.qramount)
         if (qramount == '') {
             this.setState({ qramountError: "Please Enter Amount" })
         } else if (walleteamount < qramount) {
             // console.log("Value=============", parseFloat(qramount) - parseFloat(walleteamount))
             let money = parseFloat(qramount) - parseFloat(walleteamount)
-            this.setState({qramountError: `Insufficient Balance, Please add ${money} to your wallet`})
-        }else{
-            this.setState({qrLoading: true})
+            this.setState({ qramountError: `Insufficient Balance, Please add ${money} to your wallet` })
+        } else {
+            this.setState({ qrLoading: true })
             // console.log(">>>>>>>>>>>>>>>>>>",qramount,qrvalue,mobileno)
             let body = JSON.stringify({
                 amount: parseFloat(qramount),
                 shop_mobile: qrvalue
             })
-            const response  = await payfromwallet(body, mobileno)
+            const response = await payfromwallet(body, mobileno)
             // console.log("response", response)
-            if(response.statusCode == 200){
+            if (response.statusCode == 200) {
                 this.componentDidMount()
-                this.setState({qrdialodvisible: false ,qrLoading: false })
-            }else{
-                this.setState({qramountError: response.message, qrLoading: false})
+                this.setState({ qrdialodvisible: false, qrLoading: false })
+            } else {
+                this.setState({ qramountError: response.message, qrLoading: false })
             }
-            
+
         }
     }
     render() {
@@ -241,14 +241,14 @@ export default class MyWallet extends Component {
                         <Image style={styles.imgrs} source={AppStyles.iconSet.rupee} />
                         <Text style={styles.rstxt}>{walleteamount}</Text>
                     </View>
-                   
-                        <Text style={{ fontSize: 18 }}>Payment History</Text>
-                        {this.orderDetails()}
-                   
+
+                    <Text style={{ fontSize: 18 }}>Payment History</Text>
+                    {this.orderDetails()}
+
                     <TouchableOpacity
                         onPress={() => this.onOpneScanner()}
                         style={[styles.fotterbtn, { bottom: 80 }]}>
-                       <Image source={require('../../../assets/images/qr-code.png')}  style={{width:25, height:25}}/>
+                        <Image source={require('../../../assets/images/qr-code.png')} style={{ width: 25, height: 25 }} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -283,7 +283,7 @@ export default class MyWallet extends Component {
                                 <View style={{ flex: 6 }}>
 
                                     <View style={styles.addbtnContainer}>
-                                        <TouchableOpacity style={styles.addcvvbutton}  onPress={() => this.setState({ dialogVisible: false, amountError: '' })}>
+                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => this.setState({ dialogVisible: false, amountError: '' })}>
 
                                             <Text style={styles.addtext}>Cancel</Text>
 
@@ -293,7 +293,7 @@ export default class MyWallet extends Component {
                                 <View style={{ flex: 6 }}>
 
                                     <View style={styles.addbtnContainer}>
-                                        <TouchableOpacity style={styles.addcvvbutton}  onPress={() => amount.length !== 0 ? this.props.navigation.navigate('AddCards', { amount: amount }) : this.setState({ amountError: 'Please Enter Amount' })}>
+                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => amount.length !== 0 ? this.props.navigation.navigate('AddCards', { amount: amount }) : this.setState({ amountError: 'Please Enter Amount' })}>
                                             {
                                                 isLoading ?
                                                     <ActivityIndicator color={'#000'} size="small" />
@@ -332,7 +332,7 @@ export default class MyWallet extends Component {
                                 <View style={{ flex: 6 }}>
 
                                     <View style={styles.addbtnContainer}>
-                                        <TouchableOpacity style={styles.addcvvbutton}  onPress={() => this.setState({ qrdialodvisible: false, qramountError: '' })}>
+                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => this.setState({ qrdialodvisible: false, qramountError: '' })}>
 
                                             <Text style={styles.addtext}>Cancel</Text>
 
@@ -363,6 +363,9 @@ export default class MyWallet extends Component {
         return (
             <>
                 <View style={{ flex: 1 }}>
+                    <TouchableOpacity onPress={() => this.setState({ opneScanner: !this.state.opneScanner })} style={{ position: 'absolute', top: 15, right: 15, zIndex: 1 }}>
+                        <Icon name={'close'} size={30} color={'#fff'} />
+                    </TouchableOpacity>
                     <CameraKitCameraScreen
                         showFrame={false}
                         //Show/hide scan frame
@@ -446,9 +449,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingLeft:15,
-        paddingRight:15,
-        padding:15
+        paddingLeft: 15,
+        paddingRight: 15,
+        padding: 15
     },
     addtext: {
         fontSize: 20

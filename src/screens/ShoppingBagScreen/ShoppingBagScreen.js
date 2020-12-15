@@ -177,17 +177,13 @@ class ShoppingBagScreen extends Component {
           this.setState({deliveryfee : parseInt(this.state.basecharge)})
       }
       else if( this.state.totalPayamount > 15){
-        let charges = finalchargekm - 2 
-        console.log("normal_charge", charges * parseInt(this.state.normal_charge))
-        this.setState({ deliveryfee: charges * parseInt(this.state.normal_charge) })
+        this.setState({ deliveryfee:  parseInt(this.state.normal_charge) })
       }
       else {
         let charges = finalchargekm - 2 
-        console.log("charges", charges * parseInt(this.state.chargesPerKm))
         this.setState({ deliveryfee: charges * parseInt(this.state.chargesPerKm) })
       }
 
-      console.log("totalPayamount>>>>>>>>>>>>>>>>>>>>", this.state.totalPayamount)
       
   }
   getkm(lat1, lon1, lat2, lon2, unit = 'K'){
@@ -459,7 +455,7 @@ class ShoppingBagScreen extends Component {
                       </View>
                       <View style={{ flexDirection: 'row', paddingTop: 5 }}>
                         <Text style={styles.text}>Delivery partner fee</Text>
-                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ { deliveryfee}</Text>
+                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ { (deliveryfee).toFixed(2)}</Text>
                       </View>
                     </View>
                     <View style={{ flexDirection: 'row', paddingBottom: 10 }}>

@@ -25,6 +25,7 @@ import OrderDetailsScreen from '../screens/Order/orderDetails'
 import ViewAllProductsPage from '../components/Home/ViewAllProductsPage'
 import AllSearchPage from '../components/Home/AllSearch'
 import DBoyOrdersScreen from '../screens/Order/dBoyOrderScreen'
+import DeliveryboyhireddrawerScreen from '../screens/DboyHired/dboyhired'
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: HomeScreen,
@@ -40,7 +41,8 @@ const DrawerNavigator = createDrawerNavigator(
     ServicebookDetails:ServicebookDetails,
     ViewAllProductsPage:ViewAllProductsPage,
     AllSearchPage:AllSearchPage,
-    DBoyOrdersScreen:DBoyOrdersScreen
+    DBoyOrdersScreen:DBoyOrdersScreen,
+    DeliveryboyhireddrawerScreen:DeliveryboyhireddrawerScreen
     // OrderDetailsScreen:OrderDetailsScreen
   },
   {
@@ -124,7 +126,9 @@ const getDrawerScreenTitle = routeKey => {
     case "AllSearchPage" :
         return "AllSearchPage";     
     case "DBoyOrdersScreen": 
-          return "Booking"    
+          return "Booking";
+    case "DeliveryboyhireddrawerScreen": 
+        return "Delivery Boy Hire"        
     default:
       return "Home";
   }

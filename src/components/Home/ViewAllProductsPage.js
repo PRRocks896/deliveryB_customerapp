@@ -135,7 +135,9 @@ function ViewAllProductsPage(props) {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }} />
-                <Image style={styles.productCardImage} source={{ uri: item.item.productImage[0] }} />
+                
+
+                <Image style={styles.productCardImage} source={ item.item.productImage.length == 0 ? require('../../../assets/images/logo.png') : { uri: item.item.productImage[0] }} />
               </View>
               <Text
                 style={styles.productCardPrice}
@@ -179,7 +181,8 @@ function ViewAllProductsPage(props) {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }} />
-                <Image style={styles.productCardImage} source={{ uri: item.item.serviceImage[0] }} />
+                  
+                <Image style={styles.productCardImage} source={ item.item.serviceImage.lenth == 0  ? require('../../../assets/images/logo.png') : { uri: item.item.serviceImage[0] }} />
               </View>
 
               <Text style={styles.productCardPrice}

@@ -278,9 +278,11 @@ function SmsAuthenticationScreen(props) {
         })
         const data = await signin(body);
         console.log("sigin response", data)
+        AsyncStorage.setItem('TOKEN', data.token)
         AsyncStorage.setItem("LoginData", JSON.stringify(data))
         AsyncStorage.setItem("userId", data.userId)
         AsyncStorage.setItem("UserMobile", dialcode + mobile)
+        AsyncStorage.setItem('reqToken',data.reqToken )
         if (data.success == false) {
           setLoading(false)
 
@@ -360,7 +362,7 @@ function SmsAuthenticationScreen(props) {
     return (
       <>
         <Text style={styles.title}>{IMLocalized('Sign In')}</Text>
-        <View style={styles.InputContainer}>
+        <View style={[styles.InputContainer, {marginBottom:10}]}>
 
           <IntlPhoneInput onChangeText={onChangeTextlogin} defaultCountry="IN" />
         </View>

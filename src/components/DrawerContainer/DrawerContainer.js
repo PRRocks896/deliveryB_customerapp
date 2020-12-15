@@ -183,6 +183,15 @@ function DrawerContainer(appConfig) {
               navigation.navigate("ServicebookDetails", { appConfig });
             }}
           />
+
+<DrawerItem
+            title="DELIVERY BOY HIRE"
+            source={AppStyles.iconSet.orderDrawer}
+            onPress={() => {
+              navigation.closeDrawer()
+              navigation.navigate("DeliveryboyhireddrawerScreen", { appConfig });
+            }}
+          />
            <DrawerItem
             title="DELIVERY BOY BOOKING"
             source={AppStyles.iconSet.orderDrawer}

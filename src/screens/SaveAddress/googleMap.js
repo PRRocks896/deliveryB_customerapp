@@ -115,6 +115,7 @@ console.log("fetch lat long=============",this.props.isparamsData,  this.state.r
         EventRegister.emit('Long', responseJson.results[0].geometry.location.lng)
         EventRegister.emit('address', responseJson.results[0].address_components)
         const userLocation = responseJson.results[0].formatted_address;
+        EventRegister.emit('FullAddress',userLocation )
         this.setState({
           userLocation: userLocation,
           regionChangeProgress: false

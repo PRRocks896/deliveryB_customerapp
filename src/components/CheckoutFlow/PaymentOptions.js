@@ -274,6 +274,18 @@ function PaymentOptions(props) {
     <ScrollView>
       <View style={styles.shippingDetailsContainer}>
       </View>
+
+      <TouchableOpacity
+        onPress={onPressOther}
+        style={styles.addNewCardContainer}
+      >
+        <View style={styles.addNewCardIconContainer}>
+          <Icon name={'payment'} size={25} />
+        </View>
+        <View style={{ backgroundColor: isSelect == 'OTHER' ? '#a3a3a3' : '#fff', flexDirection: 'row', flex: 6, padding: 10 }}>
+          <Text style={[styles.addNewCardTitle, { color: isSelect == 'OTHER' ? '#fff' : '#000' }]}>{"Debit card / Credit card / Net banking"}</Text>
+        </View>
+      </TouchableOpacity>
       <TouchableOpacity
         onPress={onpressCod}
         style={styles.addNewCardContainer}
@@ -305,17 +317,7 @@ function PaymentOptions(props) {
           </View>
           : null
       }
-      <TouchableOpacity
-        onPress={onPressOther}
-        style={styles.addNewCardContainer}
-      >
-        <View style={styles.addNewCardIconContainer}>
-          <Icon name={'payment'} size={25} />
-        </View>
-        <View style={{ backgroundColor: isSelect == 'OTHER' ? '#a3a3a3' : '#fff', flexDirection: 'row', flex: 6, padding: 10 }}>
-          <Text style={[styles.addNewCardTitle, { color: isSelect == 'OTHER' ? '#fff' : '#000' }]}>{"Other"}</Text>
-        </View>
-      </TouchableOpacity>
+      
 
 
       {/* <TouchableOpacity

@@ -29,7 +29,7 @@ function ProductCard(props) {
             alignItems: 'center',
             justifyContent: 'center'
           }} />
-        <Image style={styles.productCardImage} source={{ uri:  item.productImage[0] }} />
+        <Image style={styles.productCardImage} source={  item.productImage.length == 0 ? require('../../../assets/images/logo.png') : { uri: item.productImage[0] }} />
       </View>
 
 

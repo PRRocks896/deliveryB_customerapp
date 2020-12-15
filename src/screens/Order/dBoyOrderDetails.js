@@ -202,6 +202,7 @@ class DBoyOrderDetailsScreen extends Component {
                                 placeholder='Enter Amount'
                                 style={styles.cvvinput}
                                 maxLength={5}
+                                keyboardType={'number-pad'}
                                 onChangeText={(text) => this.setState({ amount: text })}
                             />
                             {

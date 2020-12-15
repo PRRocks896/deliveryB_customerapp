@@ -80,12 +80,20 @@ function ShopList(props) {
             <FlatList
                 data={shopsArray}
                 renderItem={(item) => {
+                    console.log("item.item.shopImage", item.item)
                     return (
                         <TouchableOpacity onPress= { () => [refRBSheet.current.close(), props.navigation.navigate('ShopWiseProduct', {shopid: item.item._id, shopname:item.item.name})]}>
                             <View style={[styles.bottomsheet, { flexDirection: 'row' }]}>
                                 <View style={{  flexDirection: 'row' , flex:9}}>
                                     <View style={{ flex: 5 }}>
-                                        <Image style={{ width: 150, height: 100 }} source={{ uri: item.item.shopImage }} />
+                                        {
+                                            item.item.shopImage ?
+
+                                            <Image style={{ width: 150, height: 100 }} source={{ uri: item.item.shopImage }} />
+                                            :
+                                            <Image style={{ width: 100, height: 100 }} source={ require('../../../../assets/images/logo.png')} />
+
+                                        }
                                     </View>
                                     <View style={{ flex: 6 }}>
                                         <View style={{ flexDirection: 'row' }}>

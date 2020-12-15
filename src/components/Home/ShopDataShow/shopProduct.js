@@ -39,7 +39,7 @@ function ShopWiseProduct(props) {
 
     const [productModalData, setproductModalData] = useState({})
     const [serviceModalData, setserviceModalData] = useState({})
-
+    const [alreadyAddecart, setalreadyAddecart] = useState(false)
     useEffect(() => {
         getProducts()
     }, [])

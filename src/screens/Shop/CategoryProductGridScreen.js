@@ -238,23 +238,23 @@ class CategoryProductGridScreen extends Component {
     let id = this.props.navigation.state.params.categoryId
     this.setState({ categoryProducts: [] })
     this.setState({ serviceCategoryData: [] })
-    if (this.state.categoryProducts.length == 0) {
+   
       let order = this.state.isSelectSort == 'lowTohigh' ? 'asc' : 'desc'
-      let data = `page=0&limit=10000&sort=productDetail.price&priceLow=10&priceHigh=100000&order=${order}&category=${id}&subcategory=${this.state.subcategoryid}`
+      let dataproducts = `page=0&limit=10000&sort=productDetail.price&priceLow=10&priceHigh=100000&order=${order}&category=${id}&subcategory=${this.state.subcategoryid}`
       this.RBSheet.close()
-      const response = await sortingProducts(data)
+      const responseproduct = await sortingProducts(dataproducts)
 
-      console.log("sorting data response ======", response)
-      if (response.statusCode == 200) {
-        if (response.data.products.length > 0) {
-          this.setState({ categoryProducts: response.data.products })
+      console.log("sorting data response ======", responseproduct)
+      if (responseproduct.statusCode == 200) {
+        if (responseproduct.data.products.length > 0) {
+          this.setState({ categoryProducts: responseproduct.data.products })
         }
 
       }
-    }
+    
 
-    if (this.state.serviceCategoryData.length == 0) {
-      let order = this.state.isSelectSort == 'lowTohigh' ? 'asc' : 'desc'
+  
+    
       let data = `page=0&limit=10000&sort=serviceDetail.price&priceLow=10&priceHigh=100000&order=${order}&category=${id}&subcategory=${this.state.subcategoryid}`
       // this.RBSheet.close()
       const response = await sortingProducts(data)
@@ -265,7 +265,7 @@ class CategoryProductGridScreen extends Component {
           this.setState({ serviceCategoryData: response.data.services })
         }
       }
-    }
+    
   }
 
 
@@ -359,7 +359,7 @@ class CategoryProductGridScreen extends Component {
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    onPress={() => this.applysorting()}
+                    onPress={() => [this.applysorting(), this.setState({serviceCategoryData: []})]}
                     style={styles.applybutton}>
                     <Text style={{ color: '#fff', fontSize: 15 }}>{"Apply"}</Text>
                   </TouchableOpacity>
@@ -501,7 +501,7 @@ class CategoryProductGridScreen extends Component {
                       </TouchableOpacity>
 
                       <TouchableOpacity
-                        onPress={() => this.applysorting()}
+                        onPress={() => [this.applysorting(), this.setState({categoryProducts: []})]}
                         style={styles.applybutton}>
                         <Text style={{ color: '#fff', fontSize: 15 }}>{"Apply"}</Text>
                       </TouchableOpacity>
@@ -523,6 +523,7 @@ class CategoryProductGridScreen extends Component {
                 })
               }
               appConfig={this.appConfig}
+              navigation={this.props.navigation}
             />
           </View>
         </>

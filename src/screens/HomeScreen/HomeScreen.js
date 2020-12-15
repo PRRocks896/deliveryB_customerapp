@@ -17,6 +17,8 @@ import addToBagProduct from "../../components/AddTobagProduct/addbagproduct";
 import getCategory from "../../services/Products/getCategory";
 import getProducts from "../../services/Products/getproducts";
 import RazorpayCheckout from 'react-native-razorpay';
+import refreshTokenService from "../../services/RefreshToken";
+import AsyncStorage from "@react-native-community/async-storage";
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -45,16 +47,28 @@ class HomeScreen extends Component {
 
       });
   }
-
-  async componentDidMount() {
-
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+  tokengenerate = async () => {
+   let rewToken = await AsyncStorage.getItem('reqToken')
+   let userid = await  AsyncStorage.getItem("userId")
+    let body = JSON.stringify({
+      id:userid,
+      reqToken:rewToken
+    })
+    console.log("body==========", body)
+    const reponse  = await refreshTokenService(body)
+    console.log("response==== of refresh token", reponse)
+    AsyncStorage.setItem('TOKEN', reponse.xauthtoken)
     this.getCategoryProducts() // For get categories
     this.getFeaturedProducts() // For get products
     // this.loadFromDatabase();
     this.setWishlistState();
     this.setShippingAddress();
     // this.getCaegory()
+  }
+
+  async componentDidMount() {
+    this.tokengenerate()
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
   }
   getCategoryProducts = async () => {
 
@@ -186,7 +200,6 @@ class HomeScreen extends Component {
         onModalCancelPress={this.onModalCancel}
         appConfig={this.appConfig}
         alreadyAddecart={this.state.alreadyAddecart}
-
         categoryproducts={this.state.categoryProduct}
         featuredproduct={this.state.fetauredproducts}
       />

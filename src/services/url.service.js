@@ -1,6 +1,10 @@
 import Config from '../config'
 
 const api = {
+
+    refreshToken:{
+        refreshToken: Config.getURL + 'shared/app-fetch-token'
+    },
     signup: {
         singUP: Config.getURL + 'shared/app-signup'
     },

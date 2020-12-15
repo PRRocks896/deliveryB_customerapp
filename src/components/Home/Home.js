@@ -245,6 +245,11 @@ function Home(props) {
               onCategoryPress={props.onCategoryPress}
             />
         }
+          <ShopList
+          title={"Shop List"}
+          navigation={navigation}
+          appConfig={appConfig}
+        />
         {
           isLoadingProduct == true ?
             <SkeletonPlaceholder>
@@ -351,11 +356,7 @@ function Home(props) {
             />
         }
 
-        <ShopList
-          title={"Shop List"}
-          navigation={navigation}
-          appConfig={appConfig}
-        />
+      
         {
           dboyArray.length ?
           <ShowDeliveryBoyList

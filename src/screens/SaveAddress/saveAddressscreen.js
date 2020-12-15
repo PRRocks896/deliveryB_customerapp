@@ -8,7 +8,8 @@ import {
     TextInput,
     Picker,
     Alert,
-    BackHandler
+    BackHandler,
+    CheckBox
 } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import addAddress from '../../services/SavedAddress/addAddress'
@@ -17,6 +18,7 @@ import updateAddress from "../../services/SavedAddress/updateAddress";
 import { ScrollView } from "react-native-gesture-handler";
 import GoogleMapComponent from "./googleMap";
 import { EventRegister } from 'react-native-event-listeners'
+import { ActivityIndicator } from "react-native-paper";
 
 var latitudedata;
 let longitudedata;
@@ -43,7 +45,11 @@ class SaveAddressScreen extends Component {
             countryError: '',
 
             latitude: '',
-            longitude: ''
+            longitude: '',
+
+            mapAddress: '',
+            isSelectedCheckbox: false,
+            addressLoading: false
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.props.navigation.addListener(
@@ -80,8 +86,9 @@ class SaveAddressScreen extends Component {
         EventRegister.addEventListener('address', (data) => {
             addressArray = data
         })
-
-
+        EventRegister.addEventListener('FullAddress', (data) => {
+            this.setState({ mapAddress: data })
+        })
 
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         let paramsData = this.props.navigation.state.params
@@ -162,10 +169,11 @@ class SaveAddressScreen extends Component {
                 address_line_1 = address_line_1 + ',' + item.long_name
             }
         })
-console.log("lat long",typeof(latitudedata),longitudedata )
+        console.log("lat long", typeof (latitudedata), longitudedata)
         if (address_line_1 != undefined && address_line_2 !== undefined && district != undefined && pinCode != undefined && state != undefined && country != undefined) {
-            if (addressLength == 0) {
 
+            if (addressLength == 0) {
+                this.setState({ addressLoading: true })
                 let body = JSON.stringify({
                     user_id: userId,
                     address: [
@@ -185,13 +193,18 @@ console.log("lat long",typeof(latitudedata),longitudedata )
                 })
                 // add address from here, call api
                 const data = await addAddress(body);
+
+                console.log("Add Address", data)
                 if (data.success) {
                     this.props.navigation.goBack()
+                    this.setState({ addressLoading: false })
                 } else {
                     Alert.alert(data.message);
                     this.props.navigation.goBack()
+                    this.setState({ addressLoading: false })
                 }
             } else {
+                this.setState({ addressLoading: true })
                 //  if address already available then append address from here
                 let body = JSON.stringify({
                     user_id: userId,
@@ -215,9 +228,11 @@ console.log("lat long",typeof(latitudedata),longitudedata )
                 const data = await updateAddress(body, id)
                 if (data.success) {
                     this.props.navigation.goBack()
+                    this.setState({ addressLoading: false })
                 } else {
                     Alert.alert(data.message);
                     this.props.navigation.goBack()
+                    this.setState({ addressLoading: false })
                 }
             }
         } else {
@@ -245,6 +260,7 @@ console.log("lat long",typeof(latitudedata),longitudedata )
         EventRegister.addEventListener('address', (data) => {
             addressArray = data
         })
+
         console.log("Lat long data", latitudedata, longitudedata, addressArray)
         let address_line_1;
         let address_line_2;
@@ -281,6 +297,7 @@ console.log("lat long",typeof(latitudedata),longitudedata )
 
         }
         if (address_line_1 != '' && district != '' && pinCode != '' && state != '' && phoneNo != '' && country != '') {
+            this.setState({ addressLoading: true })
             let body = JSON.stringify({
                 user_id: userId,
                 address: [
@@ -303,9 +320,11 @@ console.log("lat long",typeof(latitudedata),longitudedata )
             console.log("Data update address", data)
             if (data.success) {
                 this.props.navigation.goBack()
+                this.setState({ addressLoading: false })
             } else {
                 Alert.alert(data.messageCode);
                 this.props.navigation.goBack()
+                this.setState({ addressLoading: false })
             }
         } else {
             if (mobile == '') this.setState({ mobilenoError: 'Please Enter Mobile No.' })
@@ -333,10 +352,38 @@ console.log("lat long",typeof(latitudedata),longitudedata )
 
                         </View>
                     </View>
+                    {
+                        isParamsData ?
+                            <>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <CheckBox
+                                        value={this.state.isSelectedCheckbox}
+                                        onValueChange={(value) => this.setState({ isSelectedCheckbox: value })}
+                                        style={styles.checkbox}
+                                    />
+                                    <Text style={{ textAlignVertical: 'center' }}>  Same as Above</Text>
+                                </View>
+
+                                {
+
+                                    this.state.isSelectedCheckbox == false ?
+                                        <View style={styles.oldAddressbox}>
+                                            <Text>{this.state.address_line_1 + ', ' + this.state.address_line_2 + ', ' + this.state.district + ', ' + this.state.pinCode + ', ' + this.state.state + ', ' + this.state.country}</Text>
+                                        </View>
+                                        :
+                                        <View style={styles.oldAddressbox}>
+                                            <Text>{this.state.mapAddress}</Text>
+                                        </View>
+                                }
+                            </>
+                            : null
+                    }
+
 
                     <Picker
                         selectedValue={name}
                         style={styles.picker}
+                        enabled={!isParamsData ? true : false}
                         onValueChange={(itemValue, itemIndex) => this.setState({ name: itemValue })}>
                         <Picker.Item label="Home" value="Home" />
                         <Picker.Item label="Office" value="Office" />
@@ -345,13 +392,23 @@ console.log("lat long",typeof(latitudedata),longitudedata )
                     <View style={styles.btnContainer}>
                         {
                             !isParamsData ?
-                                <TouchableOpacity style={styles.button} onPress={() => this.addaddress()}>
-                                    <Text style={{ fontSize: 20 }}>Add Address</Text>
-                                </TouchableOpacity>
+                                this.state.addressLoading ?
+                                    <TouchableOpacity style={styles.button} >
+                                        <ActivityIndicator size={'small'} color={'#000'} />
+                                    </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity style={styles.button} onPress={() => this.addaddress()}>
+                                        <Text style={{ fontSize: 20 }}>Add Address</Text>
+                                    </TouchableOpacity>
                                 :
-                                <TouchableOpacity style={styles.button} onPress={() => this.updateAddress()}>
-                                    <Text style={{ fontSize: 20 }}>Update Address</Text>
-                                </TouchableOpacity>
+                                this.state.addressLoading ?
+                                    <TouchableOpacity style={styles.button} >
+                                        <ActivityIndicator size={'small'} color={'#000'} />
+                                    </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity style={styles.button} onPress={() => this.updateAddress()}>
+                                        <Text style={{ fontSize: 20 }}>Update Address</Text>
+                                    </TouchableOpacity>
                         }
                     </View>
                 </View>
@@ -402,6 +459,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10
+    },
+    oldAddressbox: {
+        padding: 8,
+        borderWidth: 1,
+        borderColor: '#e7e7e7',
+        marginBottom: 10,
+        marginLeft: 5,
+        marginRight: 10
     }
 
 })

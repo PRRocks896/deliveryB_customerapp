@@ -33,7 +33,7 @@ function ShoppingBagButton(props) {
   console.log("=======in button ", bagItemsdata)
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={props.onPress} style={{ justifyContent: 'center', marginBottom: 10 }}>
+      <TouchableOpacity onPress={props.onPress} style={{ justifyContent: 'center', marginBottom: 10 , marginRight:15}}>
         <View>
           <Image
             source={AppStyles.iconSet.shoppingBagFilled}

@@ -26,6 +26,12 @@ const dynamicStyles = colorScheme => {
       resizeMode: 'contain',
       zIndex:1
     },
+    dummycardimg:{
+      width: "50%",
+      height: "50%",
+      borderRadius: 6,
+      resizeMode: 'contain',
+    },
     productCardPrice: {
       textAlign: "left",
       fontSize: 14,

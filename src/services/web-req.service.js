@@ -1,16 +1,18 @@
 import Headers from '../../src/Constants/header'
+import {  } from 'react-native';
 import { AsyncStorage } from 'react-native';
 const STRIPE_PUBLISHABLE_KEY = 'pk_test_zKjF89F1BXY9dRGquKZ44ZS300EI4WCGKh';
 const STRIPE_SECRET_KEY = 'sk_test_7jK3rEYJcduJPhXqDKtZh4zc00G47MbWVQ'
 const WebReq = {
     get: async function (url, isToken = false) {
         try {
-            let allData = await AsyncStorage.getItem('LoginData')
-            let token = JSON.parse(allData)
+            let token = await AsyncStorage.getItem('TOKEN')
+            // console.log("in web req=========================", token)
+         
             const headers =
                 isToken ? {
                     ...Headers,
-                    'Authorization': token.xauthtoken,
+                    'Authorization': token,
                 } :
                     Headers
 
@@ -38,8 +40,7 @@ const WebReq = {
     },
     post: async function (url, body, isToken = false, changeContenttype = false, secretKey = false) {
         try {
-            let allData = await AsyncStorage.getItem('LoginData')
-            let token = JSON.parse(allData)
+            let token = await AsyncStorage.getItem('TOKEN')
             // console.log('changeContent: ', changeContenttype);
             if (changeContenttype == true || secretKey == true) {
                 Headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -50,7 +51,7 @@ const WebReq = {
             const headers =
                 isToken ? {
                     ...Headers,
-                    'Authorization': changeContenttype ? `Bearer ${STRIPE_PUBLISHABLE_KEY}` : secretKey ? `Bearer ${STRIPE_SECRET_KEY}` : token.xauthtoken,
+                    'Authorization': changeContenttype ? `Bearer ${STRIPE_PUBLISHABLE_KEY}` : secretKey ? `Bearer ${STRIPE_SECRET_KEY}` : token,
                 } :
                     Headers
             // console.log("body", url, body, headers)
@@ -75,12 +76,11 @@ const WebReq = {
     },
     put: async function (url, body, isToken = false,) {
         try {
-            let allData = await AsyncStorage.getItem('LoginData')
-            let token = JSON.parse(allData)
+            let token = await AsyncStorage.getItem('TOKEN')
             const headers =
                 isToken ? {
                     ...Headers,
-                    'Authorization': token.xauthtoken,
+                    'Authorization': token,
                 } :
                     Headers
             // console.log("in put web req", url, body)
@@ -108,12 +108,11 @@ const WebReq = {
     },
     delete: async function (url, isToken = false) {
         try {
-            let allData = await AsyncStorage.getItem('LoginData')
-            let token = JSON.parse(allData)
+            let token = await AsyncStorage.getItem('TOKEN')
             const headers =
                 isToken ? {
                     ...Headers,
-                    'Authorization': token.xauthtoken,
+                    'Authorization': token,
                 } :
                     Headers
             // console.log("in delete web req", url, headers)

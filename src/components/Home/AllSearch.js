@@ -72,6 +72,8 @@ function AllSearchPage(props) {
           return () => backHandler.remove()
     },[])
     const onChangeSearch = async (query) => {
+
+       
         if(query.length > 0){
             let data = `words=${query}&page=${page}&limit=1000`
         
@@ -83,6 +85,7 @@ function AllSearchPage(props) {
             }
         }else{
             setAllData([])
+            setSearchQuery('')
         }
     }
 
@@ -198,8 +201,8 @@ function AllSearchPage(props) {
                     onPress={() => props.navigation.navigate('AllSearchPage')}
                     placeholder="Search"
                     onChangeText={onChangeSearch}
-                    // value={searchQuery}
-                    clearIcon={() => <Icon name={'close'} size={20} color={'#808080'} onPress={() => setAllData([], setSearchQuery(''))}/>}
+                    value={searchQuery}
+                    clearIcon={() => searchQuery.length ? <Icon name={'close'} size={20} color={'#808080'} onPress={() => [ setSearchQuery(''),setAllData([])]}/> : null}
                 />
             </View>
 

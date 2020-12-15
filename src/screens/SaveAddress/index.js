@@ -44,7 +44,7 @@ class SaveAddress extends Component {
             radiovalue: '',
             value: '',
             isLoading: false,
-           
+
 
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
@@ -66,16 +66,12 @@ class SaveAddress extends Component {
         return true;
     }
     componentDidMount = async () => {
-       
-
-
+        console.log("start==================================")
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         this.setState({ isLoading: true })
         let userid = await AsyncStorage.getItem('userId')
         // get address via user
         const data = await getAddressviaUSer(userid);
-
-        console.log("All Data get", data.data)
         if (data.data) {
             this.setState({ address: data.data.address, addressid: data.data._id, isLoading: false })
             AsyncStorage.setItem("AddressId", data.data._id)
@@ -105,6 +101,49 @@ class SaveAddress extends Component {
         })
         const data = await updateAddress(body, id)
     }
+
+    removeItem = async(clickid) => {
+
+        let userId = await AsyncStorage.getItem('userId')
+        let phoneNo = await AsyncStorage.getItem('UserMobile')
+
+        let found = this.state.address.some(i => i._id == clickid)
+        if (found == true) {
+            let index = this.state.address.findIndex(i => i._id == clickid)
+            this.state.address.splice(index, 1)
+        }
+        let body = JSON.stringify({
+            user_id: userId,
+            address: [
+                ... this.state.address,
+            ]
+        })
+        const data = await updateAddress(body, this.state.addressid)
+        console.log("Data update address", data)
+        if (data.success) {
+           this.componentDidMount()
+        } else {
+            Alert.alert(data.messageCode);
+            
+        }
+    }
+
+    /**
+     * Delete Address
+     * @param {any} clickid 
+     */
+    deleteAddress = async (clickid) => {
+        Alert.alert(
+            'Remove Address',
+            "Are you sure you want to remove this address.",
+            [{
+              text: 'REMOVE',
+              onPress: () => this.removeItem(clickid)
+            }, { text: 'CANCEL' }],
+
+          );
+
+    }
     /**
      * display Address 
      */
@@ -130,8 +169,11 @@ class SaveAddress extends Component {
                                     <Text style={{ color: '#000', fontSize: 12 }}>{item.item.address_line_1}</Text>
                                     <Text style={{ color: '#000', fontSize: 12 }}>{item.item.address_line_2}</Text>
                                 </View>
-                                <TouchableOpacity style={styles.homeAddEditView} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { mainAddressId: addressid, onClickaddress: item, address: this.state.address, obclickaddressid: item.item._id })}>
+                                <TouchableOpacity style={[styles.homeAddEditView,  { borderTopEndRadius: 0, borderBottomEndRadius: 0 }]} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { mainAddressId: addressid, onClickaddress: item, address: this.state.address, obclickaddressid: item.item._id })}>
                                     <Icon name={'pencil-square-o'} size={25} color='#000' />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.homeAddEditView]} onPress={() => this.deleteAddress(item.item._id)}>
+                                    <Icon name={'trash'} size={25} color='#000' />
                                 </TouchableOpacity>
                             </RadioButton.Group>
                         </TouchableOpacity>
@@ -145,7 +187,6 @@ class SaveAddress extends Component {
 
         return (
             <View style={{ flex: 1 }}>
-                <ProcedureImage source={AppStyles.imageSet.box} />
                 {
                     this.state.isLoading ? <ActivityIndicator size={'small'} color={'#000'} />
                         :
