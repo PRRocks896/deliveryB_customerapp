@@ -126,41 +126,19 @@ class ShoppingBagScreen extends Component {
       this.setState({ isDataLoading: true })
     }
 
-    let shopArray = []
-    let shoplatlong = []
-    getdata.data.data.map((item)=> shopArray.push(item.shop_id))
-    let uniqshopsid = shopArray.filter(function (item, index, inputArray) {
-      return inputArray.indexOf(item) == index;
-    });
-    let length = shopArray.length;
-    console.log("shopArray", uniqshopsid)
-    uniqshopsid.map(async(item) => {
-      const responseshop = await shopdetails(item)
-      if(responseshop.success){
-        console.log("shop lat long", responseshop.data.shopDetail.shopLatitude, responseshop.data.shopDetail.shopLongitude)
-        shoplatlong.push ( { lat : responseshop.data.shopDetail.shopLatitude , long : responseshop.data.shopDetail.shopLongitude});
-        length--;
-        this.getdistance(shoplatlong)
-        console.log("length===============", length)
-        // if(length == 0) {
-        //   console.log(">>>>>>>>>>>>>>>>>>>>>shoplatlong", shoplatlong)
-
-        // }
-      }
-    })
     
     
   }
 
-  getdistance = async(shoplatlong) => {
-    console.log("customer data lat long", this.state.customerLat, this.state.customerLong, shoplatlong)
+  getdistance = async(shoplatlong, customerLat, customerLong) => {
+    console.log("customer data lat long", customerLat, customerLong, shoplatlong)
     let km = []
     // let destination = shoplatlong.startsWith('%7C') ? shoplatlong.replace('%7C','') : ''
     console.log("destination", shoplatlong)
     
     shoplatlong.map((item) => {
       
-    let data =   this.getkm( this.state.customerLat, this.state.customerLong, item.lat, item.long,  'K')
+    let data =   this.getkm( customerLat, customerLong, item.lat, item.long,  'K')
     console.log("final km", data) 
         km.push(data)
        })
@@ -245,6 +223,7 @@ class ShoppingBagScreen extends Component {
           error: null,
         });
 
+        this.getcharges(position.coords.latitude, position.coords.longitude )
 
       },
       (error) => {
@@ -255,6 +234,35 @@ class ShoppingBagScreen extends Component {
       },
       { enableHighAccuracy: false, timeout: 200000, maximumAge: 5000 },
     );
+  }
+
+  getcharges = async(clat, clong) => {
+    let userid = await AsyncStorage.getItem('userId')
+    const getdata = await getbagproduct(userid)
+
+    
+    let shopArray = []
+    let shoplatlong = []
+    getdata.data.data.map((item)=> shopArray.push(item.shop_id))
+    let uniqshopsid = shopArray.filter(function (item, index, inputArray) {
+      return inputArray.indexOf(item) == index;
+    });
+    let length = shopArray.length;
+    console.log("shopArray", uniqshopsid)
+    uniqshopsid.map(async(item) => {
+      const responseshop = await shopdetails(item)
+      if(responseshop.success){
+        console.log("shop lat long", responseshop.data.shopDetail.shopLatitude, responseshop.data.shopDetail.shopLongitude)
+        shoplatlong.push ( { lat : responseshop.data.shopDetail.shopLatitude , long : responseshop.data.shopDetail.shopLongitude});
+        length--;
+        this.getdistance(shoplatlong, clat,clong )
+        console.log("length===============", length)
+        // if(length == 0) {
+        //   console.log(">>>>>>>>>>>>>>>>>>>>>shoplatlong", shoplatlong)
+
+        // }
+      }
+    })
   }
 
   /**
@@ -451,16 +459,16 @@ class ShoppingBagScreen extends Component {
                       <Text style={[styles.text, { fontSize: 20 }]}>Bill Details</Text>
                       <View style={{ flexDirection: 'row', paddingTop: 5 }}>
                         <Text style={styles.text}>Item Total</Text>
-                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ {totalPayamount}</Text>
+                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ {parseFloat(totalPayamount).toFixed(2)}</Text>
                       </View>
                       <View style={{ flexDirection: 'row', paddingTop: 5 }}>
                         <Text style={styles.text}>Delivery partner fee</Text>
-                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ { (deliveryfee).toFixed(2)}</Text>
+                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ { parseFloat(deliveryfee).toFixed(2)}</Text>
                       </View>
                     </View>
                     <View style={{ flexDirection: 'row', paddingBottom: 10 }}>
-                      <Text style={styles.text}>Texes and Charges</Text>
-                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ {taxsCharges}</Text>
+                      <Text style={styles.text}>Taxes and Charges</Text>
+                        <Text style={[styles.text, { position: 'absolute', right: 20 }]}>₹ {parseFloat(taxsCharges).toFixed(2)}</Text>
                     </View>
                     <View style={styles.dashboarder} />
                     <View style={{ flexDirection: 'row' }}>

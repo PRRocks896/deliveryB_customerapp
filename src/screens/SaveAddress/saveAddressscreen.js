@@ -92,6 +92,8 @@ class SaveAddressScreen extends Component {
 
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         let paramsData = this.props.navigation.state.params
+
+        console.log("data=============================", paramsData.onClickaddress)
         let index = paramsData.onClickaddress.index
         if (paramsData) {
             this.setState({ isParamsData: true })
@@ -150,6 +152,7 @@ class SaveAddressScreen extends Component {
         let state;
         let country;
         let pinCode;
+        console.log("addressArray", addressArray)
 
         addressArray.map(item => {
             console.log(item.types[0])
@@ -163,15 +166,15 @@ class SaveAddressScreen extends Component {
                 district = item.long_name
             } else if (item.types.includes('sublocality_level_1')) {
                 address_line_2 = item.long_name
-            } else if (item.types.includes('sublocality_level_2') || item.types.includes('route')) {
+            } else if (item.types.includes('sublocality_level_2') || item.types.includes('route') || item.types.includes('premise')) {
                 address_line_1 = item.long_name
             } else if (item.types.includes('street_number')) {
                 address_line_1 = address_line_1 + ',' + item.long_name
             }
         })
         console.log("lat long", typeof (latitudedata), longitudedata)
-        if (address_line_1 != undefined && address_line_2 !== undefined && district != undefined && pinCode != undefined && state != undefined && country != undefined) {
-
+        console.log("addressss lengt===============================", address_line_1,address_line_2,district, pinCode,state, country   )
+        if ( address_line_2 !== undefined && district != undefined && pinCode != undefined && state != undefined && country != undefined) {
             if (addressLength == 0) {
                 this.setState({ addressLoading: true })
                 let body = JSON.stringify({
@@ -179,7 +182,7 @@ class SaveAddressScreen extends Component {
                     address: [
                         {
                             name: name,
-                            address_line_1: address_line_1,
+                            address_line_1: address_line_1 == undefined ? '' : address_line_1,
                             address_line_2: address_line_2,
                             district: district,
                             state: state,
