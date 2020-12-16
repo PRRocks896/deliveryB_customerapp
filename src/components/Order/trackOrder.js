@@ -27,6 +27,7 @@ export default class TrackOrderComp extends Component {
         isDirection: false,
         isLoading: false,
         code: '',
+        markerangel:0,
 
         isCustomerappshow: false
     }
@@ -54,7 +55,7 @@ export default class TrackOrderComp extends Component {
     }
     startTimer = () => {
 
-        let timer = setInterval(this.manageTimer, 3000);
+        let timer = setInterval(this.manageTimer, 2000);
         this.setState({ timer });
 
     }
@@ -71,6 +72,7 @@ export default class TrackOrderComp extends Component {
             clearInterval(this.state.timer);
         }
         else {
+            console.log("call=============================")
             this.getLocation()
         }
     }
@@ -99,13 +101,38 @@ export default class TrackOrderComp extends Component {
             }
         })
 
+        this.findangle(result.lat, result.long )
+
 
 
     }
+    findangle = (sourceLat, sourceLong) => {
+        var PI = 3.14159;
+        var lat1 = parseFloat(sourceLat) * PI / 180;
+        var long1 = parseFloat(sourceLong) * PI / 180;
+        var lat2 = parseFloat(this.state.destination.latitude) * PI / 180;
+        var long2 = parseFloat(this.state.destination.longitude) * PI / 180;
+    
+        var dLon = (long2 - long1);
+    
+        var y = Math.sin(dLon) * Math.cos(lat2);
+        var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1)
+                * Math.cos(lat2) * Math.cos(dLon);
+    
+        var brng = Math.atan2(y, x);
 
+        console.log("brng-----------------------", brng)
+    
+        brng =  brng * (180 / Math.PI); // Math.toDegrees(brng);
+        brng = (brng + 360) % 360;
+    
+        console.log(brng);
+        this.setState({markerangel:brng })
+        return brng
+    }
 
     render() {
-        const { source, destination, isDirection, isCustomerappshow } = this.state;
+        const { source, destination, isDirection, isCustomerappshow, markerangel } = this.state;
         console.log("sorce=============", source, destination)
         return (
             <>
@@ -129,7 +156,7 @@ export default class TrackOrderComp extends Component {
                     // maxZoomLevel={30}
                     minZoomLevel={15}
                 >
-                    <Marker draggable coordinate={source} title='You' onDragEnd={(e) => console.log("dreg marker", e.nativeEvent.coordinate)} >
+                    <Marker rotation={markerangel} draggable coordinate={source} title='You' onDragEnd={(e) => console.log("dreg marker", e.nativeEvent.coordinate)} >
                         <Image source={require('../../../assets/images/dboy.png')} style={{ height: 75, width: 75 }} />
                     </Marker>
 

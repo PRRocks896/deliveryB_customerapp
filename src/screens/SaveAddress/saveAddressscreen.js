@@ -173,7 +173,7 @@ class SaveAddressScreen extends Component {
             }
         })
         console.log("lat long", typeof (latitudedata), longitudedata)
-        console.log("addressss lengt===============================", address_line_1,address_line_2,district, pinCode,state, country   )
+        console.log("addressss lengt===============================", addressLength, address_line_1,address_line_2,district, pinCode,state, country   )
         if ( address_line_2 !== undefined && district != undefined && pinCode != undefined && state != undefined && country != undefined) {
             if (addressLength == 0) {
                 this.setState({ addressLoading: true })
@@ -182,7 +182,7 @@ class SaveAddressScreen extends Component {
                     address: [
                         {
                             name: name,
-                            address_line_1: address_line_1 == undefined ? '' : address_line_1,
+                            address_line_1: address_line_1,
                             address_line_2: address_line_2,
                             district: district,
                             state: state,
@@ -194,15 +194,18 @@ class SaveAddressScreen extends Component {
                         }
                     ]
                 })
+
+
+                console.log("body=========================", body)
                 // add address from here, call api
                 const data = await addAddress(body);
 
                 console.log("Add Address", data)
-                if (data.success) {
+                if (data.success == true) {
                     this.props.navigation.goBack()
                     this.setState({ addressLoading: false })
                 } else {
-                    Alert.alert(data.message);
+                    Alert.alert("",data.message);
                     this.props.navigation.goBack()
                     this.setState({ addressLoading: false })
                 }

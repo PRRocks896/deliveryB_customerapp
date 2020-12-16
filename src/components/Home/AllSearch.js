@@ -58,7 +58,7 @@ function AllSearchPage(props) {
 
     const [AllData, setAllData] = useState([])
     const [alreadyAddecart, setalreadyAddecart] = useState(false)
-
+    const [quentity, setquentity] = useState(1)
     useEffect( () => {
         const backAction = () => {
             props.navigation.goBack()
@@ -219,10 +219,15 @@ function AllSearchPage(props) {
             item={productModalData}
             shippingMethods={props.shippingMethods}
             visible={productmodalVisible}
-            onAddToBag={onAddToBag}
-            onCancelPress={() => setproductmodalVisible(!productmodalVisible)}
+            onAddToBag={onAddToBag}  onCancelPress={(modalVisible) => {
+                setproductmodalVisible(!modalVisible);
+                setquentity(1)
+              }}
+            // onCancelPress={() => setproductmodalVisible(!productmodalVisible)}
             appConfig={props.navigation.state.params.appConfig}
             navigation={props.navigation}
+            quentityset={quentity}
+            onSetQuantity={(value) => setquentity(value)}
           />
 
         <ServiceModelComponent

@@ -33,10 +33,12 @@ function ProductDetailModal(props) {
   const [alreadyaddecart, setalreadyaddecart] = useState(false)
   const [selecteditemcolor, setselecteditemcolor] = useState('')
   const [selecteditemSize, setselecteditemSize] = useState('')
-  const [quentity, setquentity] = useState(1)
+  // const [quentity, setquentity] = useState(props.quentityset)
   const [shopList, setshopList] = useState([])
   const refRBSheet = useRef();
   const [selectedshopID, setselectedshopID] = useState('')
+
+ 
 
   useEffect(() => {
     checkalreadyaddtocart()
@@ -104,11 +106,15 @@ function ProductDetailModal(props) {
   };
 
   const incrementItem = async () => {
-    setquentity(quentity + 1)
+    props.onSetQuantity(props.quentityset + 1);
+    // setquentity(quentity + 1)
   }
 
   const decrementItem = async () => {
-    if (quentity !== 1) setquentity(quentity - 1)
+    if(props.quentityset !== 1) {
+      props.onSetQuantity(props.quentityset - 1);
+    }
+    // if (quentity !== 1) setquentity(quentity - 1)
   }
 
 
@@ -161,7 +167,7 @@ function ProductDetailModal(props) {
         backdropOpacity={0.5}
         deviceWidth={deviceWidth}
         deviceHeight={deviceHeight}
-        onBackButtonPress={onCancelPress}
+        onBackButtonPress={() => onCancelPress(false)}
       >
 
         <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="dark-content" />
@@ -254,7 +260,7 @@ function ProductDetailModal(props) {
                   />
                 </TouchableOpacity>
                 <View>
-                  <Text style={styles.quantityCount}>{quentity}</Text>
+                  <Text style={styles.quantityCount}>{props.quentityset}</Text>
                 </View>
                 <TouchableOpacity
                   onPress={() => decrementItem()}
@@ -317,7 +323,7 @@ function ProductDetailModal(props) {
                 {displayshopList()}
 
                 <TouchableOpacity
-                  onPress={() => [onAddToBag(item, selecteditemcolor, selecteditemSize, quentity, selectedshopID), refRBSheet.current.close()]}
+                  onPress={() => [onAddToBag(item, selecteditemcolor, selecteditemSize, props.quentityset, selectedshopID), refRBSheet.current.close()]}
                   style={styles.applybutton}>
                   <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
                 </TouchableOpacity>

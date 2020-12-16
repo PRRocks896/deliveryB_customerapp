@@ -6,6 +6,8 @@ import ProductDetailModal from "../Modals/ProductDetailModal/ProductDetailModal"
 import styles from "./styles";
 
 function Search(props) {
+  const [quentity, setquentity] = useState(1)
+
   const {
     extraData,
     products,
@@ -33,8 +35,15 @@ function Search(props) {
         shippingMethods={shippingMethods}
         visible={isProductDetailVisible}
         onAddToBag={onAddToBag}
-        onCancelPress={onModalCancel}
+        // onCancelPress={onModalCancel}
+        onCancelPress={(modalVisible) => {
+          onModalCancel
+          setquentity(1)
+        }}
         appConfig={appConfig}
+
+        quentityset={quentity}
+        onSetQuantity={(value) => setquentity(value)}
       />
     </View>
   );

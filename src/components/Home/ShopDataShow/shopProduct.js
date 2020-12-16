@@ -40,6 +40,8 @@ function ShopWiseProduct(props) {
     const [productModalData, setproductModalData] = useState({})
     const [serviceModalData, setserviceModalData] = useState({})
     const [alreadyAddecart, setalreadyAddecart] = useState(false)
+    const [quentity, setquentity] = useState(1)
+
     useEffect(() => {
         getProducts()
     }, [])
@@ -192,9 +194,15 @@ function ShopWiseProduct(props) {
                 shippingMethods={props.shippingMethods}
                 visible={productmodalVisible}
                 onAddToBag={onAddToBag}
-                onCancelPress={() => setproductmodalVisible(!productmodalVisible)}
+                // onCancelPress={() => setproductmodalVisible(!productmodalVisible)}
+                onCancelPress={(modalVisible) => {
+                    setproductmodalVisible(!modalVisible);
+                    setquentity(1)
+                  }}
                 appConfig={props.navigation.state.params.appConfig}
                 navigation={props.navigation}
+                quentityset={quentity}
+        onSetQuantity={(value) => setquentity(value)}
             />
 
             <ServiceModelComponent

@@ -24,7 +24,7 @@ function Header(props) {
         />
       </TouchableOpacity>
       <View style={styles.headerIconspace} />
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={onSharePress}
         style={[styles.headerIconContainer, styles.headerIconRightContainer]}
       >
@@ -33,7 +33,7 @@ function Header(props) {
           resizeMode={"contain"}
           source={AppStyles.iconSet.share}
         />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }

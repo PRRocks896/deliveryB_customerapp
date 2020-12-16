@@ -149,27 +149,33 @@ function ShowDeliveryBoyList(props) {
                                 style={styles.dboyView}
                                 onPress={() => [isAccept ? props.navigation.navigate('DBoyDetails', { details: item.item.deliveryboy }) : setdetailshoreDboy(item.item.deliveryboy)]}
                             >
-                                <View style={[styles.dboyContainer, { marginLeft: 5 }]}>
-                                    <ActivityIndicator size={'small'} color={'#000'}
-                                        style={{
-                                            position: 'absolute',
-                                            left: 0,
-                                            right: 0,
-                                            top: 0,
-                                            bottom: 0,
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }} />
-                                    <Image style={styles.delievryboyimg} source={item.item.deliveryboy.user_id.hasOwnProperty('profilePicture') ? { uri: item.item.deliveryboy.user_id.profilePicture } : require('../../../../assets/icons/user.png')} />
-                                </View>
-                                <View>
-                                    <Text style={[styles.productCardPrice, { marginLeft: 5, }]}> {item.item.deliveryboy.user_id.name} </Text>
-                                    <Text style={styles.productCardDescription}> {(item.item.distance).toFixed(2)} km </Text>
-                                </View>
-                                <TouchableOpacity onPress={() => [setdialogVisible(true), setclickdboyData(item.item)]} style={[styles.applybutton, { width: '90%' }]}>
-                                    <Text style={{ color: '#fff' }}>{'Hire'}</Text>
+                                {
+                                    item.item.deliveryboy?.user_id !== null ?
+                                        <>
+                                            <View style={[styles.dboyContainer, { marginLeft: 5 }]}>
+                                                <ActivityIndicator size={'small'} color={'#000'}
+                                                    style={{
+                                                        position: 'absolute',
+                                                        left: 0,
+                                                        right: 0,
+                                                        top: 0,
+                                                        bottom: 0,
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
+                                                    }} />
+                                                <Image style={styles.delievryboyimg} source={item.item.deliveryboy?.user_id.hasOwnProperty('profilePicture') ? { uri: item.item.deliveryboy.user_id.profilePicture } : require('../../../../assets/icons/user.png')} />
+                                            </View>
+                                            <View>
+                                                <Text style={[styles.productCardPrice, { marginLeft: 5, }]}> {item.item.deliveryboy?.user_id.name} </Text>
+                                                <Text style={styles.productCardDescription}> {(item.item.distance).toFixed(2)} km </Text>
+                                            </View>
+                                            <TouchableOpacity onPress={() => [setdialogVisible(true), setclickdboyData(item.item)]} style={[styles.applybutton, { width: '90%' }]}>
+                                                <Text style={{ color: '#fff' }}>{'Hire'}</Text>
 
-                                </TouchableOpacity>
+                                            </TouchableOpacity>
+                                        </>
+                                        : null
+                                }
                             </TouchableOpacity>
 
                         </>
@@ -179,7 +185,7 @@ function ShowDeliveryBoyList(props) {
             />
         )
     }
-   
+
     return (
 
         <View style={styles.container} >

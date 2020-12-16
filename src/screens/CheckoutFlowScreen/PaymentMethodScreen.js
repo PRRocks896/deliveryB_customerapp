@@ -93,11 +93,11 @@ class PaymentMethodScreen extends Component {
     const { chargeConfirm, transactionid } = this.state
     let data = this.props.navigation.state.params
     let payamount = data.totalPrice
-    console.log("trs id",transactionid , payamount)
+    console.log("trs id=========================",transactionid , payamount, chargeConfirm)
     if (chargeConfirm !== '') {
       this.props.navigation.replace("ShippingAddress", {
         appConfig: this.appConfig,
-        transactionid: chargeConfirm == 'succeeded' ? transactionid : '',
+        transactionid: chargeConfirm == 'succeeded' || chargeConfirm == 'OTHER'  ? transactionid : '',
         customerID: data.customerID,
         bagproduct: data.product,
         totalammount: chargeConfirm == 'WALLET' ? payamount : data.totalPrice,
@@ -227,7 +227,7 @@ class PaymentMethodScreen extends Component {
     const response = await createOrderRazorpay(body)
     console.log("Response of razor pay order", response)
    
-    if (response && response.status == 'created') {
+    if (response && response.id && response.status == 'created' ) {
       this.razorpayopen(response.id)
     }
   }
@@ -245,7 +245,8 @@ class PaymentMethodScreen extends Component {
       description: 'Tribata',
       image: 'https://linkpicture.com/q/logo_227.png',
       currency: 'INR',
-      key: 'rzp_test_WnyFW6axxBffc1',
+      // key: 'rzp_live_SJvGLjm6gU2DCI',
+      key:'rzp_test_WnyFW6axxBffc1',
       amount:  amount * 100,
       name: name,
       order_id: orderid,
@@ -256,7 +257,7 @@ class PaymentMethodScreen extends Component {
       },
       theme: { color: '#53a20e' }
     }
-    RazorpayCheckout.open(options).then((data) => {
+    RazorpayCheckout.open(options).then((data) => { 
      console.log("On Success response", data)
      this.setState({transactionid : data.razorpay_payment_id})
      this.setState({ chargeConfirm: 'OTHER' })

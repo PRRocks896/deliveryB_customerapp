@@ -41,7 +41,7 @@ function BestSellers(props) {
   const [modalVisible, setmodalVisible] = useState(false)
   const [clickproduct, setclickproduct] = useState({})
   const [alreadyAddecart, setalreadyAddecart] = useState(false)
-
+  const [quentity, setquentity] = useState(1)
 
   const getBestSellerProducts = async () => {
 
@@ -121,12 +121,13 @@ function BestSellers(props) {
    * @param {any} item product data 
    * add to bag product
    */
-  const onAddToBag = async (item, color, size, quentity, selectedshopID) => {
+  const onAddToBag = async (item, color, size, qty, selectedshopID) => {
     setmodalVisible(!modalVisible)
+    setquentity(1);
 
 
     //add to bag product call from component
-    addToBagProduct(item, alreadyAddecart, color, size, quentity, selectedshopID)
+    addToBagProduct(item, alreadyAddecart, color, size, qty, selectedshopID)
   };
 
   return (
@@ -157,9 +158,14 @@ function BestSellers(props) {
         shippingMethods={props.shippingMethods}
         visible={modalVisible}
         onAddToBag={onAddToBag}
-        onCancelPress={() => setmodalVisible(!modalVisible)}
+        onCancelPress={(modalVisible) => {
+          setmodalVisible(!modalVisible);
+          setquentity(1)
+        }}
         appConfig={props.appConfig}
         navigation={props.navigation}
+        quentityset={quentity}
+        onSetQuantity={(value) => setquentity(value)}
       />
     </SafeAreaView>
   );

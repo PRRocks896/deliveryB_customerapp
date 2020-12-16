@@ -82,16 +82,16 @@ function ShopList(props) {
                 renderItem={(item) => {
                     console.log("item.item.shopImage", item.item)
                     return (
-                        <TouchableOpacity onPress= { () => [refRBSheet.current.close(), props.navigation.navigate('ShopWiseProduct', {shopid: item.item._id, shopname:item.item.name})]}>
+                        <TouchableOpacity onPress={() => [refRBSheet.current.close(), props.navigation.navigate('ShopWiseProduct', { shopid: item.item._id, shopname: item.item.name })]}>
                             <View style={[styles.bottomsheet, { flexDirection: 'row' }]}>
-                                <View style={{  flexDirection: 'row' , flex:9}}>
+                                <View style={{ flexDirection: 'row', flex: 9 }}>
                                     <View style={{ flex: 5 }}>
                                         {
                                             item.item.shopImage ?
 
-                                            <Image style={{ width: 150, height: 100 }} source={{ uri: item.item.shopImage }} />
-                                            :
-                                            <Image style={{ width: 100, height: 100 }} source={ require('../../../../assets/images/logo.png')} />
+                                                <Image style={{ width: 150, height: 100 }} source={{ uri: item.item.shopImage }} />
+                                                :
+                                                <Image style={{ width: 100, height: 100 }} source={require('../../../../assets/images/logo.png')} />
 
                                         }
                                     </View>
@@ -105,11 +105,11 @@ function ShopList(props) {
                                                     : null
                                             }
                                         </View>
-                                        <Text style={styles.shopname }> {item.item.shopAddress}  </Text>
+                                        <Text style={styles.shopname}> {item.item.shopAddress}  </Text>
                                     </View>
                                 </View>
                             </View>
-                            
+
                         </TouchableOpacity>
                     )
                 }}
@@ -124,7 +124,9 @@ function ShopList(props) {
             <View style={[styles.unitContainer, { flexDirection: 'row' }]}>
                 <Text style={styles.unitTitle}>{title}</Text>
             </View>
-            { shoplistArray.length ? displayshopTypeList() : null}
+            { shoplistArray.length ? displayshopTypeList() : null
+
+            }
             <RBSheet
                 ref={refRBSheet}
                 closeOnDragDown={true}
@@ -142,7 +144,10 @@ function ShopList(props) {
                 }}
             >
                 <View style={{ marginLeft: 10, marginRight: 10 }}>
-                    {showShopList()}
+                    {shopsArray.length !== 0 ? showShopList() :
+                        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10 }}>
+                            <Text>No Data Found</Text>
+                        </View>}
                 </View>
             </RBSheet>
         </View>

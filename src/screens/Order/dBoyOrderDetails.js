@@ -79,9 +79,9 @@ class DBoyOrderDetailsScreen extends Component {
         let usermobile = await AsyncStorage.getItem('UserMobile')
         let dBoymobile = dPhone
         let bookingid = bookingData._id
-        this.setState({ isLoading: true })
-
+        
         if (amount !== '') {
+            this.setState({ isLoading: true })
             let body = JSON.stringify({
                 from_mobile: usermobile,
                 to_mobile: dBoymobile,
@@ -117,6 +117,7 @@ class DBoyOrderDetailsScreen extends Component {
     realiseDBoy = async () => {
         const bookingData = this.props.navigation.state.params.data
         let id = bookingData.delivery_boy._id
+        console.log("d boy id ===================", id)
         let bookingid = bookingData._id
         let socket = connect()
         let databody = {
@@ -309,5 +310,12 @@ const styles = StyleSheet.create({
       },
       addtext: {
         fontSize: 20
+      },
+      errortxt: {
+        color: 'red'
+      },
+      cvvinput: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#a3a3a3'
       },
 })

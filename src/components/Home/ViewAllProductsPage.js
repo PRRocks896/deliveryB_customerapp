@@ -66,6 +66,7 @@ function ViewAllProductsPage(props) {
 
   const [alreadyAddecart, setalreadyAddecart] = useState(false)
 
+  const [quentity, setquentity] = useState(1)
 
 
   useEffect(() => {
@@ -407,9 +408,15 @@ function ViewAllProductsPage(props) {
             shippingMethods={props.shippingMethods}
             visible={modalVisible}
             onAddToBag={onAddToBag}
-            onCancelPress={() => setmodalVisible(!modalVisible)}
+            // onCancelPress={() => setmodalVisible(!modalVisible)}
+            onCancelPress={(modalVisible) => {
+              setmodalVisible(!modalVisible);
+              setquentity(1)
+            }}
             appConfig={props.appConfig}
             navigation={props.navigation}
+            quentityset={quentity}
+            onSetQuantity={(value) => setquentity(value)}
           />
         </View>
         <TouchableOpacity onPress={() => [refRBSheet.current.open(), setbestseelerpage(0)]} style={styles.filtercontainer}>

@@ -30,9 +30,9 @@ function DBoyDetails(props) {
         let usermobile = await AsyncStorage.getItem('UserMobile')
         let dBoymobile = details.user_id.mobile
         let bookingid = props.navigation.state.params.bookingid
-        console.log("booking id========================",  props.navigation.state.params)
-        setisLoading(true)
+        console.log("booking id========================", amount,  props.navigation.state.params)
         if (amount !== 0) {
+            setisLoading(true)
             let body = JSON.stringify({
                 from_mobile: usermobile,
                 to_mobile: dBoymobile,

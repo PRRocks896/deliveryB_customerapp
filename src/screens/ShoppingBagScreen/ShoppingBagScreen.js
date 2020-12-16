@@ -124,12 +124,15 @@ class ShoppingBagScreen extends Component {
       this.setState({ totalPayamount: total, taxsCharges:taxcharges })
     } else {
       this.setState({ isDataLoading: true })
-    }
-
-    
-    
+    } 
   }
 
+  /**
+   * Get Distance between Customer and Shop
+   * @param {number} shoplatlong 
+   * @param {number} customerLat 
+   * @param {number} customerLong 
+   */
   getdistance = async(shoplatlong, customerLat, customerLong) => {
     console.log("customer data lat long", customerLat, customerLong, shoplatlong)
     let km = []
@@ -164,6 +167,14 @@ class ShoppingBagScreen extends Component {
 
       
   }
+  /**
+   * Calculate km
+   * @param {number} lat1 
+   * @param {number} lon1 
+   * @param {number} lat2 
+   * @param {number} lon2 
+   * @param {number} unit 
+   */
   getkm(lat1, lon1, lat2, lon2, unit = 'K'){
     if ((lat1 == lat2) && (lon1 == lon2)) {
       return 0;
@@ -186,6 +197,10 @@ class ShoppingBagScreen extends Component {
     }
 
   }
+
+  /**
+   * Permission for locations
+   */
   permissionforlocation = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -206,6 +221,10 @@ class ShoppingBagScreen extends Component {
       console.warn(err)
     }
   }
+
+  /**
+   * Get Current Locations
+   */
   getLocation = async () => {
     Geolocation.getCurrentPosition(
       (position) => {
@@ -236,6 +255,11 @@ class ShoppingBagScreen extends Component {
     );
   }
 
+  /**
+   * Calculate charges
+   * @param {number} clat 
+   * @param {number} clong 
+   */
   getcharges = async(clat, clong) => {
     let userid = await AsyncStorage.getItem('userId')
     const getdata = await getbagproduct(userid)

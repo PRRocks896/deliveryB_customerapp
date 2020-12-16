@@ -82,7 +82,7 @@ class CategoryProductGridScreen extends Component {
       selectedSlot: '',
       slotdate: moment().format('DD/MM/YYYY'),
       subCategoryArray: [],
-
+      quentity:1, 
       page: 0,
       isSelectSort: 'lowTohigh',
       subcategoryid: ''
@@ -153,12 +153,12 @@ class CategoryProductGridScreen extends Component {
    * @param {any} item product data 
    * add to bag product
    */
-  onAddToBag = async (item, color, size, quentity, selectedshopID) => {
-    this.setState({ isProductDetailVisible: false })
+  onAddToBag = async (item, color, size, qty, selectedshopID) => {
+    this.setState({ isProductDetailVisible: false  , quentity:1})
     const { alreadyAddecart } = this.state
 
     //add to bag product call from component
-    addToBagProduct(item, alreadyAddecart, color, size, quentity, selectedshopID)
+    addToBagProduct(item, alreadyAddecart, color, size, qty, selectedshopID)
   };
 
   booknow = async (item, selectedSlot, selectedshopID, slotdate) => {
@@ -517,13 +517,18 @@ class CategoryProductGridScreen extends Component {
               productDetails={product.productDetail}
               onFavouritePress={this.onFavouritePress}
               onAddToBag={this.onAddToBag}
-              onCancelPress={() =>
+              onCancelPress={(modalVisible) =>
                 this.setState({
-                  isProductDetailVisible: !this.state.isProductDetailVisible
+                  isProductDetailVisible: !this.state.isProductDetailVisible,
+                  quentity: 1
                 })
+               
               }
               appConfig={this.appConfig}
               navigation={this.props.navigation}
+
+              quentityset={this.state.quentity}
+              onSetQuantity={(value) => this.setState({ quentity: value})}
             />
           </View>
         </>

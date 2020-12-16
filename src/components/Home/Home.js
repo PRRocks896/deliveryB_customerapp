@@ -48,7 +48,7 @@ function Home(props) {
   const [customerLat, setcustomerLat] = useState(22.2856)
   const [customerLong, setcustomerLong] = useState(70.7561)
   const [dboyArray, setdboyArray] = useState([])
-
+  const [quentity, setquentity] = useState(1)
   const [region, setregion] = useState({
     latitude: 22.2856,
     longitude: 70.7561,
@@ -377,11 +377,18 @@ function Home(props) {
           visible={isProductDetailVisible}
           onFavouritePress={onFavouritePress}
           onAddToBag={onAddToBag}
-          onCancelPress={onModalCancelPress}
+          // onCancelPress={onModalCancelPress}
+          onCancelPress={(modalVisible) => {
+            onModalCancelPress(modalVisible)
+            setquentity(1)
+          }}
           productDetails={productDetails}
           appConfig={appConfig}
           alreadyAddecart={alreadyAddecart}
           navigation={navigation}
+
+          quentityset={quentity}
+        onSetQuantity={(value) => setquentity(value)}
         />
       </ScrollView>
     );

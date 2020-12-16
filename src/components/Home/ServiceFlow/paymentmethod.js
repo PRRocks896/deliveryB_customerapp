@@ -259,7 +259,7 @@ class ServicePaymentOptions extends Component {
      this.setState({transactionid : data.razorpay_payment_id})
      this.setState({ chargeConfirm: 'OTHER' })
     }).catch((error) => {
-      alert(`Error: ${error.code} | ${error.description}`);
+      // alert(`Error: ${error.code} | ${error.description}`);
     });
   }
 
