@@ -1,5 +1,6 @@
 export default {
     getURL: 'https://api.tribata.in/api/',
-    // getURL: 'http://192.168.0.104:3200/api/',
+    razorpaykey:'rzp_test_WnyFW6axxBffc1',
+    // getURL: 'http://192.168.0.106:3200/api/',
 
 }

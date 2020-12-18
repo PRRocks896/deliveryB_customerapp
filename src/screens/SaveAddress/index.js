@@ -153,6 +153,7 @@ class SaveAddress extends Component {
             <FlatList
                 data={address}
                 renderItem={(item, indexofaddress) => {
+                    console.log("item.item.address_line_1", item.item.address_line_1)
                     return (
                         <TouchableOpacity style={[styles.row, styles.card]} >
                             <RadioButton.Group onValueChange={value => [this.updateaddress(item.index), this.setState({ value: value })]} value={value}>
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
     addicon: {
         width: 30,
         height: 30,
-        color: '#000'
+      
     },
     card: {
         margin: 5,

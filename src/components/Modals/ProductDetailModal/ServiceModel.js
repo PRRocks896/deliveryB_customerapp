@@ -197,7 +197,7 @@ function ServiceModelComponent(props) {
                                 <Text style={styles.title}>{item.name}</Text>
                                 <Text style={styles.title}>Available Slot : {item.serviceDetail && item.serviceDetail.serviceSlot[0].start} to {item.serviceDetail && item.serviceDetail.serviceSlot[0].end}</Text>
                                 <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{item.description}</Text>
-                                <View style={styles.inputContainer}>
+                                <View style={[styles.inputContainer, {borderWidth:1, borderColor:'#a3a3a3', marginLeft:10, marginRight:10}]}>
                                     <DatePicker
                                         style={{ width: '100%' }}
                                         date={slotdate}
@@ -218,17 +218,20 @@ function ServiceModelComponent(props) {
                                             dateInput: {
                                                 marginLeft: -180,
                                                 borderWidth: 0,
+                                                color:'#a3a3a3'
 
-                                            }
+                                            },
+                                            dateText:styles.datetitle
+                                            
                                             // ... You can check the source to find the other keys.
                                         }}
                                         onDateChange={(date) => setslotdate(date)}
                                     />
                                 </View>
-                                <View style={styles.inputContainer}>
+                                <View style={[styles.inputContainer, {borderWidth:1, borderColor:'#a3a3a3', marginLeft:10, marginRight:10, marginTop:10}]}>
                                     <Picker
                                         selectedValue={selectedSlot}
-                                        style={{ width: '100%', height: 40 }}
+                                        style={styles.pickervalue}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (item.serviceDetail.serviceSlot[0].start <= itemIndex && item.serviceDetail.serviceSlot[0].end >= itemIndex) {
                                                 setselectedSlot(itemValue)
@@ -241,7 +244,7 @@ function ServiceModelComponent(props) {
                                         {
                                             timedata.map((item) => {
                                                 return (
-                                                    <Picker.Item label={item.item} value={item.id} key={item.id} />
+                                                    <Picker.Item  label={item.item} value={item.id} key={item.id} />
                                                 )
 
                                             })

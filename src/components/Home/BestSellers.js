@@ -77,18 +77,7 @@ function BestSellers(props) {
             alignItems: 'center',
             justifyContent: 'center'
           }} />
-                {/* <View
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                  <Image style={styles.dummycardimg} source={require('../../../assets/images/logo.png')} />
-                </View> */}
+              
                 <Image style={styles.productCardImage} source={ item.item.productImage.length == 0 ? require('../../../assets/images/logo.png') :{ uri: item.item.productImage[0] }} />
               </View>
               <Text

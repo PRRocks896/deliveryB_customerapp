@@ -49,7 +49,8 @@ class SaveAddressScreen extends Component {
 
             mapAddress: '',
             isSelectedCheckbox: false,
-            addressLoading: false
+            addressLoading: false,
+            addressError: ''
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.props.navigation.addListener(
@@ -162,19 +163,21 @@ class SaveAddressScreen extends Component {
                 country = item.long_name
             } else if (item.types.includes('administrative_area_level_1')) {
                 state = item.long_name
-            } else if (item.types.includes('locality')) {
+            } else if (item.types.includes('locality') || item.types.includes('administrative_area_level_2')) {
                 district = item.long_name
-            } else if (item.types.includes('sublocality_level_1')) {
+            } else if (item.types.includes('sublocality_level_1') || item.types.includes('route') || item.types.includes('premise') || item.types.includes('locality')) {
                 address_line_2 = item.long_name
             } else if (item.types.includes('sublocality_level_2') || item.types.includes('route') || item.types.includes('premise')) {
+
+                console.log("addressline1===================", item.long_name)
                 address_line_1 = item.long_name
             } else if (item.types.includes('street_number')) {
                 address_line_1 = address_line_1 + ',' + item.long_name
             }
         })
         console.log("lat long", typeof (latitudedata), longitudedata)
-        console.log("addressss lengt===============================", addressLength, address_line_1,address_line_2,district, pinCode,state, country   )
-        if ( address_line_2 !== undefined && district != undefined && pinCode != undefined && state != undefined && country != undefined) {
+        console.log("addressss lengt===============================", addressLength, address_line_1, address_line_2, district, pinCode, state, country)
+        if (address_line_2 !== undefined && district != undefined && pinCode != undefined && state != undefined && country != undefined) {
             if (addressLength == 0) {
                 this.setState({ addressLoading: true })
                 let body = JSON.stringify({
@@ -182,7 +185,7 @@ class SaveAddressScreen extends Component {
                     address: [
                         {
                             name: name,
-                            address_line_1: address_line_1,
+                            address_line_1: address_line_1 == undefined ? address_line_2 : address_line_1,
                             address_line_2: address_line_2,
                             district: district,
                             state: state,
@@ -194,8 +197,6 @@ class SaveAddressScreen extends Component {
                         }
                     ]
                 })
-
-
                 console.log("body=========================", body)
                 // add address from here, call api
                 const data = await addAddress(body);
@@ -205,7 +206,7 @@ class SaveAddressScreen extends Component {
                     this.props.navigation.goBack()
                     this.setState({ addressLoading: false })
                 } else {
-                    Alert.alert("",data.message);
+                    Alert.alert("", data.message);
                     this.props.navigation.goBack()
                     this.setState({ addressLoading: false })
                 }
@@ -218,7 +219,7 @@ class SaveAddressScreen extends Component {
                         ...this.props.navigation.state.params.address,
                         {
                             name: name,
-                            address_line_1: address_line_1,
+                            address_line_1: address_line_1 == undefined ? address_line_2 : address_line_1,
                             address_line_2: address_line_2,
                             district: district,
                             state: state,
@@ -230,7 +231,7 @@ class SaveAddressScreen extends Component {
                         }
                     ]
                 })
-
+                console.log("body========================", body)
                 const data = await updateAddress(body, id)
                 if (data.success) {
                     this.props.navigation.goBack()
@@ -242,7 +243,7 @@ class SaveAddressScreen extends Component {
                 }
             }
         } else {
-
+            this.setState({ addressError: 'Something Missing' })
         }
     }
     /**
@@ -355,7 +356,13 @@ class SaveAddressScreen extends Component {
                             {/* For Load Google Map for get user's Location */}
 
                             <GoogleMapComponent latitude={parseFloat(lat)} longitude={parseFloat(long)} isparamsData={isData} />
-
+                            {
+                                this.state.addressError !== '' ?
+                                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: 'red', textAlign: 'center' }}>{this.state.addressError}</Text>
+                                    </View>
+                                    : null
+                            }
                         </View>
                     </View>
                     {

@@ -153,6 +153,8 @@ console.log("fetch lat long=============",this.props.isparamsData,  this.state.r
                 showsUserLocation={true}
                 onMapReady={this.onMapReady}
                 onRegionChangeComplete={this.onRegionChange}
+                //  maxZoomLevel={30}
+                 minZoomLevel={12}
               >
                 <MapView.Marker
                   coordinate={{ "latitude": this.state.region.latitude, "longitude": this.state.region.longitude }}

@@ -80,9 +80,7 @@ class CheckoutScreen extends Component {
       const shopDetailsres = await shopdetails(item)
 
       if (shopDetailsres.success) {
-
-        let shopMobile = shopDetailsres.data.mobile
-
+        let shopMobile = shopDetailsres.data.shopDetail.user_id.mobile
         let body = JSON.stringify({
           shop_mobile: shopMobile,
           amount: paramdata.totalammount
@@ -90,10 +88,7 @@ class CheckoutScreen extends Component {
 
         //For Pay amount from wallet
         const paydata = await payfromwallet(body, phoneno)
-
         if (paydata.statusCode == 200) {
-
-
           //make data for place order
           bagData.map((productsdata) => {
             if (item == productsdata.products[0].product_id.shop_id) {
@@ -126,7 +121,10 @@ class CheckoutScreen extends Component {
                 obj.push({
                   product_id: productitem.products[0].product_id._id,
                   price: productitem.products[0].price,
-                  quantity: productitem.products[0].quantity
+                  quantity: productitem.products[0].quantity,
+                  color: productitem.products[0].color,
+                  size: productitem.products[0].size,
+                  discount_price: productitem.products[0].discount_price
                 })
               }
             })
@@ -137,7 +135,6 @@ class CheckoutScreen extends Component {
 
           //Call Place order api
           const placeorderresponse = await placeOrder(JSON.stringify(result));
-
 
           if (placeorderresponse == undefined) {
             this.setState({ dialogVisible: false, isLoading: false })
@@ -151,14 +148,12 @@ class CheckoutScreen extends Component {
             );
           }
           else if (placeorderresponse.statusCode == 200) {
-            console.log("placeorderresponse,", placeorderresponse)
             this.setState({ dialogVisible: false, isLoading: false })
 
             bagData.map(async (item) => {
 
               // After place order make statis true for placed products
               const cartStatus = await changeCartStatus(item._id)
-              console.log("cartStatus=============", cartStatus)
               if (cartStatus.statusCode == 200) {
 
                 this.props.navigation.navigate("Order", { appConfig: this.appConfig });
@@ -306,39 +301,45 @@ class CheckoutScreen extends Component {
   onFooterPress = async () => {
 
 
-    if(this.state.totalkm >= 15){
+    if (this.state.totalkm >= 15) {
       Toast.show('This delivery taking 3 to 4 Days to deliver and It will carry up to 15kg.', Toast.LONG, [
         'UIAlertController',
       ]);
     }
-    this.setState({ isLoading: true })
-    let paramdata = this.props.navigation.state.params
-    let bagData = paramdata.bagproduct
-    let shopsid = []
-    // get user mobile number
-    let mobile = await AsyncStorage.getItem('CurrentUser')
-    let mobileParsed = JSON.parse(mobile)
-    let phoneno = mobileParsed.data.mobile
+
+    if (this.state.radioValue !== '') {
+
+      let paramdata = this.props.navigation.state.params
+      let bagData = paramdata.bagproduct
+      let shopsid = []
+      // get user mobile number
+      let mobile = await AsyncStorage.getItem('CurrentUser')
+      let mobileParsed = JSON.parse(mobile)
+      let phoneno = mobileParsed.data.mobile
 
 
-    //For shopid array
-    bagData.map((item) => {
-      shopsid.push(item.products[0].product_id.shop_id);
-    });
+      //For shopid array
+      bagData.map((item) => {
+        shopsid.push(item.products[0].product_id.shop_id);
+      });
 
-    //make unique shop id
-    let uniqshopsid = shopsid.filter(function (item, index, inputArray) {
-      return inputArray.indexOf(item) == index;
-    });
-    let filterProduct = []
+      //make unique shop id
+      let uniqshopsid = shopsid.filter(function (item, index, inputArray) {
+        return inputArray.indexOf(item) == index;
+      });
+      let filterProduct = []
 
 
+      this.setState({ isLoading: true })
 
-    if (paramdata.payment_method == 'WALLET') {
-      this.placeorderfromWallet(uniqshopsid)
-    } else {
-      this.placeorderwithoutWallet(uniqshopsid)
+      if (paramdata.payment_method == 'WALLET') {
+        this.placeorderfromWallet(uniqshopsid)
+      } else {
+
+        this.placeorderwithoutWallet(uniqshopsid)
+      }
     }
+
 
   };
 
@@ -385,11 +386,11 @@ class CheckoutScreen extends Component {
           onTouchOutside={() => this.setState({ dialogVisible: false })} >
           <View>
             <RadioButton.Group onValueChange={value => this.setState({ radioValue: value })} value={this.state.radioValue}>
-             
-                    <RadioButton.Item label="Delivery" value="3_OR_4_DAYS" disabled={this.state.clickOk} />
-                    <RadioButton.Item label="Self Pickup" value="SELF_PICKED" disabled={this.state.clickOk} />
-                  
-            
+
+              <RadioButton.Item label="Delivery" value="3_OR_4_DAYS" disabled={this.state.clickOk} />
+              <RadioButton.Item label="Self Pickup" value="SELF_PICKED" disabled={this.state.clickOk} />
+
+
             </RadioButton.Group>
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center' }}>
@@ -402,7 +403,12 @@ class CheckoutScreen extends Component {
 
               </View>
               <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center' }}>
-                <TouchableOpacity style={styles.adddeviverybtn} onPress={() => [this.onFooterPress(), this.setState({ clickOk: true })]}>
+                <TouchableOpacity style={styles.adddeviverybtn} onPress={() => {
+                  this.onFooterPress();
+                  if (this.state.radioValue !== '') {
+                    this.setState({ clickOk: true })
+                  }
+                }}>
                   {
                     !this.state.isLoading ?
                       <Text style={[styles.text, { fontSize: 18 }]}>Ok</Text>

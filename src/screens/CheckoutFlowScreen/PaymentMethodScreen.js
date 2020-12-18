@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { EventRegister } from 'react-native-event-listeners'
 import createOrderRazorpay from "../../services/Order/createrazorpayorder";
 import RazorpayCheckout from 'react-native-razorpay';
+import Config from "../../config";
 
 class PaymentMethodScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
@@ -246,7 +247,7 @@ class PaymentMethodScreen extends Component {
       image: 'https://linkpicture.com/q/logo_227.png',
       currency: 'INR',
       // key: 'rzp_live_SJvGLjm6gU2DCI',
-      key:'rzp_test_WnyFW6axxBffc1',
+      key: Config.razorpaykey,
       amount:  amount * 100,
       name: name,
       order_id: orderid,
@@ -259,9 +260,13 @@ class PaymentMethodScreen extends Component {
     }
     RazorpayCheckout.open(options).then((data) => { 
      console.log("On Success response", data)
-     this.setState({transactionid : data.razorpay_payment_id})
-     this.setState({ chargeConfirm: 'OTHER' })
-     this.setOrderDetails()
+     if(data.hasOwnProperty('razorpay_payment_id')){
+       this.setState({transactionid : data.razorpay_payment_id})
+       this.setState({ chargeConfirm: 'OTHER' })
+       this.setOrderDetails()
+     }else{
+        Alert.alert("", "Something went wrong")
+     }
     }).catch((error) => {
       console.log("Error",error.code, error.description )
       // alert(`Error: ${error.code} | ${error.description}`);

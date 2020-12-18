@@ -1,5 +1,4 @@
 import Headers from '../../src/Constants/header'
-import {  } from 'react-native';
 import { AsyncStorage } from 'react-native';
 const STRIPE_PUBLISHABLE_KEY = 'pk_test_zKjF89F1BXY9dRGquKZ44ZS300EI4WCGKh';
 const STRIPE_SECRET_KEY = 'sk_test_7jK3rEYJcduJPhXqDKtZh4zc00G47MbWVQ'
@@ -35,7 +34,12 @@ const WebReq = {
                 return await res.json()
             }
         } catch (err) {
-            throw err;
+            return {
+                data: {},
+                message: 'Internal server error',
+                messageCode: 'Internal server error',
+                success: false
+            }
         }
     },
     post: async function (url, body, isToken = false, changeContenttype = false, secretKey = false) {
@@ -71,7 +75,12 @@ const WebReq = {
             }
         } catch (err) {
             console.log("Error", err)
-            throw err;
+            return {
+                data: {},
+                message: 'Internal server error',
+                messageCode: 'Internal server error',
+                success: false
+            }
         }
     },
     put: async function (url, body, isToken = false,) {
@@ -102,7 +111,12 @@ const WebReq = {
                 return await res.json()
             }
         } catch (err) {
-            throw err;
+            return {
+                data: {},
+                message: 'Internal server error',
+                messageCode: 'Internal server error',
+                success: false
+            }
         }
 
     },
@@ -134,7 +148,12 @@ const WebReq = {
                 return await res.json()
             }
         } catch (err) {
-            throw err;
+            return {
+                data: {},
+                message: 'Internal server error',
+                messageCode: 'Internal server error',
+                success: false
+            }
         }
 
     },

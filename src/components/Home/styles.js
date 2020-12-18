@@ -127,7 +127,7 @@ const dynamicStyles = colorScheme => {
     productCardDescription: {
       textAlign: "left",
       fontSize: 13,
-      color: '#000',
+      color: AppStyles.colorSet[colorScheme].mainTextColor,
       fontFamily: AppStyles.fontFamily.regularFont,
       paddingTop: featuredTextPadding
     },

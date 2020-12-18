@@ -200,14 +200,14 @@ function DrawerContainer(appConfig) {
               navigation.navigate("DBoyOrdersScreen", { appConfig });
             }}
           />
-           <DrawerItem
+           {/* <DrawerItem
             title="ADD CARDS"
             source={AppStyles.imageSet.creditCard}
             onPress={() => {
               navigation.closeDrawer()
               navigation.navigate("AddCards", { appConfig });
             }}
-          />
+          /> */}
            <DrawerItem
             title="MY WALLET"
             source={AppStyles.imageSet.payment}

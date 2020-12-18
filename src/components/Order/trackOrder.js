@@ -27,7 +27,7 @@ export default class TrackOrderComp extends Component {
         isDirection: false,
         isLoading: false,
         code: '',
-        markerangel:0,
+        markerangle:0,
 
         isCustomerappshow: false
     }
@@ -127,12 +127,12 @@ export default class TrackOrderComp extends Component {
         brng = (brng + 360) % 360;
     
         console.log(brng);
-        this.setState({markerangel:brng })
+        this.setState({markerangle:brng })
         return brng
     }
 
     render() {
-        const { source, destination, isDirection, isCustomerappshow, markerangel } = this.state;
+        const { source, destination, isDirection, isCustomerappshow, markerangle } = this.state;
         console.log("sorce=============", source, destination)
         return (
             <>
@@ -156,7 +156,7 @@ export default class TrackOrderComp extends Component {
                     // maxZoomLevel={30}
                     minZoomLevel={15}
                 >
-                    <Marker rotation={markerangel} draggable coordinate={source} title='You' onDragEnd={(e) => console.log("dreg marker", e.nativeEvent.coordinate)} >
+                    <Marker rotation={markerangle} draggable coordinate={source} title='You' onDragEnd={(e) => console.log("dreg marker", e.nativeEvent.coordinate)} >
                         <Image source={require('../../../assets/images/dboy.png')} style={{ height: 75, width: 75 }} />
                     </Marker>
 

@@ -14,6 +14,12 @@ import { ActivityIndicator } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { CameraKitCameraScreen, } from 'react-native-camera-kit';
 import payfromwallet from '../../services/Wallet/payfromwallet';
+import createOrderRazorpay from '../../services/Order/createrazorpayorder';
+import RazorpayCheckout from 'react-native-razorpay';
+import addamountwallet from '../../services/Wallet/addamountwallet';
+import { Alert } from 'react-native';
+import Config from '../../config';
+
 export default class MyWallet extends Component {
     constructor(props) {
         super(props);
@@ -221,17 +227,104 @@ export default class MyWallet extends Component {
                 amount: parseFloat(qramount),
                 shop_mobile: qrvalue
             })
+
+            console.log("body=========", body)
             const response = await payfromwallet(body, mobileno)
-            // console.log("response", response)
+            console.log("response", response)
             if (response.statusCode == 200) {
                 this.componentDidMount()
-                this.setState({ qrdialodvisible: false, qrLoading: false })
+                this.setState({ qrdialodvisible: false, qrLoading: false, qramount:'' })
             } else {
-                this.setState({ qramountError: response.message, qrLoading: false })
+                this.setState({ qramountError: response.message, qrLoading: false , qramount:''})
             }
-
         }
     }
+
+
+    addFromRazorpay = async () => {
+        if (this.state.amount !== '') {
+
+            this.setState({isLoading: true})
+            let body = JSON.stringify({
+                "amount": parseFloat(this.state.amount) * 100,
+                "currency": "INR",
+                "receipt": 'receipt#' + Math.floor(100000000 + Math.random() * 900000000),
+                "notes": "Test Payment"
+            })
+            console.log("============body", body)
+            const response = await createOrderRazorpay(body)
+            console.log("Response of razor pay order", response)
+
+            if (response && response.id && response.status == 'created') {
+                this.razorpayopen(response.id)
+            }
+        }
+    }
+
+    razorpayopen = async (orderid) => {
+
+        let profile = await AsyncStorage.getItem('CurrentUser')
+        let parsedData = JSON.parse(profile)
+        let name = parsedData.data.name
+        let email = parsedData.data.email
+        let contact = parsedData.data.mobile
+       
+        let amount = Math.floor(this.state.amount) * 100
+        var options = {
+            description: 'Tribata',
+            image: 'https://linkpicture.com/q/logo_227.png',
+            currency: 'INR',
+            // key: 'rzp_live_SJvGLjm6gU2DCI',
+            key: Config.razorpaykey,
+            amount: amount * 100,
+            name: name,
+            order_id: orderid,
+            prefill: {
+                email: email,
+                contact: contact,
+                name: name
+            },
+            theme: { color: '#53a20e' }
+        }
+        RazorpayCheckout.open(options).then((data) => {
+            console.log("On Success response", data)
+            if (data.hasOwnProperty('razorpay_payment_id')) {
+                this.addtowalletamoutfun()
+                // this.setState({ transactionid: data.razorpay_payment_id })
+                // this.setState({ chargeConfirm: 'OTHER' })
+               
+            } else {
+                Alert.alert("", "Something went wrong")
+            }
+        }).catch((error) => {
+            console.log("Error", error.code, error.description)
+            
+        });
+    }
+
+    addtowalletamoutfun = async () => {
+        let mobile = await AsyncStorage.getItem('CurrentUser')
+        let mobileParsed = JSON.parse(mobile)
+        let phoneNo = mobileParsed.data.mobile
+        let body = JSON.stringify({
+            amount: parseFloat(this.state.amount)
+        })
+        const data = await addamountwallet(body, phoneNo)
+        if (data.success) {
+            this.setState({isLoading: false, dialogVisible: false, amount:'', amountError:''})
+            this.loadwalletdata()
+        } else {
+            this.setState({isLoading: false, dialogVisible: false,  amount:'', amountError:''})
+            Alert.alert(
+                "",
+                data.message,
+                [
+                    { text: "Ok", },
+                ],
+            );
+        }
+     }
+
     render() {
         const { isLoading, amount, walleteamount, refreshing } = this.state
         if (!this.state.opneScanner) {
@@ -293,7 +386,7 @@ export default class MyWallet extends Component {
                                 <View style={{ flex: 6 }}>
 
                                     <View style={styles.addbtnContainer}>
-                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => amount.length !== 0 ? this.props.navigation.navigate('AddCards', { amount: amount }) : this.setState({ amountError: 'Please Enter Amount' })}>
+                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => amount.length !== 0 ? this.addFromRazorpay() : this.setState({ amountError: 'Please Enter Amount' })}>
                                             {
                                                 isLoading ?
                                                     <ActivityIndicator color={'#000'} size="small" />
@@ -377,8 +470,10 @@ export default class MyWallet extends Component {
                         //If frame is visible then frame color
                         colorForScannerFrame={'black'}
                         //Scanner Frame color
-                        onReadCode={event =>
+                        onReadCode={event =>{
                             this.onBarcodeScan(event.nativeEvent.codeStringValue)
+                            console.log("event==============", event.nativeEvent)
+                        }
                         }
                     />
                 </View>

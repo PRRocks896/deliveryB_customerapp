@@ -139,6 +139,16 @@ const dynamicStyles = colorScheme => {
       paddingLeft: 15,
       fontSize: 17
     },
+    datetitle:{
+      fontFamily: AppStyles.fontFamily.regularFont,
+      color: AppStyles.colorSet[colorScheme].mainTextColor,
+      fontSize: 17
+    },
+    pickervalue:{
+      width: '100%', 
+      height: 40 ,
+      color: AppStyles.colorSet[colorScheme].mainTextColor,
+    },  
     price: {
       fontFamily: AppStyles.fontFamily.regularFont,
       color: AppStyles.colorSet[colorScheme].mainSubtextColor,

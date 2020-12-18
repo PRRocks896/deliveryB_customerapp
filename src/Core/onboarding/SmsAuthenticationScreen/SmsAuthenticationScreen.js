@@ -278,11 +278,9 @@ function SmsAuthenticationScreen(props) {
         })
         const data = await signin(body);
         console.log("sigin response", data)
-        AsyncStorage.setItem('TOKEN', data.token)
-        AsyncStorage.setItem("LoginData", JSON.stringify(data))
-        AsyncStorage.setItem("userId", data.userId)
-        AsyncStorage.setItem("UserMobile", dialcode + mobile)
-        AsyncStorage.setItem('reqToken',data.reqToken )
+        
+
+      
         if (data.success == false) {
           setLoading(false)
 
@@ -290,6 +288,12 @@ function SmsAuthenticationScreen(props) {
 
         } else {
           setLoading(false)
+
+          AsyncStorage.setItem('TOKEN', data.token)
+        AsyncStorage.setItem("LoginData", JSON.stringify(data))
+        AsyncStorage.setItem("userId", data.userId)
+        AsyncStorage.setItem("UserMobile", dialcode + mobile)
+        AsyncStorage.setItem('reqToken',data.reqToken )
           getCurrentProfileDetails()
           getAddressid()
           props.navigation.navigate('MainStack', { user: data.userId });

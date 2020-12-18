@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { EventRegister } from 'react-native-event-listeners'
 import RazorpayCheckout from 'react-native-razorpay';
 import createOrderRazorpay from "../../../services/Order/createrazorpayorder";
+import Config from "../../../config";
 
 class ServicePaymentOptions extends Component {
   
@@ -243,7 +244,7 @@ class ServicePaymentOptions extends Component {
       description: 'Tribata',
       image: 'https://i.imgur.com/3g7nmJC.png',
       currency: 'INR',
-      key: 'rzp_test_WnyFW6axxBffc1',
+      key: Config.razorpaykey,
       amount:  amount * 100,
       name: name,
       order_id: orderid,
