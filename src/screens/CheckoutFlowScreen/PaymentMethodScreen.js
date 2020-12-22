@@ -18,6 +18,7 @@ import { EventRegister } from 'react-native-event-listeners'
 import createOrderRazorpay from "../../services/Order/createrazorpayorder";
 import RazorpayCheckout from 'react-native-razorpay';
 import Config from "../../config";
+import getRazorpaykey from "../../services/Razorpay/getkeyrazorpay";
 
 class PaymentMethodScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
@@ -66,6 +67,8 @@ class PaymentMethodScreen extends Component {
       chargeConfirm: '',
       addCards: [],
 
+      razorpay_key:''
+
     };
   }
 
@@ -83,6 +86,17 @@ class PaymentMethodScreen extends Component {
     EventRegister.addEventListener('transactionid', (data) => {
       this.setState({ transactionid: data })
     })
+
+
+    this.getRazorpaykey()
+  }
+
+  getRazorpaykey = async () => {
+    const response = await getRazorpaykey()
+    console.log("response of razorpay key", response)
+    if(response.key_id){
+      this.setState({razorpay_key: response.key_id})
+    }
   }
 
   /**
@@ -234,7 +248,7 @@ class PaymentMethodScreen extends Component {
   }
 
   razorpayopen = async(orderid) => {
-
+    console.log("key:", this.state.razorpay_key)
     let profile = await AsyncStorage.getItem('CurrentUser')
     let parsedData = JSON.parse(profile)
     let name =  parsedData.data.name
@@ -247,7 +261,7 @@ class PaymentMethodScreen extends Component {
       image: 'https://linkpicture.com/q/logo_227.png',
       currency: 'INR',
       // key: 'rzp_live_SJvGLjm6gU2DCI',
-      key: Config.razorpaykey,
+      key: this.state.razorpay_key,
       amount:  amount * 100,
       name: name,
       order_id: orderid,

@@ -168,6 +168,10 @@ const api = {
         getserviceorderdetails: Config.getURL + 'customer/bookings/'
     },
 
+    razorpaykey:{
+        razorpaykey: Config.getURL + 'razorpay/key'
+    },
+
 
 
 

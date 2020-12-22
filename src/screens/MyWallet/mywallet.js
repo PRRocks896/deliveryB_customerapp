@@ -19,6 +19,7 @@ import RazorpayCheckout from 'react-native-razorpay';
 import addamountwallet from '../../services/Wallet/addamountwallet';
 import { Alert } from 'react-native';
 import Config from '../../config';
+import getRazorpaykey from '../../services/Razorpay/getkeyrazorpay';
 
 export default class MyWallet extends Component {
     constructor(props) {
@@ -42,7 +43,9 @@ export default class MyWallet extends Component {
             qramount: '',
             qramountError: '',
             qrLoading: false,
-            page: 1
+            page: 1,
+
+            razorpay_key:''
         };
         this.props.navigation.addListener(
             'didFocus',
@@ -146,7 +149,16 @@ export default class MyWallet extends Component {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         this.loadwalletdata()
 
+        this.getRazorpaykey()
+
     }
+    getRazorpaykey = async () => {
+        const response = await getRazorpaykey()
+        console.log("response of razorpay key", response)
+        if(response.key_id){
+          this.setState({razorpay_key: response.key_id})
+        }
+      }
     orderDetails = () => {
         const { transctionslist, refreshing } = this.state
         return (
@@ -275,7 +287,7 @@ export default class MyWallet extends Component {
             image: 'https://linkpicture.com/q/logo_227.png',
             currency: 'INR',
             // key: 'rzp_live_SJvGLjm6gU2DCI',
-            key: Config.razorpaykey,
+            key: this.state.razorpay_key,
             amount: amount * 100,
             name: name,
             order_id: orderid,

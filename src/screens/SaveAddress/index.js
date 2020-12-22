@@ -75,6 +75,11 @@ class SaveAddress extends Component {
         if (data.data) {
             this.setState({ address: data.data.address, addressid: data.data._id, isLoading: false })
             AsyncStorage.setItem("AddressId", data.data._id)
+         
+                let dataAddress = data.data.address.filter(item => item.isDefault == true)
+                AsyncStorage.setItem("CustomerAddress", JSON.stringify(dataAddress[0]))
+               
+             
             this.state.address.map((item) => {
                 if (item.isDefault == true) this.setState({ value: item._id })
             })

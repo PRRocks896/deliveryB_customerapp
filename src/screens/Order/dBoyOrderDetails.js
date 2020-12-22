@@ -57,8 +57,6 @@ class DBoyOrderDetailsScreen extends Component {
     }
 
     componentDidMount = async () => {
-        
-
         let id = this.props.navigation.state.params.data.delivery_boy.user_id
         const response = await detailsdboyService(id)
         console.log("response dboy details", response)
@@ -66,8 +64,8 @@ class DBoyOrderDetailsScreen extends Component {
             this.setState({ dname: response.data[0].user_id.name, dPhone: response.data[0].user_id.mobile })
         }
         const details = this.props.navigation.state.params.data
-        console.log("details.delivery_charg", details.delivery_charge)
-        if (details.delivery_charge == 0) {
+        console.log("details.delivery_charg", details)
+        if (details.delivery_charge == 0 || details.status == 'BOOKING_ACCEPTED') {
             this.setState({ isshowPaybtn: true })
         }
     }
@@ -115,11 +113,11 @@ class DBoyOrderDetailsScreen extends Component {
     }
 
     realiseDBoy = async () => {
-        const bookingData = this.props.navigation.state.params.data
-        let id = bookingData.delivery_boy._id
-        console.log("d boy id ===================", id)
-        let bookingid = bookingData._id
         let socket = connect()
+        const bookingData = this.props.navigation.state.params.data
+        let id = bookingData.delivery_boy.user_id
+        console.log("d boy id ==============5fd9a15f209e1e15c0406fc4=====",  id)
+        let bookingid = bookingData._id
         let databody = {
             userID: id,
             isOccupied: false,
@@ -131,7 +129,6 @@ class DBoyOrderDetailsScreen extends Component {
         const response = await bookingStatusService(body, bookingid)
         if (response.statusCode == 200) {
             this.props.navigation.goBack()
-
         } else {
             Toast.show(response.message, Toast.LONG, [
                 'UIAlertController',

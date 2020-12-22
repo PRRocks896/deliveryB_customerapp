@@ -17,6 +17,7 @@ import { EventRegister } from 'react-native-event-listeners'
 import RazorpayCheckout from 'react-native-razorpay';
 import createOrderRazorpay from "../../../services/Order/createrazorpayorder";
 import Config from "../../../config";
+import getRazorpaykey from "../../../services/Razorpay/getkeyrazorpay";
 
 class ServicePaymentOptions extends Component {
   
@@ -66,6 +67,8 @@ class ServicePaymentOptions extends Component {
       chargeConfirm: '',
       addCards: [],
 
+      razorpay_key:''
+
     };
   }
 
@@ -83,7 +86,18 @@ class ServicePaymentOptions extends Component {
     EventRegister.addEventListener('transactionid', (data) => {
       this.setState({ transactionid: data })
     })
+
+    this.getRazorpaykey()
   }
+
+  getRazorpaykey = async () => {
+    const response = await getRazorpaykey()
+    console.log("response of razorpay key", response)
+    if(response.key_id){
+      this.setState({razorpay_key: response.key_id})
+    }
+  }
+
 
   /**
    * on click next call this function
@@ -244,7 +258,7 @@ class ServicePaymentOptions extends Component {
       description: 'Tribata',
       image: 'https://i.imgur.com/3g7nmJC.png',
       currency: 'INR',
-      key: Config.razorpaykey,
+      key: this.state.razorpay_key,
       amount:  amount * 100,
       name: name,
       order_id: orderid,

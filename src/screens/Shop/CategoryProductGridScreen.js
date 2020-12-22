@@ -274,7 +274,7 @@ class CategoryProductGridScreen extends Component {
     const { isSelectSort, subCategoryArray, slotdate, selectedSlot, productData, product, isLoadingProduct, categoryProducts, isServiceData, serviceCategoryData, modalVisible } = this.state
     const { extraData } = this.props;
     if (isServiceData) {
-      if (serviceCategoryData.length) {
+     
         return (
           <>
             <View style={styles.container}>
@@ -282,10 +282,13 @@ class CategoryProductGridScreen extends Component {
                 {
                   subCategoryArray.length ?
                     this.displaysubCategoryData()
-                    : null
+                    : 
+                   null
                 }
               </View>
-              <FlatList
+              {
+                serviceCategoryData.length ? 
+                <FlatList
                 data={serviceCategoryData}
                 renderItem={(item) => {
                   return (
@@ -303,6 +306,12 @@ class CategoryProductGridScreen extends Component {
                 numColumns={2}
                 keyExtractor={(item) => (item._id).toString()}
               />
+              :
+                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                 <Text>{'No Service Found'}</Text>
+               </View>
+              }
+             
 
               <TouchableOpacity onPress={() => this.RBSheet.open()} style={styles.filterbtnContainer}>
                 <Icon name={'filter-list'} color={'#000'} size={25} />
@@ -380,13 +389,7 @@ class CategoryProductGridScreen extends Component {
             </View>
           </>
         )
-      } else {
-        return (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>{'No Service Found'}</Text>
-          </View>
-        )
-      }
+     
     } else {
       return (
         <>

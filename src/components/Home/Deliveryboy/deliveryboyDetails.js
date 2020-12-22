@@ -45,7 +45,7 @@ function DBoyDetails(props) {
                 let databody = JSON.stringify({
                     "delivery_charges": parseFloat(amount)
                 })
-                console.log("body of pay", databody)
+                console.log("body of pay", databody, bookingid)
                 const responsedata = await bookingChargeService(databody, bookingid)
                 console.log("response=========of pay ", responsedata)
                 if (responsedata.statusCode == 200) {
@@ -70,6 +70,7 @@ function DBoyDetails(props) {
         let id = details.user_id._id
         let bookingid = props.navigation.state.params.bookingid
         let socket = connect()
+        console.log("id===============================", id)
         let databody = {
             userID: id,
             isOccupied: false,
