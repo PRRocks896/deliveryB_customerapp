@@ -114,6 +114,17 @@ class AllShopListScreen extends Component {
                     let responsedata = responseofgoogle.rows[0].elements
                     if (responsedata !== 'ZERO_RESULTS') {
                         time = responsedata[0].duration.text
+                        if(time.split(' ')[1] == 'min' || time.split(' ')[1] == 'mins'){
+                            let mintime = time.split(' ')[0]
+                            let timemin = parseFloat(mintime) + 10 
+                            time = timemin + ' mins'
+                            console.log("added time in mins", time)
+                        } else if(time.split(' ')[1] == 'hour' || time.split(' ')[1] == 'hours'){
+                            let datatime = time.split(' ')[2]
+                            let hourtime =  parseFloat(datatime) + 10 
+                            time =  time.split(' ')[0] + ' ' + time.split(' ')[1] + ' ' +hourtime + ' ' + 'mins'  
+                            console.log("added time in hours",time)
+                        }
                         var result = datares.map(function (el) {
                             var o = Object.assign({}, el);
                             o.time = time;
@@ -184,7 +195,8 @@ class AllShopListScreen extends Component {
                                             : null
                                     }
                                 </View>
-                                <Text style={[styless.shopAddress, {marginBottom:5}]}> {item.item.shopAddress}  </Text>
+                                <Text style={styless.shopAddress}> {item.item.shopAddress}  </Text>
+                                <Text style={[styless.shopkm,  {marginBottom:5}]}> Open:  {item.item.openingTime ? item.item.openingTime : '00'} : 00 - {item.item.closingTime ? item.item.closingTime : '00'} : 00</Text>
                                 <View style={styless.border} />
                                 <Text style={[styless.shopkm, { marginTop: 5 }]}> {this.getshopkm(customerLat, customerLong, item.item.shopLatitude, item.item.shopLongitude, 'K')} kms - {item.item.time} delivery  </Text>
                             </View>

@@ -25,6 +25,7 @@ import DBoyDetails from '../components/Home/Deliveryboy/deliveryboyDetails'
 import ShopWiseProduct from '../components/Home/ShopDataShow/shopProduct'
 import DBoyOrderDetailsScreen from '../screens/Order/dBoyOrderDetails'
 import AllShopListScreen from '../components/Home/ShopDataShow/allshopListScreen'
+import ProductDetailsPageScreen from '../components/Home/ProductDetailsPage'
 const MainStackNavigator = createStackNavigator(
   {
     Drawer: { screen: DrawerStackNavigator },
@@ -40,6 +41,7 @@ const MainStackNavigator = createStackNavigator(
     ServicePaymentOptions:{ screen : ServicePaymentOptions },
     PlaceServiceScrren: { screen : PlaceServiceScrren },
     AllShopListScreen: { screen: AllShopListScreen },
+    ProductDetailsPageScreen: { screen: ProductDetailsPageScreen },
     OrderDetailsScreen: {
       screen: OrderDetailsScreen,
       navigationOptions: {

@@ -32,19 +32,20 @@ function ProductCard(props) {
         <Image style={styles.productCardImage} source={  item.productImage.length == 0 ? require('../../../assets/images/logo.png') : { uri: item.productImage[0] }} />
       </View>
 
-
+          <View style={{justifyContent:'center', alignItems:'center'}}>
       {
         productDetails ?
           <Text
-            style={styles.productCardPrice}
+            style={[styles.productCardPrice, {textAlign:'center'}]}
           >₹ {checktype(productDetails.price)}</Text>
           : <Text
-            style={styles.productCardPrice}
+            style={[styles.productCardPrice, {textAlign:'center'}]}
           > ₹ {checktype(price)}</Text>
       }
       <Text style={styles.productCardDescription} numberOfLines={1}>
         {item.name}
       </Text>
+      </View>
     </TouchableOpacity>
   );
 }

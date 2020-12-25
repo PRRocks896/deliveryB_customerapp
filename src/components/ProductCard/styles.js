@@ -18,6 +18,8 @@ const dynamicStyles = colorScheme => {
     productCardImageConainer: {
       width: "100%",
       height: "80%",
+      justifyContent:'center',
+      alignItems:'center'
     },
     productCardImage: {
       width: "100%",
@@ -40,7 +42,7 @@ const dynamicStyles = colorScheme => {
       paddingTop: featuredTextPadding
     },
     productCardDescription: {
-      textAlign: "left",
+      
       fontSize: 13,
       color: '#000',
       fontFamily: AppStyles.fontFamily.regularFont,

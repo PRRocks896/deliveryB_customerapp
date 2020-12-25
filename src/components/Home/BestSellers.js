@@ -57,31 +57,33 @@ function BestSellers(props) {
   const displaybestproducts = () => {
     return (
       <FlatList
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
         data={bestSellerProducts}
-        nestedScrollEnabled
         renderItem={(item) => {
           return (
             <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => [setclickproduct(item.item), setmodalVisible(true)]}
+              // onPress={() => [setclickproduct(item.item), setmodalVisible(true)]}
+              onPress={() => [setclickproduct(item.item), props.navigation.navigate('ProductDetailsPageScreen', {appConfig: props.appConfig, title:item.item.name})]}
+
               style={[styles.productCardConainer, { width: 0.41 * width }]}
             >
               <View style={styles.productCardImageConainer}>
-              <ActivityIndicator size={'small'} color={'#000'}
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }} />
-              
-                <Image style={styles.productCardImage} source={ item.item.productImage.length == 0 ? require('../../../assets/images/logo.png') :{ uri: item.item.productImage[0] }} />
+                <ActivityIndicator size={'small'} color={'#000'}
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }} />
+
+                <Image style={styles.productCardImage} source={item.item.productImage.length == 0 ? require('../../../assets/images/logo.png') : { uri: item.item.productImage[0] }} />
               </View>
               <Text
-                style={styles.productCardPrice}
+                style={[styles.productCardPrice, {textAlign:'center'}]}
               >₹ {checktype(item.item.productDetail.price)}</Text>
               <Text style={styles.productCardDescription} numberOfLines={1}>
                 {item.item.name}
@@ -89,8 +91,7 @@ function BestSellers(props) {
             </TouchableOpacity>
           )
         }}
-        itemDimension={0.41 * width}
-        numColumns={2}
+
       />
 
     )
