@@ -120,7 +120,7 @@ const WebReq = {
         }
 
     },
-    delete: async function (url, isToken = false) {
+    delete: async function (url, isToken = false, body = {}) {
         try {
             let token = await AsyncStorage.getItem('TOKEN')
             const headers =
@@ -130,7 +130,7 @@ const WebReq = {
                 } :
                     Headers
             // console.log("in delete web req", url, headers)
-            const res = await fetch(url, { headers: headers, method: 'DELETE' });
+            const res = await fetch(url, { headers: headers, method: 'DELETE' , body: body});
             // console.log("DELETE REQ WEB SERVICE", res)
             if (res && res.status === 200) {
                 return await res.json()

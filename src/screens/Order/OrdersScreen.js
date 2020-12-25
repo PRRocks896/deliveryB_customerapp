@@ -79,6 +79,7 @@ class OrdersScreen extends Component {
       let dataAddress =  data.data.address.filter(item => item.isDefault == true)
       AsyncStorage.setItem("CustomerAddress", JSON.stringify(dataAddress[0]))
       AsyncStorage.setItem("AddressId", data.data._id)
+
     }
   }
   getOrders = async () => {
@@ -98,7 +99,6 @@ class OrdersScreen extends Component {
     })
     const data = await getOrder(addressid, body)
     // console.log("addressid", data)
-     
       if (data.success) {
         this.setState({ orderHistory: data.data})
         // that.setState({ orderHistory:  that.page == 1 ? data.data : [...this.state.orderHistory, ...data.data], isLoadingorder: false , isLoading: false, setOnLoad: true})

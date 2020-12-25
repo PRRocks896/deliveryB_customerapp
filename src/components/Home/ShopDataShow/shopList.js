@@ -32,6 +32,8 @@ function ShopList(props) {
             }
         })
         const response = await getshopTypeList(body)
+
+        console.log("all shop type", response.data.list)
         if (response.statusCode == 200) {
             setshoplistArray(response.data.list)
         }
@@ -50,7 +52,7 @@ function ShopList(props) {
             }
         })
         const response = await getshopeListbyType(body, typeid)
-        console.log("All shop List ", response)
+        // console.log("All shop List ", response)
         if (response.statusCode == 200) {
             setshopsArray(response.data.list, typeid)
         }
@@ -64,10 +66,21 @@ function ShopList(props) {
                 renderItem={(item) => {
                     return (
                         <TouchableOpacity
-                            onPress={() => getshopbyType(item.item._id)}
-                            style={[styles.categoryTextContainerView, { padding: 10, margin: 10 }]}>
-                            <Text style={styles.categoryText}>{item.item.type}</Text>
-                        </TouchableOpacity>
+                        // onPress={() => getshopbyType(item.item._id)}
+                        onPress= { () => props.navigation.navigate('AllShopListScreen', {id:item.item._id, title:item.item.type})}
+                        style={styles.categorybox}>
+                         <View style={{ flex: 3 }}>
+                           {
+                             item.item.shopTypeImage ?
+                               <Image style={styles.categoryimg} source={{ uri: item.item.shopTypeImage }} />
+                               :
+                               <Image style={styles.categoryimg} source={require('../../../../assets/images/logo.png')} />
+                           }
+                         </View>
+                         <View style={{ flex: 5 , marginTop:3}}>
+                           <Text style={styles.categoryText}>{(item.item.type).replace(/_/g, " ")}</Text>
+                         </View>
+                       </TouchableOpacity>
                     )
                 }}
 
@@ -80,7 +93,7 @@ function ShopList(props) {
             <FlatList
                 data={shopsArray}
                 renderItem={(item) => {
-                    console.log("item.item.shopImage", item.item)
+                   
                     return (
                         <TouchableOpacity onPress={() => [refRBSheet.current.close(), props.navigation.navigate('ShopWiseProduct', { shopid: item.item._id, shopname: item.item.name })]}>
                             <View style={[styles.bottomsheet, { flexDirection: 'row' }]}>

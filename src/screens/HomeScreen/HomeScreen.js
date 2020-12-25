@@ -73,7 +73,7 @@ class HomeScreen extends Component {
   getCategoryProducts = async () => {
 
     const data = await getCategory();
-
+    // console.log("Category====================", data)
     if (data.success) {
       this.setState({ categoryProduct: data.data })
     }

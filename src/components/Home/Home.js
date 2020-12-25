@@ -74,21 +74,6 @@ function Home(props) {
 
   useEffect(() => {
 
-    const backAction = () => {
-      Alert.alert("Hold on!", "Are you sure you want to go back?", [
-        {
-          text: "Cancel",
-          onPress: () => null,
-          style: "cancel"
-        },
-        { text: "YES", onPress: () => BackHandler.exitApp() }
-      ]);
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
 
     const unsubscribe = NetInfo.addEventListener((state) => {
       setNetInfo(state.isConnected);
@@ -107,7 +92,7 @@ function Home(props) {
   });
 
   
-    return () => [backHandler.remove(), unsubscribe(),unsubscribenavigation]
+    return () => [ unsubscribe(),unsubscribenavigation]
   }, []);
 
   const permissionforlocation = async () => {
@@ -357,7 +342,7 @@ function Home(props) {
         }
 
       
-        {
+        {/* {
           dboyArray.length ?
           <ShowDeliveryBoyList
             title={"Hire Delivery Boy"}
@@ -369,7 +354,7 @@ function Home(props) {
             callFunction={() =>  permissionforlocation()}
           />
           : null
-        }
+        } */}
 
         <ProductDetailModal
           item={product}

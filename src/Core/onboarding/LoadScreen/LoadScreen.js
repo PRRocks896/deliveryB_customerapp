@@ -17,14 +17,14 @@ const LoadScreen = props => {
     const setAppState = async () => {
         const shouldShowOnboardingFlow = await deviceStorage.getShouldShowOnboardingFlow();
         const userid = await AsyncStorage.getItem('userId')
-        if (!shouldShowOnboardingFlow && userid == null) {
-            navigation.navigate("LoginStack", { appStyles: appStyles, appConfig: appConfig });
-        } else if (userid !== null) {
+        // if (!shouldShowOnboardingFlow && userid == null) {
+        //     navigation.navigate("LoginStack", { appStyles: appStyles, appConfig: appConfig });
+        // } else if (userid !== null) {
             props.navigation.navigate('MainStack', { user: userid });
-        }
-        else {
-            navigation.navigate("Walkthrough", { appStyles: appStyles, appConfig: appConfig });
-        }
+        // }
+        // else {
+            // navigation.navigate("Walkthrough", { appStyles: appStyles, appConfig: appConfig });
+        // }
     };
 
     return <View />;

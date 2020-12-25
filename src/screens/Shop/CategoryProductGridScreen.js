@@ -25,34 +25,6 @@ import { getsubcategoryProductService, getSubCategoryService, sortingProducts } 
 import ServiceModelComponent from "../../components/Modals/ProductDetailModal/ServiceModel";
 import { checktype } from "../../utils/utilis";
 
-const timedata = [
-  { id: 1, item: '01 : 00 Am' },
-  { id: 2, item: '02 : 00 Am' },
-  { id: 3, item: '03 : 00 Am' },
-  { id: 4, item: '04 : 00 Am' },
-  { id: 5, item: '05 : 00 Am' },
-  { id: 6, item: '06 : 00 Am' },
-  { id: 7, item: '07 : 00 Am' },
-  { id: 8, item: '08 : 00 Am' },
-  { id: 9, item: '09 : 00 Am' },
-  { id: 10, item: '10 : 00 Am' },
-  { id: 11, item: '11 : 00 Am' },
-  { id: 12, item: '12 : 00 Am' },
-  { id: 13, item: '13 : 00 Pm' },
-  { id: 14, item: '14 : 00 Pm' },
-  { id: 15, item: '15 : 00 Pm' },
-  { id: 16, item: '16 : 00 Pm' },
-  { id: 17, item: '17 : 00 Pm' },
-  { id: 18, item: '18 : 00 Pm' },
-  { id: 19, item: '19 : 00 Pm' },
-  { id: 20, item: '20 : 00 Pm' },
-  { id: 21, item: '21 : 00 Pm' },
-  { id: 22, item: '22 : 00 Pm' },
-  { id: 23, item: '23 : 00 Pm' },
-  { id: 24, item: '24 : 00 Pm' },
-]
-const deviceWidth = Dimensions.get("window").width;
-const deviceHeight = Dimensions.get("window").height;
 class CategoryProductGridScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     // const currentTheme = AppStyles.navThemeConstants[screenProps.theme];
@@ -115,8 +87,10 @@ class CategoryProductGridScreen extends Component {
   }
 
   getsubCategory = async (id) => {
-
+    console.log("sub category id=================", id)
     const response = await getSubCategoryService(id)
+
+    console.log("Sub category products", response)
     if (response.statusCode == 200) {
       this.setState({ subCategoryArray: response.data })
     }
@@ -124,11 +98,11 @@ class CategoryProductGridScreen extends Component {
 
   getCategoryProducts = async (name) => {
     const data = await getProductsbyID(name);
-    console.log("propduct data", data)
+    // console.log("propduct data", data)
     if (data.data.length == 0) {
       const response = await getservicebyName(name)
       if (response.data.length !== 0) {
-        console.log(" service data ", response.data)
+        // console.log(" service data ", response.data)
         this.setState({ serviceCategoryData: response.data, isServiceData: true, isLoadingProduct: false })
       } else {
         this.setState({ isServiceData: false, isLoadingProduct: false })
@@ -223,10 +197,22 @@ class CategoryProductGridScreen extends Component {
         renderItem={(item) => {
           return (
             <TouchableOpacity
-              onPress={() => this.getsubProducts(item.item._id)}
-              style={styles.subCategoryView}>
-              <Text style={styles.subcategoyTxt}>{item.item.name}</Text>
-            </TouchableOpacity>
+            onPress={() => this.getsubProducts(item.item._id)} 
+            style={styles.categorybox}>
+             <View style={{ flex: 3, justifyContent:'center', alignItems:'center'}}>
+               {
+                 item.item.hasOwnProperty('subCategoryImage') ?
+                   <Image style={styles.categoryimg} source={{ uri: item.item.subCategoryImage }} />
+                   :
+                   <Image style={styles.categoryimg} source={require('../../../assets/images/logo.png')} />
+               }
+             </View>
+             <View style={{flex:5, marginTop:5}}>
+               <Text style={[styles.subcategoyTxt, {textAlign:'center'}]}>{(item.item.name).replace(/_/g, " ")}</Text>
+
+             </View>
+            
+           </TouchableOpacity>
           )
         }}
 
@@ -273,21 +259,23 @@ class CategoryProductGridScreen extends Component {
 
     const { isSelectSort, subCategoryArray, slotdate, selectedSlot, productData, product, isLoadingProduct, categoryProducts, isServiceData, serviceCategoryData, modalVisible } = this.state
     const { extraData } = this.props;
+
+    console.log("subCategoryArray", subCategoryArray)
     if (isServiceData) {
      
         return (
           <>
             <View style={styles.container}>
-              <View style={{ marginTop: 10 }}>
+            <View style={{ marginTop: 10 ,height:'18%'}}>
                 {
-                  subCategoryArray.length ?
+                  subCategoryArray !== null && subCategoryArray.length !== 0 ?
                     this.displaysubCategoryData()
                     : 
                    null
                 }
               </View>
               {
-                serviceCategoryData.length ? 
+                serviceCategoryData.length !== 0 ? 
                 <FlatList
                 data={serviceCategoryData}
                 renderItem={(item) => {
@@ -428,15 +416,15 @@ class CategoryProductGridScreen extends Component {
                 :
 
                 <>
-                  <View style={{ marginTop: 10 }}>
+                  <View style={{ marginTop: 10 ,height:'18%'}}>
                     {
-                      subCategoryArray.length ?
+                     subCategoryArray!== null && subCategoryArray.length !== 0 ?
                         this.displaysubCategoryData()
                         : null
                     }
 
                   </View>
-                  {categoryProducts.length ?
+                  {categoryProducts.length > 0 ?
                     <ProductGrid
                       products={this.state.categoryProducts}
                       onCardPress={this.onCardPress}

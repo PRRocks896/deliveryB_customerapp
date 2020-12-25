@@ -31,6 +31,9 @@ import firebase from 'react-native-firebase';
 
 import IntlPhoneInput from 'react-native-intl-phone-input';
 import AsyncStorage from '@react-native-community/async-storage';
+import getbagproduct from '../../../services/AddToBag/getbagProduct';
+import removeitemforlocalProducts from '../../../services/AddToBag/deletebagforlocalproducts';
+import addToBagProduct from '../../../components/AddTobagProduct/addbagproduct';
 
 function SmsAuthenticationScreen(props) {
 
@@ -274,29 +277,28 @@ function SmsAuthenticationScreen(props) {
         let body = JSON.stringify({
           mobile: dialcode + mobile,
           password: password,
-          fcmToken:fcmToken
+          fcmToken: fcmToken
         })
         const data = await signin(body);
         console.log("sigin response", data)
-        
 
-      
+
+
         if (data.success == false) {
           setLoading(false)
-
           Toast.show(data.message, Toast.LONG);
-
         } else {
           setLoading(false)
 
           AsyncStorage.setItem('TOKEN', data.token)
-        AsyncStorage.setItem("LoginData", JSON.stringify(data))
-        AsyncStorage.setItem("userId", data.userId)
-        AsyncStorage.setItem("UserMobile", dialcode + mobile)
-        AsyncStorage.setItem('reqToken',data.reqToken )
-          getCurrentProfileDetails()
+          AsyncStorage.setItem("LoginData", JSON.stringify(data))
+          AsyncStorage.setItem("userId", data.userId)
+          AsyncStorage.setItem("UserMobile", dialcode + mobile)
+          AsyncStorage.setItem('reqToken', data.reqToken)
           getAddressid()
-          props.navigation.navigate('MainStack', { user: data.userId });
+          getCurrentProfileDetails()
+          addtobagLocalProducts()
+
         }
       }
 
@@ -310,6 +312,38 @@ function SmsAuthenticationScreen(props) {
       if (fcmToken == null) setpasswordError('Somthing Went Wrong')
 
     }
+
+  }
+
+  const addtobagLocalProducts = async () => {
+
+    // props.navigation.navigate('MainStack', { user: userid });
+    let userid = await AsyncStorage.getItem('userId')
+    let localdata = await AsyncStorage.getItem('Ofline_Products')
+    if (localdata !== null) {
+      let localdataParsed = JSON.parse(localdata)
+      let localIDs = []
+      localdataParsed.filter(data => {
+        localIDs.push(data.productid)
+      })
+      console.log("local ids=============", localIDs)
+      let body = JSON.stringify({
+        productIds: localIDs
+      })
+      const response = await removeitemforlocalProducts(body)
+      console.log("Response for local products", response)
+      if(response.statusCode == 200){
+        localdataParsed.map((item) => {
+          addToBagProduct(item.item, false, item.selecteditemcolor, item.selecteditemSize, item.qty, item.selectedshopID)
+        })
+        props.navigation.navigate('MainStack', { user: userid });
+      }else{
+        props.navigation.navigate('MainStack', { user: userid });
+      }
+    } else {
+      props.navigation.navigate('MainStack', { user: userid });
+    }
+
 
   }
 
@@ -366,7 +400,7 @@ function SmsAuthenticationScreen(props) {
     return (
       <>
         <Text style={styles.title}>{IMLocalized('Sign In')}</Text>
-        <View style={[styles.InputContainer, {marginBottom:10}]}>
+        <View style={[styles.InputContainer, { marginBottom: 10 }]}>
 
           <IntlPhoneInput onChangeText={onChangeTextlogin} defaultCountry="IN" />
         </View>

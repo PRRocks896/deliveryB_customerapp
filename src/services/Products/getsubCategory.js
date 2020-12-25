@@ -2,6 +2,7 @@ import WebReq from '../web-req.service';
 import api from '../url.service';
 
 export async function getSubCategoryService  (categoryid) {
+    console.log("sub category============",api.getsubCategory.getsubCategory + categoryid )
     const res = await WebReq.get(api.getsubCategory.getsubCategory + categoryid, true)
     return res;
 }

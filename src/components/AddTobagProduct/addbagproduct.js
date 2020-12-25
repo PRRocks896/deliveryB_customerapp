@@ -7,8 +7,11 @@ import { checktype } from "../../utils/utilis";
 
 
 
-const addToBagProduct = async(item, alreadyAddecart, color, size, quentity, selectedshopID) => {
-  console.log("On Add to bag function", color, size, quentity)
+const addToBagProduct = async (item, alreadyAddecart, color, size, quentity, selectedshopID) => {
+
+  let userid = await AsyncStorage.getItem('userId')
+  if (userid !== null) {
+    console.log("On Add to bag function", color, size, quentity)
     let userid = await AsyncStorage.getItem('userId')
     let products = []
     let found;
@@ -16,16 +19,16 @@ const addToBagProduct = async(item, alreadyAddecart, color, size, quentity, sele
     console.log("add to bag function", getdata)
     if (getdata.data.data !== null) {
       found = getdata.data.data.some(i => i.products[0].product_id.id == item.productDetail._id)
-        console.log("found==========", found)
+      console.log("found==========", found)
 
       if (found == false) {
         products.push({
           product_id: item.productDetail._id,
           price: item.productDetail.price,
-          discount_price: item.productDetail.discount_price ? item.productDetail.discount_price : item.productDetail.price, 
+          discount_price: item.productDetail.discount_price ? item.productDetail.discount_price : item.productDetail.price,
           quantity: quentity,
-          size:size,
-          color:color,
+          size: size,
+          color: color,
           name: item.name,
           productImage: item.productImage
         })
@@ -67,12 +70,15 @@ const addToBagProduct = async(item, alreadyAddecart, color, size, quentity, sele
         products: products
       }
       const data = await addtobag(JSON.stringify(body))
-     
+
       const getdata = await getbagproduct(userid)
       if (getdata.success && getdata.data.data !== null) {
         EventRegister.emit('cartlength', getdata.data.data.length)
       }
     }
+
+  }
+
 }
 
 export default addToBagProduct

@@ -25,10 +25,22 @@ function ShowDeliveryBoyList(props) {
 
     const [clickdboyData, setclickdboyData] = useState({})
 
+    const [loggedinuser, setloggedinuser] = useState(false)
 
     useEffect( () => {
-        getAddress()
+
+        getloginid()
     },[])
+
+    const getloginid = async () => {
+        let userid = await AsyncStorage.getItem('userId')
+        if (userid == null) {
+          setloggedinuser(false)
+        } else {
+          setloggedinuser(true)
+          getAddress()
+        }
+      }
 
     const getAddress = async () => {
         let userid = await AsyncStorage.getItem('userId')
@@ -182,10 +194,16 @@ function ShowDeliveryBoyList(props) {
                                                 <Text style={[styles.productCardPrice, { marginLeft: 5, }]}> {item.item.deliveryboy?.user_id.name} </Text>
                                                 <Text style={styles.productCardDescription}> {(item.item.distance).toFixed(2)} km </Text>
                                             </View>
+                                            {
+                                                loggedinuser ? 
                                             <TouchableOpacity onPress={() => [setdialogVisible(true), setclickdboyData(item.item)]} style={[styles.applybutton, { width: '90%' }]}>
                                                 <Text style={{ color: '#fff' }}>{'Hire'}</Text>
-
                                             </TouchableOpacity>
+                                            :
+                                            <TouchableOpacity onPress={() =>  props.navigation.navigate("LoginStack")} style={[styles.applybutton, { width: '90%' }]}>
+                                            <Text style={{ color: '#fff' }}>{'Hire'}</Text>
+                                                    </TouchableOpacity>
+                                            }
                                         </>
                                         : null
                                 }

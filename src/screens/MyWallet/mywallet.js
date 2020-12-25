@@ -307,10 +307,11 @@ export default class MyWallet extends Component {
                
             } else {
                 Alert.alert("", "Something went wrong")
+                this.setState({isLoading: false})
             }
         }).catch((error) => {
             console.log("Error", error.code, error.description)
-            
+            this.setState({isLoading: false})
         });
     }
 
@@ -388,7 +389,7 @@ export default class MyWallet extends Component {
                                 <View style={{ flex: 6 }}>
 
                                     <View style={styles.addbtnContainer}>
-                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => this.setState({ dialogVisible: false, amountError: '' })}>
+                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => this.setState({ dialogVisible: false, amountError: '' , isLoading: false})}>
 
                                             <Text style={styles.addtext}>Cancel</Text>
 

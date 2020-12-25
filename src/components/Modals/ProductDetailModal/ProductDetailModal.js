@@ -7,7 +7,6 @@ import {
   Share,
   TouchableOpacity,
   Image,
-  AsyncStorage,
   FlatList
 } from "react-native";
 import PropTypes from "prop-types";
@@ -27,6 +26,10 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { checktype } from "../../../utils/utilis";
+import AsyncStorage from "@react-native-community/async-storage";
+import { nullPlaceholder } from "i18n-js";
+import { Alert } from "react-native";
+import { EventRegister } from "react-native-event-listeners";
 function ProductDetailModal(props) {
   const colorScheme = useColorScheme();
   const styles = dynamicStyles(colorScheme);
@@ -38,11 +41,24 @@ function ProductDetailModal(props) {
   const refRBSheet = useRef();
   const [selectedshopID, setselectedshopID] = useState('')
 
- 
+  const [loggedinuser, setloggedinuser] = useState(false)
+
+
 
   useEffect(() => {
-    checkalreadyaddtocart()
+    
+    getloginid()
   })
+
+  const getloginid = async () => {
+    let userid = await AsyncStorage.getItem('userId')
+    if (userid == null) {
+      setloggedinuser(false)
+    } else {
+      setloggedinuser(true)
+      checkalreadyaddtocart()
+    }
+  }
 
   /**
    * Get Shop All List by Product Master id
@@ -111,7 +127,7 @@ function ProductDetailModal(props) {
   }
 
   const decrementItem = async () => {
-    if(props.quentityset !== 1) {
+    if (props.quentityset !== 1) {
       props.onSetQuantity(props.quentityset - 1);
     }
     // if (quentity !== 1) setquentity(quentity - 1)
@@ -149,6 +165,52 @@ function ProductDetailModal(props) {
 
       />
     )
+  }
+
+  const oflineStorage = async(item, selecteditemcolor, selecteditemSize, qty, selectedshopID ) => {
+    console.log("item", item)
+    let getproducrsoff = await AsyncStorage.getItem("Ofline_Products")
+    let parseddata = JSON.parse(getproducrsoff)
+    console.log("Frist get Products off", parseddata)
+    if(parseddata !== null){
+      console.log("add to local", )
+      found = parseddata.some(i => i.productid == item.productDetail._id)
+      if(found == false){
+        let products =  parseddata
+        products.push({
+          item:item,
+          selecteditemcolor:selecteditemcolor,
+          selecteditemSize:selecteditemSize,
+          qty:qty,
+          selectedshopID:selectedshopID,
+          productid:item.productDetail._id
+        })
+        AsyncStorage.setItem("Ofline_Products", JSON.stringify(products))
+        let cartlengthdata = await AsyncStorage.getItem('Ofline_Products')
+        onCancelPress(false)
+        EventRegister.emit('cartlength',   JSON.parse(cartlengthdata.length))
+      }else{
+        Alert.alert("","already added")
+        onCancelPress(false)
+      }
+
+    }else{
+      let products =  []
+      products.push({
+        item:item,
+        selecteditemcolor:selecteditemcolor,
+        selecteditemSize:selecteditemSize,
+        qty:qty,
+        selectedshopID:selectedshopID,
+        productid:item.productDetail._id
+      })
+      AsyncStorage.setItem("Ofline_Products", JSON.stringify(products))
+      let cartlengthdata = await AsyncStorage.getItem('Ofline_Products')
+      EventRegister.emit('cartlength',   JSON.parse(cartlengthdata.length))
+      onCancelPress(false)
+    }
+    let producrsoff = await AsyncStorage.getItem("Ofline_Products")
+    console.log("Ofliine products======================", JSON.parse(producrsoff))
   }
 
   // console.log("item.productDetail.color.length",item.productDetail&& item.productDetail.color)
@@ -321,17 +383,25 @@ function ProductDetailModal(props) {
             shopList.length ?
               <>
                 {displayshopList()}
+                {
+                  loggedinuser ?
+                    <TouchableOpacity
+                      onPress={() => [onAddToBag(item, selecteditemcolor, selecteditemSize, props.quentityset, selectedshopID), refRBSheet.current.close()]}
+                      style={styles.applybutton}>
+                      <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
+                    </TouchableOpacity>
+                    :
+                    <TouchableOpacity
+                      onPress={() => [oflineStorage(item, selecteditemcolor, selecteditemSize, props.quentityset, selectedshopID), refRBSheet.current.close()]}
+                      style={styles.applybutton}>
+                      <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
+                    </TouchableOpacity>
+                }
 
-                <TouchableOpacity
-                  onPress={() => [onAddToBag(item, selecteditemcolor, selecteditemSize, props.quentityset, selectedshopID), refRBSheet.current.close()]}
-                  style={styles.applybutton}>
-                  <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
-                </TouchableOpacity>
-
-              </> 
-              : 
-              <View style={{justifyContent:'center', alignItems:'center'}}>
-              <Text>{'No Shop List Found'}</Text>
+              </>
+              :
+              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Text>{'No Shop List Found'}</Text>
               </View>
           }
         </View>

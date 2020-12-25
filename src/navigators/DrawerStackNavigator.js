@@ -26,6 +26,8 @@ import ViewAllProductsPage from '../components/Home/ViewAllProductsPage'
 import AllSearchPage from '../components/Home/AllSearch'
 import DBoyOrdersScreen from '../screens/Order/dBoyOrderScreen'
 import DeliveryboyhireddrawerScreen from '../screens/DboyHired/dboyhired'
+import ScanAndPayButton from "../components/scanAndPayButton/scanandpayButton";
+import DBoyButton from "../components/DBoybutton/dboyButton";
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: HomeScreen,
@@ -34,15 +36,15 @@ const DrawerNavigator = createDrawerNavigator(
     Search: SearchScreen,
     Profile: ProfileScreen,
     ShoppingBag: ShoppingBagScreen,
-    MyWallet:MyWallet,
-    AddCards:AddCards,
-    QRScanner:QRScanner,
-    SearchService:SearchService,
-    ServicebookDetails:ServicebookDetails,
-    ViewAllProductsPage:ViewAllProductsPage,
-    AllSearchPage:AllSearchPage,
-    DBoyOrdersScreen:DBoyOrdersScreen,
-    DeliveryboyhireddrawerScreen:DeliveryboyhireddrawerScreen
+    MyWallet: MyWallet,
+    AddCards: AddCards,
+    QRScanner: QRScanner,
+    SearchService: SearchService,
+    ServicebookDetails: ServicebookDetails,
+    ViewAllProductsPage: ViewAllProductsPage,
+    AllSearchPage: AllSearchPage,
+    DBoyOrdersScreen: DBoyOrdersScreen,
+    DeliveryboyhireddrawerScreen: DeliveryboyhireddrawerScreen
     // OrderDetailsScreen:OrderDetailsScreen
   },
   {
@@ -58,7 +60,6 @@ const DrawerNavigator = createDrawerNavigator(
     navigationOptions: ({ navigation, screenProps }) => {
       const routeIndex = navigation.state.index;
       const theme = screenProps.theme
-
       return {
         headerStyle: {
           backgroundColor: AppStyles.navThemeConstants.light.backgroundColor,
@@ -76,21 +77,39 @@ const DrawerNavigator = createDrawerNavigator(
             }}
           />
         ),
-        headerRight: navigation.state.routes[routeIndex].key !=
-          "ShoppingBag" && (
+        
+        headerRight: navigation.state.routes[routeIndex].key != "ShoppingBag"
+          ?
+          <>
+            <DBoyButton
+              onPress={() => {
+                navigation.navigate("DeliveryboyhireddrawerScreen", { appConfig: ShopertinoConfig });
+              }} />
             <ShoppingBagButton
               onPress={() => {
                 navigation.navigate("Bag", { appConfig: ShopertinoConfig });
               }}
             />
-          ),
-        headerTitle:  navigation.state.routes[routeIndex].key == "Search" &&  "Search" ||
-        navigation.state.routes[routeIndex].key == "AddCards" && "Add Cards" ||
-        navigation.state.routes[routeIndex].key == 'MyWallet' && 'My Wallet' || 
-        navigation.state.routes[routeIndex].key ==  'ServicebookDetails' && 'Booked Service' ||
-        navigation.state.routes[routeIndex].key ==  'SearchService' && 'Search Service' ||
-        navigation.state.routes[routeIndex].key ==  'ViewAllProductsPage' && 'View All' ||
-        navigation.state.routes[routeIndex].key ==  'AllSearchPage' && 'Search' 
+            <ScanAndPayButton />
+          </>
+          : navigation.state.routes[routeIndex].key == "DeliveryboyhireddrawerScreen" ?
+            <>
+              <ShoppingBagButton
+                onPress={() => {
+                  navigation.navigate("Bag", { appConfig: ShopertinoConfig });
+                }}
+              />
+              <ScanAndPayButton />
+            </>
+            : null,
+
+        headerTitle: navigation.state.routes[routeIndex].key == "Search" && "Search" ||
+          navigation.state.routes[routeIndex].key == "AddCards" && "Add Cards" ||
+          navigation.state.routes[routeIndex].key == 'MyWallet' && 'My Wallet' ||
+          navigation.state.routes[routeIndex].key == 'ServicebookDetails' && 'Booked Service' ||
+          navigation.state.routes[routeIndex].key == 'SearchService' && 'Search Service' ||
+          navigation.state.routes[routeIndex].key == 'ViewAllProductsPage' && 'View All' ||
+          navigation.state.routes[routeIndex].key == 'AllSearchPage' && 'Search'
       };
     }
   }
@@ -119,16 +138,16 @@ const getDrawerScreenTitle = routeKey => {
       return "Shopping Bag";
     case "MyWallet":
       return "MyWallet";
-    case "AddCards": 
+    case "AddCards":
       return "AddCards";
-    case "ViewAllProductsPage" :
-      return "ViewAllProductsPage";  
-    case "AllSearchPage" :
-        return "AllSearchPage";     
-    case "DBoyOrdersScreen": 
-          return "Booking";
-    case "DeliveryboyhireddrawerScreen": 
-        return "Delivery Boy Hire"        
+    case "ViewAllProductsPage":
+      return "ViewAllProductsPage";
+    case "AllSearchPage":
+      return "AllSearchPage";
+    case "DBoyOrdersScreen":
+      return "Booking";
+    case "DeliveryboyhireddrawerScreen":
+      return "Delivery Boy Hire"
     default:
       return "Home";
   }

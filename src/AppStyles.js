@@ -117,7 +117,8 @@ const iconSet = {
   mastercard: require("../assets/icons/mastercard.png"),
   unionpay: require("../assets/icons/unionpay.png"),
   saveAddress: require("../assets/icons/location.png"),
-  rupee:require("../assets/icons/rupee.png")
+  rupee:require("../assets/icons/rupee.png"),
+  login:require("../assets/images/login.png")
  
 };
 

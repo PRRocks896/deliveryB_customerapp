@@ -14,6 +14,7 @@ import api from '../../services/url.service'
 import { EventRegister } from 'react-native-event-listeners'
 import { ScrollView } from "react-native-gesture-handler";
 import getProfileDetails from "../../services/Profile/getProfile";
+import { Alert } from "react-native";
 const options = {
   title: 'Select Profile',
   storageOptions: {
@@ -29,21 +30,61 @@ function DrawerContainer(appConfig) {
     const [profilepic, setProfilepic] = useState(null)
     const [isLoading, setIsloading] = useState(false)
 
+    const [loggedinuser, setloggedinuser] = useState(false)
+
     const onLogout = async () => {
+      navigation.closeDrawer()
+      Alert.alert(
+        "Sign out",
+        "Are You sure you want to sign out?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => logoutUser() }
+        ],
+        { cancelable: false }
+      );
+
+
+     
+    };
+
+    const logoutUser = async () => {
+      
+     
+     await AsyncStorage.removeItem('userId')
       await deviceStorage.removeUserData();
       await AsyncStorage.getAllKeys()
         .then(keys => AsyncStorage.multiRemove(keys))
         .then(async () => {
           const keys = await AsyncStorage.getAllKeys()
           if (keys.length == 0) {
-            navigation.navigate("LoginStack");
+            navigation.navigate("MainStack");
+            getloginid()
           }
         });
-    };
+    }
 
     useEffect(() => {
       getimg()
+      getloginid()
     }, [])
+
+    const getloginid = async () => {
+      let userid = await AsyncStorage.getItem('userId')
+
+      console.log("UserLogin id>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", userid)
+      if (userid == null) {
+        setloggedinuser(false)
+      } else {
+        setloggedinuser(true)
+      }
+    }
+
+
     const getimg = async () => {
 
       let loginData = await AsyncStorage.getItem('LoginData')
@@ -53,20 +94,20 @@ function DrawerContainer(appConfig) {
         reqToken: details.reqToken,
       })
       const data = await getProfileDetails(body);
-     
+
       setProfilepic(data.data.profilePicture)
       EventRegister.addEventListener('profileImage', (data) => { setProfilepic(data) })
-     
+
     }
 
     const imagePicker = () => {
       ImagePicker.showImagePicker(options, (response) => {
         if (response.didCancel) {
-        
+
         } else if (response.error) {
-         
+
         } else if (response.customButton) {
-        
+
         } else {
           setProfilepic(response.path)
           profilepicfun()
@@ -90,7 +131,7 @@ function DrawerContainer(appConfig) {
         { name: 'profile', filename: fileName, type: Imagetype, data: RNFetchBlob.wrap(Imagepath) },
       ]).then((resp) => {
         let data = resp.json()
-      
+
         setIsloading(false)
         EventRegister.emit('profileImage', data.data.profilePhoto)
         AsyncStorage.setItem("Profilepic", data.data.profilePhoto)
@@ -98,7 +139,7 @@ function DrawerContainer(appConfig) {
         profilepicfun()
 
       }).catch((err) => {
-        
+
       })
     }
     const profilepicfun = () => {
@@ -109,23 +150,32 @@ function DrawerContainer(appConfig) {
       )
     }
     return (
-      <ScrollView contentContainerStyle={{flexGrow:1}} >
-        <View style={{ flex: 3 }}>
-          {
-            isLoading == false ?
-              <>
-                <View style={styles.cardImageContainer}>
-                  <Image
-                    source={profilepic == null ? require('../../../assets/icons/user.png') : { uri: profilepic }}
-                    style={styles.cardImage} />
-                {profilepicfun()}
-                </View>
-              </>
-              :
-              <ActivityIndicator size="large" color="#000" />
-          }
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} >
+        {
+          loggedinuser ?
+            <View style={{ flex: 3 }}>
+              {
 
-        </View>
+                isLoading == false ?
+                  <>
+                    <View style={styles.cardImageContainer}>
+                      <Image
+                        source={profilepic == null ? require('../../../assets/icons/user.png') : { uri: profilepic }}
+                        style={styles.cardImage} />
+                      {profilepicfun()}
+                    </View>
+                  </>
+                  :
+                  <ActivityIndicator size="large" color="#000" />
+              }
+            </View>
+            :
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, flex: 2 }}>
+              <Image
+                source={require('../../../assets/images/logo.png')}
+                style={styles.cardImage} />
+            </View>
+        }
         <View style={styles.container}>
           <DrawerItem
             title="HOME"
@@ -167,68 +217,83 @@ function DrawerContainer(appConfig) {
               navigation.navigate("SearchService", { appConfig });
             }}
           /> */}
-          <DrawerItem
-            title="ORDERS"
-            source={AppStyles.iconSet.orderDrawer}
-            onPress={() => {
-              navigation.closeDrawer()
-              navigation.navigate("Order", { appConfig });
-            }}
-          />
-          <DrawerItem
-            title="BOOKED SERVICE"
-            source={AppStyles.iconSet.orderDrawer}
-            onPress={() => {
-              navigation.closeDrawer()
-              navigation.navigate("ServicebookDetails", { appConfig });
-            }}
-          />
+          {
+            loggedinuser ?
+              <>
+                <DrawerItem
+                  title="ORDERS"
+                  source={AppStyles.iconSet.orderDrawer}
+                  onPress={() => {
+                    navigation.closeDrawer()
+                    navigation.navigate("Order", { appConfig });
+                  }}
+                />
+                <DrawerItem
+                  title="BOOKED SERVICE"
+                  source={AppStyles.iconSet.orderDrawer}
+                  onPress={() => {
+                    navigation.closeDrawer()
+                    navigation.navigate("ServicebookDetails", { appConfig });
+                  }}
+                />
 
-<DrawerItem
-            title="DELIVERY BOY HIRE"
-            source={AppStyles.iconSet.orderDrawer}
-            onPress={() => {
-              navigation.closeDrawer()
-              navigation.navigate("DeliveryboyhireddrawerScreen", { appConfig });
-            }}
-          />
-           <DrawerItem
-            title="DELIVERY BOY BOOKING"
-            source={AppStyles.iconSet.orderDrawer}
-            onPress={() => {
-              navigation.closeDrawer()
-              navigation.navigate("DBoyOrdersScreen", { appConfig });
-            }}
-          />
-           {/* <DrawerItem
-            title="ADD CARDS"
-            source={AppStyles.imageSet.creditCard}
-            onPress={() => {
-              navigation.closeDrawer()
-              navigation.navigate("AddCards", { appConfig });
-            }}
-          /> */}
-           <DrawerItem
-            title="MY WALLET"
-            source={AppStyles.imageSet.payment}
-            onPress={() => {
-              navigation.closeDrawer()
-              navigation.navigate("MyWallet", { appConfig });
-            }}
-          />
-          <DrawerItem
-            title="PROFILE"
-            source={AppStyles.iconSet.profileDrawer}
-            onPress={() => {
-              navigation.closeDrawer()
-              navigation.navigate("Profile", { appConfig });
-            }}
-          />
-          <DrawerItem
-            title="LOGOUT"
-            source={AppStyles.iconSet.logoutDrawer}
-            onPress={onLogout}
-          />
+                <DrawerItem
+                  title="DELIVERY BOY HIRE"
+                  source={AppStyles.iconSet.orderDrawer}
+                  onPress={() => {
+                    navigation.closeDrawer()
+                    navigation.navigate("DeliveryboyhireddrawerScreen", { appConfig });
+                  }}
+                />
+                <DrawerItem
+                  title="DELIVERY BOY BOOKING"
+                  source={AppStyles.iconSet.orderDrawer}
+                  onPress={() => {
+                    navigation.closeDrawer()
+                    navigation.navigate("DBoyOrdersScreen", { appConfig });
+                  }}
+                />
+                {/* <DrawerItem
+                  title="ADD CARDS"
+                  source={AppStyles.imageSet.creditCard}
+                  onPress={() => {
+                    navigation.closeDrawer()
+                    navigation.navigate("AddCards", { appConfig });
+                  }}
+                /> */}
+                <DrawerItem
+                  title="MY WALLET"
+                  source={AppStyles.imageSet.payment}
+                  onPress={() => {
+                    navigation.closeDrawer()
+                    navigation.navigate("MyWallet", { appConfig });
+                  }}
+                />
+                <DrawerItem
+                  title="PROFILE"
+                  source={AppStyles.iconSet.profileDrawer}
+                  onPress={() => {
+                    navigation.closeDrawer()
+                    navigation.navigate("Profile", { appConfig });
+                  }}
+                />
+                <DrawerItem
+                  title="LOGOUT"
+                  source={AppStyles.iconSet.logoutDrawer}
+                  onPress={onLogout}
+                />
+
+              </>
+              : 
+              <DrawerItem
+              title="SIGNIN"
+              source={AppStyles.iconSet.login}
+              onPress={() => {
+                navigation.closeDrawer()
+                navigation.navigate("LoginStack", { appConfig })
+              }}
+            />
+          }
         </View>
       </ScrollView>
     );

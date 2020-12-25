@@ -16,24 +16,47 @@ function ShoppingBagButton(props) {
   const [bagItemsdata, setbagItemsdata] = useState('')
 
   useEffect(() => {
-    getcartProductlength()
+    checklogedinuser()
+
   })
+
+  const checklogedinuser = async () => {
+    let userid = await AsyncStorage.getItem('userId')
+
+    if (userid == null) {
+      getLocalproductitem()
+    } else {
+      getcartProductlength()
+    }
+  }
+
+  const getLocalproductitem = async () => {
+    let getproducrsoff = await AsyncStorage.getItem("Ofline_Products")
+    if( getproducrsoff !== null){
+      let parseddata = JSON.parse(getproducrsoff)
+      setbagItemsdata(parseddata.length)
+      EventRegister.addEventListener('cartlength', (data) => {
+        console.log("data=========", data)
+        setbagItemsdata(data)
+      })
+    }
+  }
 
   const getcartProductlength = async () => {
     let userid = await AsyncStorage.getItem('userId')
     const getdata = await getbagproduct(userid)
-    if(getdata.data.data !== null) {
+    if (getdata.data.data !== null) {
       setbagItemsdata(getdata.data.data.length)
-          EventRegister.addEventListener('cartlength', (data) => {
-            console.log("data=========", data)
-            setbagItemsdata(data)
-          })
+      EventRegister.addEventListener('cartlength', (data) => {
+        console.log("data=========", data)
+        setbagItemsdata(data)
+      })
     }
   }
   console.log("=======in button ", bagItemsdata)
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={props.onPress} style={{ justifyContent: 'center', marginBottom: 10 , marginRight:15}}>
+      <TouchableOpacity onPress={props.onPress} style={{ justifyContent: 'center', marginBottom: 10, marginRight: 15 }}>
         <View>
           <Image
             source={AppStyles.iconSet.shoppingBagFilled}

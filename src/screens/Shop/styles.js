@@ -184,6 +184,22 @@ const styles = StyleSheet.create({
     alignSelf:'center'
     
 
+  },
+  categoryimg:{
+    width:50,
+    height:50,
+    borderRadius:360
+  },
+  categorybox:{
+    margin:5,
+    flexDirection:'column',
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 6,
+    borderColor: 'black',
+    padding:10,
+    width:90,
   }
 });
 

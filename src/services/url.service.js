@@ -171,7 +171,24 @@ const api = {
     razorpaykey:{
         razorpaykey: Config.getURL + 'razorpay/key'
     },
-
+    loccalProductaddtobag : {
+        loccalProductaddtobag : Config.getURL + 'customer/wishlistExistingByProductIdDelete'
+    },
+    getProductbyproductid:{
+        getProductbyproductid: Config.getURL + 'customer/products/'
+    },
+    postReview:{
+        postReview: Config.getURL + 'customer/ratings/'
+    },
+    getratingproduct:{
+        getratingproduct : Config.getURL + 'customer/ratings/'
+    },
+    postShopRating:{
+        postShopRating: Config.getURL + 'customer/ratings/shop/'
+    },
+    getRatingbyShop:{
+        getRatingbyShop : Config.getURL + 'customer/ratings/shop/'
+    },
 
 
 
@@ -189,7 +206,7 @@ const api = {
     googleapiforkm:{
         googleapiforkm: 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&'
     },
-
+  
     // for Razorpay
 
     createorder:{
