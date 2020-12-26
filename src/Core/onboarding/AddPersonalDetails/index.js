@@ -19,6 +19,7 @@ const AddProfileScreen = props => {
 
     
     const submit = async () => {
+        
         let userId = await AsyncStorage.getItem('useridSignup')
         let phoneno = await AsyncStorage.getItem('userSignupData')
         let parsedphonNo = JSON.parse(phoneno)
@@ -50,7 +51,8 @@ const AddProfileScreen = props => {
                    
                     if(datawallet.statusCode == 200){
                         setisLoading(false)
-                        props.navigation.popToTop('AuthStackNavigator')
+                        // props.navigation.popToTop('WelcomePage')
+                        props.navigation.goBack()
                     }else{
                        
                         setisLoading(false)

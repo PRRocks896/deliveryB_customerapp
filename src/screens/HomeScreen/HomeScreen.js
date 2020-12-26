@@ -12,7 +12,7 @@ import {
   setProducts,
   loadOrderHistory
 } from "../../redux/";
-import { BackHandler , TouchableOpacity, Text} from "react-native";
+import { BackHandler, TouchableOpacity, Text } from "react-native";
 import addToBagProduct from "../../components/AddTobagProduct/addbagproduct";
 import getCategory from "../../services/Products/getCategory";
 import getProducts from "../../services/Products/getproducts";
@@ -48,14 +48,14 @@ class HomeScreen extends Component {
       });
   }
   tokengenerate = async () => {
-   let rewToken = await AsyncStorage.getItem('reqToken')
-   let userid = await  AsyncStorage.getItem("userId")
+    let rewToken = await AsyncStorage.getItem('reqToken')
+    let userid = await AsyncStorage.getItem("userId")
     let body = JSON.stringify({
-      id:userid,
-      reqToken:rewToken
+      id: userid,
+      reqToken: rewToken
     })
     console.log("body==========", body)
-    const reponse  = await refreshTokenService(body)
+    const reponse = await refreshTokenService(body)
     console.log("response==== of refresh token", reponse)
     AsyncStorage.setItem('TOKEN', reponse.xauthtoken)
     this.getCategoryProducts() // For get categories
@@ -86,8 +86,8 @@ class HomeScreen extends Component {
     }
   }
   /**
-     * for back to prev screen
-     */
+  * for back to prev screen
+  */
   handleBackButtonClick() {
     BackHandler.exitApp();
     return true;
@@ -174,7 +174,7 @@ class HomeScreen extends Component {
         contact: '9191919191',
         name: 'Razorpay Software'
       },
-      theme: {color: '#F37254'}
+      theme: { color: '#F37254' }
     }
     RazorpayCheckout.open(options).then((data) => {
       // handle success
@@ -187,22 +187,22 @@ class HomeScreen extends Component {
   render() {
     return (
       <>
-      <Home
-        navigation={this.props.navigation}
-        shippingMethods={this.props.shippingMethods}
-        onCardPress={this.onCardPress}
-        onFavouritePress={this.onFavouritePress}
-        onCategoryPress={this.onCategoryPress}
-        onAddToBag={this.onAddToBag}
-        product={this.state.product}
-        productDetails={this.state.productDetails}
-        isProductDetailVisible={this.state.isProductDetailVisible}
-        onModalCancelPress={this.onModalCancel}
-        appConfig={this.appConfig}
-        alreadyAddecart={this.state.alreadyAddecart}
-        categoryproducts={this.state.categoryProduct}
-        featuredproduct={this.state.fetauredproducts}
-      />
+        <Home
+          navigation={this.props.navigation}
+          shippingMethods={this.props.shippingMethods}
+          onCardPress={this.onCardPress}
+          onFavouritePress={this.onFavouritePress}
+          onCategoryPress={this.onCategoryPress}
+          onAddToBag={this.onAddToBag}
+          product={this.state.product}
+          productDetails={this.state.productDetails}
+          isProductDetailVisible={this.state.isProductDetailVisible}
+          onModalCancelPress={this.onModalCancel}
+          appConfig={this.appConfig}
+          alreadyAddecart={this.state.alreadyAddecart}
+          categoryproducts={this.state.categoryProduct}
+          featuredproduct={this.state.fetauredproducts}
+        />
       </>
     );
   }

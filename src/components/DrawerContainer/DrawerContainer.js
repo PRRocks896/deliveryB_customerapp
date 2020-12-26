@@ -15,6 +15,8 @@ import { EventRegister } from 'react-native-event-listeners'
 import { ScrollView } from "react-native-gesture-handler";
 import getProfileDetails from "../../services/Profile/getProfile";
 import { Alert } from "react-native";
+
+
 const options = {
   title: 'Select Profile',
   storageOptions: {
@@ -29,6 +31,8 @@ function DrawerContainer(appConfig) {
     const { navigation } = props;
     const [profilepic, setProfilepic] = useState(null)
     const [isLoading, setIsloading] = useState(false)
+
+    
 
     const [loggedinuser, setloggedinuser] = useState(false)
 
@@ -71,11 +75,15 @@ function DrawerContainer(appConfig) {
     useEffect(() => {
       getimg()
       getloginid()
-    }, [])
+      
+    })
+
+    
 
     const getloginid = async () => {
-      let userid = await AsyncStorage.getItem('userId')
-
+      let userid;
+      userid = await AsyncStorage.getItem('userId')
+       EventRegister.addEventListener('USerLoginId', (data) => userid = data)
       console.log("UserLogin id>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", userid)
       if (userid == null) {
         setloggedinuser(false)
@@ -290,7 +298,7 @@ function DrawerContainer(appConfig) {
               source={AppStyles.iconSet.login}
               onPress={() => {
                 navigation.closeDrawer()
-                navigation.navigate("LoginStack", { appConfig })
+                navigation.navigate("WelcomePage", { appConfig })
               }}
             />
           }

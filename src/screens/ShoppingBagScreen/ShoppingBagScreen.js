@@ -117,7 +117,7 @@ class ShoppingBagScreen extends Component {
       this.setState({ loggedinuser: false ,  isDataLoading: true })
       this.getwishlistfromlocal()
     } else {
-      this.setState({ loggedinuser: true })
+      this.setState({ loggedinuser: true ,  allShoppingBag: []})
       this.getwishlistItems()
     }
   }
@@ -440,10 +440,11 @@ class ShoppingBagScreen extends Component {
       <FlatList
         data={allShoppingBag}
         renderItem={(item, index) => {
+          console.log('user===========', item.item)
           return (
             <View style={[styles.card, { flexDirection: 'row' }]}>
               <View style={{ flex: 2.5 }}>
-                <Image style={styles.img} source={{ uri: item.item.products && item.item.products[0].productImage[0] }} />
+                  <Image style={styles.img} source={{ uri: item.item.products && item.item.products[0].productImage[0] }} />
               </View>
               <View style={{ flex: 5, padding: 10 }}>
                 <Text style={styles.text}>{item.item.products[0].name}</Text>
@@ -592,7 +593,7 @@ class ShoppingBagScreen extends Component {
   }
 
   render() {
-    const { totalPayamount, isLoading, isShowData, isDataLoading, taxsCharges, deliveryfee, loggedinuser } = this.state
+    const { totalPayamount, isLoading, isShowData, isDataLoading, taxsCharges, deliveryfee, loggedinuser, allShoppingBag } = this.state
 
     if (isShowData == true) {
 
@@ -610,7 +611,9 @@ class ShoppingBagScreen extends Component {
 
               </SkeletonPlaceholder>
               :
-              this.state.loggedinuser ? this.getbagProducts() : this.showlocalProducts()
+              this.state.loggedinuser ? 
+              this.getbagProducts() 
+              : this.showlocalProducts()
 
           }
           {
@@ -657,7 +660,7 @@ class ShoppingBagScreen extends Component {
                 : null
               :
               <View style={styles.emptyView}>
-                <TouchableOpacity style={[styles.footerContainer, { borderRadius: 5 }]} onPress={() => this.props.navigation.navigate("LoginStack")}>
+                <TouchableOpacity style={[styles.footerContainer, { borderRadius: 5 }]} onPress={() => this.props.navigation.navigate("WelcomePage")}>
                   <Text style={styles.footerbtn}>Login to Continue</Text>
                 </TouchableOpacity>
               </View>

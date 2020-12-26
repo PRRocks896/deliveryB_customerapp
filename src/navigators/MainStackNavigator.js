@@ -26,6 +26,11 @@ import ShopWiseProduct from '../components/Home/ShopDataShow/shopProduct'
 import DBoyOrderDetailsScreen from '../screens/Order/dBoyOrderDetails'
 import AllShopListScreen from '../components/Home/ShopDataShow/allshopListScreen'
 import ProductDetailsPageScreen from '../components/Home/ProductDetailsPage'
+import WelcomePage from '../screens/AuthScreens/welcome'
+import { SmsAuthenticationScreen } from "../Core/onboarding";
+import ResetPasswordScreen from "../Core/onboarding/ResetPassword/resetPassword";
+import ForgotPasswordScreen from "../Core/onboarding/ForgotPassword";
+import AddProfileScreen from "../Core/onboarding/AddPersonalDetails";
 const MainStackNavigator = createStackNavigator(
   {
     Drawer: { screen: DrawerStackNavigator },
@@ -38,10 +43,16 @@ const MainStackNavigator = createStackNavigator(
     AddACard: { screen: AddACardScreen },
     Checkout: { screen: CheckoutScreen },
     Bag: { screen: ShoppingBagScreen },
-    ServicePaymentOptions:{ screen : ServicePaymentOptions },
-    PlaceServiceScrren: { screen : PlaceServiceScrren },
+    ServicePaymentOptions: { screen: ServicePaymentOptions },
+    PlaceServiceScrren: { screen: PlaceServiceScrren },
     AllShopListScreen: { screen: AllShopListScreen },
     ProductDetailsPageScreen: { screen: ProductDetailsPageScreen },
+    WelcomePage: {
+      screen: WelcomePage,
+      navigationOptions: {
+        header: null
+      }
+    },
     OrderDetailsScreen: {
       screen: OrderDetailsScreen,
       navigationOptions: {
@@ -72,7 +83,7 @@ const MainStackNavigator = createStackNavigator(
         title: 'Details'
       }
     },
-    
+
     ShopWiseProduct: {
       screen: ShopWiseProduct,
       navigationOptions: {
@@ -86,7 +97,45 @@ const MainStackNavigator = createStackNavigator(
         title: 'Details'
       }
     },
-   
+    AddProfileScreen: {
+      screen: AddProfileScreen,
+      navigationOptions: () => ({
+        headerStyle: {
+          borderBottomWidth: 0,
+          shadowColor: "transparent",
+          shadowOpacity: 0,
+          elevation: 0
+        },
+        title: 'Add Personal Details'
+      })
+    },
+    ForgotPasswordScreen: {
+      screen: ForgotPasswordScreen,
+      navigationOptions: () => ({
+        headerStyle: {
+          borderBottomWidth: 0,
+          shadowColor: "transparent",
+          shadowOpacity: 0,
+          elevation: 0
+        },
+        title: 'Forgot Password'
+      })
+    },
+    ResetPasswordScreen: {
+      screen: ResetPasswordScreen,
+      navigationOptions: () => ({
+        headerStyle: {
+          borderBottomWidth: 0,
+          shadowColor: "transparent",
+          shadowOpacity: 0,
+          elevation: 0
+        },
+        title: 'Reset Password'
+      })
+    }
+
+
+
   },
   {
     initialRouteName: "Drawer",

@@ -35,27 +35,27 @@ const AuthStackNavigator = createStackNavigator(
         headerStyle: styles.headerStyle
       })
     },
-    AddProfileScreen: {
-      screen: AddProfileScreen,
-      navigationOptions: () => ({
-        headerStyle: styles.headerStyle,
-        title: 'Add Personal Details'
-      })
-    },
-    ForgotPasswordScreen: {
-      screen: ForgotPasswordScreen,
-      navigationOptions: () => ({
-        headerStyle: styles.headerStyle,
-        title: 'Forgot Password'
-      })
-    },
-    ResetPasswordScreen: {
-      screen: ResetPasswordScreen,
-      navigationOptions: () => ({
-        headerStyle: styles.headerStyle,
-        title: 'Reset Password'
-      })
-    }
+    // AddProfileScreen: {
+    //   screen: AddProfileScreen,
+    //   navigationOptions: () => ({
+    //     headerStyle: styles.headerStyle,
+    //     title: 'Add Personal Details'
+    //   })
+    // },
+    // ForgotPasswordScreen: {
+    //   screen: ForgotPasswordScreen,
+    //   navigationOptions: () => ({
+    //     headerStyle: styles.headerStyle,
+    //     title: 'Forgot Password'
+    //   })
+    // },
+    // ResetPasswordScreen: {
+    //   screen: ResetPasswordScreen,
+    //   navigationOptions: () => ({
+    //     headerStyle: styles.headerStyle,
+    //     title: 'Reset Password'
+    //   })
+    // }
 
   },
   {
