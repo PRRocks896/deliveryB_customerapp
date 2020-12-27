@@ -440,7 +440,7 @@ class ShoppingBagScreen extends Component {
       <FlatList
         data={allShoppingBag}
         renderItem={(item, index) => {
-          console.log('user===========', item.item)
+         
           return (
             <View style={[styles.card, { flexDirection: 'row' }]}>
               <View style={{ flex: 2.5 }}>
@@ -671,7 +671,9 @@ class ShoppingBagScreen extends Component {
     } else {
       return (
         <View style={styles.emptyView}>
-          <Text style={[styles.text, { fontSize: 20 }]}>Your Cart is Empty</Text>
+                    <Image style={{ width: 300, height: 300, marginTop: -100 }} resizeMode={'contain'} source={require('../../../assets/images/orderempty.png')} />
+
+          <Text style={[styles.text, { fontSize: 20 , marginTop:-50}]}>Your Cart is Empty</Text>
           <TouchableOpacity style={[styles.footerContainer, { borderRadius: 5 }]} onPress={() => this.props.navigation.navigate("Home")}>
             <Text style={styles.footerbtn}>Continue Shopping</Text>
           </TouchableOpacity>

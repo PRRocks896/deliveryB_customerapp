@@ -214,12 +214,15 @@ function Home(props) {
               <View style={{ flexDirection: 'row', marginTop: 10 }}>
                 <View style={styles.incategorymainViewskeleton}>
                   <View style={[styles.categoryskeleton, { marginLeft: 10 }]} />
+                  <View style={styles.categoryskeletontext} />
                 </View>
                 <View style={styles.incategorymainViewskeleton}>
                   <View style={styles.categoryskeleton} />
+                  <View style={styles.categoryskeletontext} />
                 </View>
                 <View style={styles.incategorymainViewskeleton}>
                   <View style={styles.categoryskeleton} />
+                  <View style={styles.categoryskeletontext} />
                 </View>
               </View>
             </SkeletonPlaceholder>
@@ -299,35 +302,33 @@ function Home(props) {
           servicedata={serviceData} />
         {
           isLoadingProduct == true ?
-            <SkeletonPlaceholder>
-              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                <View style={{ flex: 6, flexDirection: 'row' }}>
-                  <View>
-                    <View style={styles.bestsellerMainSkeleton} />
-                    <View style={styles.featuredvalueSkeleton} />
-                    <View style={styles.featuredsmallValueSkeleton} />
-                  </View>
-                  <View>
-                    <View style={styles.bestsellerMainSkeleton} />
-                    <View style={styles.featuredvalueSkeleton} />
-                    <View style={styles.featuredsmallValueSkeleton} />
-                  </View>
-                </View>
-                <View style={{ flex: 6, flexDirection: 'row', marginTop: 10 }}>
-                  <View>
-                    <View style={styles.bestsellerMainSkeleton} />
-                    <View style={styles.featuredvalueSkeleton} />
-                    <View style={styles.featuredsmallValueSkeleton} />
-                  </View>
-                  <View>
-                    <View style={styles.bestsellerMainSkeleton} />
-                    <View style={styles.featuredvalueSkeleton} />
-                    <View style={styles.featuredsmallValueSkeleton} />
-                  </View>
-                </View>
-              </View>
-            </SkeletonPlaceholder>
-
+          <ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          style={{ flexDirection: 'row', marginTop: 20 }}>
+          <SkeletonPlaceholder>
+            <View>
+              <View style={styles.featuresmainSkeleton} />
+              <View style={styles.featuredvalueSkeleton} />
+              <View style={styles.featuredsmallValueSkeleton} />
+            </View>
+            <View>
+              <View style={styles.featuresmainSkeleton} />
+              <View style={styles.featuredvalueSkeleton} />
+              <View style={styles.featuredsmallValueSkeleton} />
+            </View>
+            <View>
+              <View style={styles.featuresmainSkeleton} />
+              <View style={styles.featuredvalueSkeleton} />
+              <View style={styles.featuredsmallValueSkeleton} />
+            </View>
+            <View>
+              <View style={styles.featuresmainSkeleton} />
+              <View style={styles.featuredvalueSkeleton} />
+              <View style={styles.featuredsmallValueSkeleton} />
+            </View>
+          </SkeletonPlaceholder>
+        </ScrollView>
             :
             <BestSellers
               onCardPress={props.onCardPress}

@@ -43,10 +43,16 @@ const dynamicStyles = colorScheme => {
       flex: 1, alignItems: "center"
     },
     categoryskeleton: {
-      width: 120,
+      width: 60,
       height: 60,
       marginRight: 10,
-      borderRadius: 10
+      borderRadius: 10,
+      borderRadius:360
+    },
+    categoryskeletontext:{
+      width:50,
+      height:10,
+      marginTop:10
     },
     newArraivalMainViewsSkeleton: {
       width: 200,
@@ -414,13 +420,14 @@ const dynamicStyles = colorScheme => {
     categorybox:{
       margin:5,
       flexDirection:'column',
-      flex: 1,
+      // flex: 1,
       justifyContent: "center",
       alignItems: "center",
       borderRadius: 6,
       borderColor: 'black',
       padding:10,
-      width:90
+      width:90,
+      height:'auto'
     },
    
   });

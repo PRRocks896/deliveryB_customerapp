@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Text, ImageBackground } from "react-native";
 import { useColorScheme } from "react-native-appearance";
 import dynamicStyles from "./styles";
 
@@ -10,14 +10,24 @@ function CategoryCard(props) {
 
   const { item, imageContainerStyle, onCategoryPress } = props;
 
+
+
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      onPress={onCategoryPress}
-      style={[styles.categoryTextContainerView, styles.categoryImageContainer, imageContainerStyle,{paddingLeft:10,paddingRight:10}]}
+
+    <ImageBackground
+      source={item.categoryImage ? { uri: item.categoryImage } : require('../../../assets/images/unnamed.png')}
+      style={[styles.categoryImageContainer, imageContainerStyle]}
+      imageStyle={styles.categoryImage}
+      resizeMode="cover"
     >
-      <Text style={styles.categoryText}>{(item.name.toUpperCase()).replace(/_/g, " ")}</Text>
-    </TouchableOpacity>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={onCategoryPress}
+        style={styles.categoryTextContainerView}
+      >
+        <Text style={styles.categoryText}>{(item.name.toUpperCase()).replace(/_/g, " ")}</Text>
+      </TouchableOpacity>
+    </ImageBackground>
 
   );
 }

@@ -69,6 +69,21 @@ function ServiceModelComponent(props) {
     const [selectedSlot, setselectedSlot] = useState('')
     const [slotdate, setslotdate] = useState(moment().format('DD/MM/YYYY'))
     const [serviceData, setserviceData] = useState([])
+    const [loggedinuser, setloggedinuser] = useState(false)
+
+    useEffect(() => {
+        getloginid()
+    })
+
+    const getloginid = async () => {
+        let userid = await AsyncStorage.getItem('userId')
+        if (userid == null) {
+            setloggedinuser(false)
+        } else {
+            setloggedinuser(true)
+
+        }
+    }
 
     /**
      * Get Shop All List by Product Master id
@@ -197,7 +212,7 @@ function ServiceModelComponent(props) {
                                 <Text style={styles.title}>{item.name}</Text>
                                 <Text style={styles.title}>Available Slot : {item.serviceDetail && item.serviceDetail.serviceSlot[0].start} to {item.serviceDetail && item.serviceDetail.serviceSlot[0].end}</Text>
                                 <Text style={[styles.title, { paddingTop: 5, fontSize: 15, marginTop: 10 }]}>{item.description}</Text>
-                                <View style={[styles.inputContainer, {borderWidth:1, borderColor:'#a3a3a3', marginLeft:10, marginRight:10}]}>
+                                <View style={[styles.inputContainer, { borderWidth: 1, borderColor: '#a3a3a3', marginLeft: 10, marginRight: 10 }]}>
                                     <DatePicker
                                         style={{ width: '100%' }}
                                         date={slotdate}
@@ -218,17 +233,17 @@ function ServiceModelComponent(props) {
                                             dateInput: {
                                                 marginLeft: -180,
                                                 borderWidth: 0,
-                                                color:'#a3a3a3'
+                                                color: '#a3a3a3'
 
                                             },
-                                            dateText:styles.datetitle
-                                            
+                                            dateText: styles.datetitle
+
                                             // ... You can check the source to find the other keys.
                                         }}
                                         onDateChange={(date) => setslotdate(date)}
                                     />
                                 </View>
-                                <View style={[styles.inputContainer, {borderWidth:1, borderColor:'#a3a3a3', marginLeft:10, marginRight:10, marginTop:10}]}>
+                                <View style={[styles.inputContainer, { borderWidth: 1, borderColor: '#a3a3a3', marginLeft: 10, marginRight: 10, marginTop: 10 }]}>
                                     <Picker
                                         selectedValue={selectedSlot}
                                         style={styles.pickervalue}
@@ -244,7 +259,7 @@ function ServiceModelComponent(props) {
                                         {
                                             timedata.map((item) => {
                                                 return (
-                                                    <Picker.Item  label={item.item} value={item.id} key={item.id} />
+                                                    <Picker.Item label={item.item} value={item.id} key={item.id} />
                                                 )
 
                                             })
@@ -290,15 +305,29 @@ function ServiceModelComponent(props) {
                                 <>
                                     {displayshopList()}
 
-                                    <TouchableOpacity
-                                        onPress={() => [onAddToBag(item, selectedSlot, selectedshopID, slotdate), refRBSheet.current.close()]}
-                                        style={styles.applybutton}>
-                                        <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
-                                    </TouchableOpacity>
+                                    {
+                                        loggedinuser ?
+                                            <TouchableOpacity
+                                                onPress={() => [onAddToBag(item, selectedSlot, selectedshopID, slotdate), refRBSheet.current.close()]}
+                                                style={styles.applybutton}>
+                                                <Text style={{ color: '#fff', fontSize: 15 }}>{"Proceed"}</Text>
+                                            </TouchableOpacity>
+                                            :
+                                            <TouchableOpacity
+                                            onPressIn={onCancelPress}
+                                                onPress={() => [refRBSheet.current.close(), props.navigation.navigate("WelcomePage")]}
+                                                style={styles.applybutton}>
+                                                <Text style={{ color: '#fff', fontSize: 15 }}>{"Login to Continue"}</Text>
+                                            </TouchableOpacity>
+
+
+
+                                    }
+
                                 </>
-                                : <View style={{justifyContent:'center', alignItems:'center'}}>
+                                : <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                     <Text>{'No Shop List Found'}</Text>
-                                    </View>}
+                                </View>}
                     </View>
                 </RBSheet>
             </>

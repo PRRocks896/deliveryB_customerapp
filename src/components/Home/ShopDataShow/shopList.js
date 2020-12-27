@@ -77,7 +77,7 @@ function ShopList(props) {
                                <Image style={styles.categoryimg} source={require('../../../../assets/images/logo.png')} />
                            }
                          </View>
-                         <View style={{ flex: 5 , marginTop:3}}>
+                         <View style={{ flex: 8 , marginTop:3}}>
                            <Text style={styles.categoryText}>{(item.item.type).replace(/_/g, " ")}</Text>
                          </View>
                        </TouchableOpacity>

@@ -64,7 +64,15 @@ function BestSellers(props) {
           return (
             <TouchableOpacity
               // onPress={() => [setclickproduct(item.item), setmodalVisible(true)]}
-              onPress={() => [setclickproduct(item.item), props.navigation.navigate('ProductDetailsPageScreen', {appConfig: props.appConfig, title:item.item.name})]}
+              onPress={() => [setclickproduct(item.item),
+                 props.navigation.navigate('ProductDetailsPageScreen',
+                  {
+                    appConfig: props.appConfig, 
+                    title:item.item.name,
+                    clickproduct:item.item,
+        
+                  }
+                  )]}
 
               style={[styles.productCardConainer, { width: 0.41 * width }]}
             >

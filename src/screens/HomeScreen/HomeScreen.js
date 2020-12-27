@@ -115,11 +115,20 @@ class HomeScreen extends Component {
   };
 
   onCardPress = item => {
-    this.setState({
-      product: item,
-      productDetails: item.productDetail ? item.productDetail : item,
-      isProductDetailVisible: !this.state.isProductDetailVisible,
-    });
+    this.props.navigation.navigate('ProductDetailsPageScreen',
+    {
+      appConfig: this.appConfig, 
+      title:item.name,
+      clickproduct:item,
+
+    }
+    )
+
+    // this.setState({
+    //   product: item,
+    //   productDetails: item.productDetail ? item.productDetail : item,
+    //   isProductDetailVisible: !this.state.isProductDetailVisible,
+    // });
   };
 
   /**

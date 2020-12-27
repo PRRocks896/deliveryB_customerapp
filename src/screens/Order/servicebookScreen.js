@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import getOrder from "../../services/Order";
 import AsyncStorage from "@react-native-community/async-storage";
-import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl, Alert, Linking } from 'react-native'
+import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl, Alert, Linking , Image} from 'react-native'
 import Appstyle from '../../AppStyles'
 import moment from "moment";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
@@ -209,7 +209,8 @@ class ServicebookDetails extends Component {
         } else {
             return (
                 <View style={styles.emptyView}>
-                    <Text style={[styles.text, { fontSize: 20 }]}>No Orders or transactions found.</Text>
+                     <Image style={{ width: 300, height: 300, marginTop: -100 }} resizeMode={'contain'} source={require('../../../assets/images/orderempty.png')} />
+                    <Text style={[styles.text, { fontSize: 20, marginTop:-50 }]}>You haven't book any service yet!</Text>
                     <TouchableOpacity style={[styles.footerContainer, { borderRadius: 5 }]} onPress={() => this.props.navigation.navigate("Home")}>
                         <Text style={styles.footerbtn}>Continue Shopping</Text>
                     </TouchableOpacity>

@@ -10,7 +10,7 @@ import {
 } from "../../redux/";
 import getOrder from "../../services/Order";
 import AsyncStorage from "@react-native-community/async-storage";
-import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl, Alert } from 'react-native'
+import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl, Alert, Image } from 'react-native'
 import Appstyle from '../../AppStyles'
 import moment from "moment";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
@@ -228,7 +228,8 @@ class DBoyOrdersScreen extends Component {
                         this.getOrderList()
                         :
                         <View style={styles.emptyView}>
-                            <Text style={[styles.text, { fontSize: 20 }]}>No any Booking Found</Text>
+                              <Image style={{width:300, height:300, marginTop:-100}} resizeMode={'contain'} source={require('../../../assets/images/dboy.png')} />
+                            <Text style={[styles.text, { fontSize: 20, marginTop:-50 }]}>You haven't book any Delivery boy yet!</Text>
                         </View>
                     }
                     <TouchableOpacity onPress={() => this.RBSheet.open()} style={styles.filtercontainer}>

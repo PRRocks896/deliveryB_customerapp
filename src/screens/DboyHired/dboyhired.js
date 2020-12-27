@@ -4,7 +4,7 @@ import { ScrollView, View, BackHandler, Alert, RefreshControl, Text, FlatList, D
 import { connect } from "../../utils/socket";
 import Geolocation from 'react-native-geolocation-service';
 import DrawerDeliveryBoyList from "./drawerdboyhire";
-
+import Appstyle from '../../AppStyles'
 
 class DeliveryboyhireddrawerScreen extends Component {
 
@@ -86,7 +86,7 @@ class DeliveryboyhireddrawerScreen extends Component {
     render() {
         const { customerLat, customerLong, dboyData } = this.state
         return (
-            <>
+            <View style={{flex:1}}>
                 {
                     dboyData.length ?
                         <DrawerDeliveryBoyList
@@ -99,12 +99,13 @@ class DeliveryboyhireddrawerScreen extends Component {
                             callFunction={() => this.permissionforlocation()}
                         />
                         :
-                        <View>
-                            <Text>{'No Delivery boy found'}</Text>
+                        <View style={{ justifyContent:'center', alignItems:'center', flex:1}}>
+                           <Image style={{width:300, height:300, marginTop:-100}} resizeMode={'contain'} source={require('../../../assets/images/dboy.png')} />
+                           <Text style={{fontFamily:Appstyle.fontFamily.boldFont, fontSize:20, marginTop:-50}}>{'Currently No Delivery Boy Available'}</Text>
                         </View>
                 }
 
-            </>
+            </View>
         );
     }
 }

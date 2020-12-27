@@ -45,7 +45,7 @@ export default class MyWallet extends Component {
             qrLoading: false,
             page: 1,
 
-            razorpay_key:''
+            razorpay_key: ''
         };
         this.props.navigation.addListener(
             'didFocus',
@@ -155,11 +155,11 @@ export default class MyWallet extends Component {
     getRazorpaykey = async () => {
         const response = await getRazorpaykey()
         console.log("response of razorpay key", response)
-        if(response.key_id){
-          this.setState({razorpay_key: response.key_id})
+        if (response.key_id) {
+            this.setState({ razorpay_key: response.key_id })
         }
-      }
-    orderDetails = () => {
+    }
+    transctionslistDetails = () => {
         const { transctionslist, refreshing } = this.state
         return (
             <FlatList
@@ -175,16 +175,28 @@ export default class MyWallet extends Component {
                             <View style={[styles.card, styles.detailMainCard]}>
                                 <View style={{ flex: 8, flexDirection: 'column', justifyContent: 'center' }}>
                                     <View style={styles.row}>
-                                        <Text style={styles.tital}>Details: </Text>
-                                        <Text style={styles.subtitle}> {item.transaction_details}</Text>
+                                        <View style={{ flex: 2 }}>
+                                            <Text style={styles.tital}>Details: </Text>
+                                        </View>
+                                        <View style={{ flex: 10 }}>
+                                            <Text style={styles.subtitle}> {item.transaction_details}</Text>
+                                        </View>
                                     </View>
-                                    <View style={styles.row}>
-                                        <Text style={styles.tital}>Type: </Text>
-                                        <Text style={[styles.subtitle, { color: '#008000', fontFamily: Appstyle.fontFamily.semiBoldFont }]}> {item.transaction_type}</Text>
+                                    <View style={[styles.row, { marginTop: 3 }]}>
+                                        <View style={{ flex: 2 }}>
+                                            <Text style={styles.tital}>Type: </Text>
+                                        </View>
+                                        <View style={{ flex: 10 }}>
+                                            <Text style={[styles.subtitle, { color: '#008000', fontFamily: Appstyle.fontFamily.semiBoldFont }]}> {item.transaction_type}</Text>
+                                        </View>
                                     </View>
-                                    <View style={styles.row}>
-                                        <Text style={styles.tital}>Amount: </Text>
-                                        <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}> {item.amount}</Text>
+                                    <View style={[styles.row, { marginTop: 3 }]}>
+                                        <View style={{ flex: 2 }}>
+                                            <Text style={styles.tital}>Amount: </Text>
+                                        </View>
+                                        <View style={{ flex: 10 }}>
+                                            <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}> {item.amount}</Text>
+                                        </View>
                                     </View>
                                 </View>
                                 <View style={[styles.row, { position: 'absolute', right: 10, bottom: 10, marginTop: 10 }]}>
@@ -245,9 +257,9 @@ export default class MyWallet extends Component {
             console.log("response", response)
             if (response.statusCode == 200) {
                 this.componentDidMount()
-                this.setState({ qrdialodvisible: false, qrLoading: false, qramount:'' })
+                this.setState({ qrdialodvisible: false, qrLoading: false, qramount: '' })
             } else {
-                this.setState({ qramountError: response.message, qrLoading: false , qramount:''})
+                this.setState({ qramountError: response.message, qrLoading: false, qramount: '' })
             }
         }
     }
@@ -256,7 +268,7 @@ export default class MyWallet extends Component {
     addFromRazorpay = async () => {
         if (this.state.amount !== '') {
 
-            this.setState({isLoading: true})
+            this.setState({ isLoading: true })
             let body = JSON.stringify({
                 "amount": parseFloat(this.state.amount) * 100,
                 "currency": "INR",
@@ -280,7 +292,7 @@ export default class MyWallet extends Component {
         let name = parsedData.data.name
         let email = parsedData.data.email
         let contact = parsedData.data.mobile
-       
+
         let amount = Math.floor(this.state.amount) * 100
         var options = {
             description: 'Tribata',
@@ -304,14 +316,14 @@ export default class MyWallet extends Component {
                 this.addtowalletamoutfun()
                 // this.setState({ transactionid: data.razorpay_payment_id })
                 // this.setState({ chargeConfirm: 'OTHER' })
-               
+
             } else {
                 Alert.alert("", "Something went wrong")
-                this.setState({isLoading: false})
+                this.setState({ isLoading: false })
             }
         }).catch((error) => {
             console.log("Error", error.code, error.description)
-            this.setState({isLoading: false})
+            this.setState({ isLoading: false })
         });
     }
 
@@ -324,10 +336,10 @@ export default class MyWallet extends Component {
         })
         const data = await addamountwallet(body, phoneNo)
         if (data.success) {
-            this.setState({isLoading: false, dialogVisible: false, amount:'', amountError:''})
+            this.setState({ isLoading: false, dialogVisible: false, amount: '', amountError: '' })
             this.loadwalletdata()
         } else {
-            this.setState({isLoading: false, dialogVisible: false,  amount:'', amountError:''})
+            this.setState({ isLoading: false, dialogVisible: false, amount: '', amountError: '' })
             Alert.alert(
                 "",
                 data.message,
@@ -336,10 +348,10 @@ export default class MyWallet extends Component {
                 ],
             );
         }
-     }
+    }
 
     render() {
-        const { isLoading, amount, walleteamount, refreshing } = this.state
+        const { isLoading, amount, walleteamount, refreshing, transctionslist } = this.state
         if (!this.state.opneScanner) {
             return (
                 <View style={[styles.container, { backgroundColor: '#fff' }]}>
@@ -349,7 +361,13 @@ export default class MyWallet extends Component {
                     </View>
 
                     <Text style={{ fontSize: 18 }}>Payment History</Text>
-                    {this.orderDetails()}
+                    { transctionslist.length !== 0 ?
+                        this.transctionslistDetails() :
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <Image style={{ width: 300, height: 300, marginTop: -100 }} resizeMode={'contain'} source={require('../../../assets/images/no-transction.jpg')} />
+
+                        </View>
+                    }
 
                     <TouchableOpacity
                         onPress={() => this.onOpneScanner()}
@@ -389,7 +407,7 @@ export default class MyWallet extends Component {
                                 <View style={{ flex: 6 }}>
 
                                     <View style={styles.addbtnContainer}>
-                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => this.setState({ dialogVisible: false, amountError: '' , isLoading: false})}>
+                                        <TouchableOpacity style={styles.addcvvbutton} onPress={() => this.setState({ dialogVisible: false, amountError: '', isLoading: false })}>
 
                                             <Text style={styles.addtext}>Cancel</Text>
 
@@ -483,7 +501,7 @@ export default class MyWallet extends Component {
                         //If frame is visible then frame color
                         colorForScannerFrame={'black'}
                         //Scanner Frame color
-                        onReadCode={event =>{
+                        onReadCode={event => {
                             this.onBarcodeScan(event.nativeEvent.codeStringValue)
                             console.log("event==============", event.nativeEvent)
                         }

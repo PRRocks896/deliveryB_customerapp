@@ -150,7 +150,7 @@ function AllSearchPage(props) {
                                     <Image style={styles.productCardImage} source={{ uri: item.item.serviceImage[0] }} />
                                 </View>
 
-                                <Text style={styles.productCardPrice}
+                                <Text style={[styles.productCardPrice, {textAlign:'center'}]}
                                 >₹ {checktype(item.item.serviceDetail.price)}</Text>
                                 <Text style={styles.productCardDescription} numberOfLines={1}>
                                     {item.item.name}
@@ -161,7 +161,16 @@ function AllSearchPage(props) {
                         return (
                             <TouchableOpacity
                                 activeOpacity={0.7}
-                                onPress={() => [setproductModalData(item.item), setproductmodalVisible(true)]}
+                                onPress={() => [setproductModalData(item.item),
+                                    //  setproductmodalVisible(true)
+                                    props.navigation.navigate('ProductDetailsPageScreen',
+                                    {
+                                      appConfig: props.appConfig, 
+                                      title:item.item.name,
+                                      clickproduct:item.item,
+                          
+                                    })
+                                    ]}
                                 style={[styles.productCardConainer, { width: 0.41 * width }]}
                             >
                                 <View style={styles.productCardImageConainer}>
@@ -178,7 +187,7 @@ function AllSearchPage(props) {
                                     <Image style={styles.productCardImage} source={{ uri: item.item.productImage[0] }} />
                                 </View>
                                 <Text
-                                    style={styles.productCardPrice}
+                                    style={[styles.productCardPrice, { textAlign:'center'}]}
                                 >₹ {checktype(item.item.productDetail.price)}</Text>
                                 <Text style={styles.productCardDescription} numberOfLines={1}>
                                     {item.item.name}
@@ -195,7 +204,7 @@ function AllSearchPage(props) {
     }
     return (
 
-        <SafeAreaView>
+        <SafeAreaView style={{flex:1}}>
             <View style={{ marginLeft: 10, marginRight: 10, marginTop: 5 }}>
                 <Searchbar
                     onPress={() => props.navigation.navigate('AllSearchPage')}
@@ -206,15 +215,19 @@ function AllSearchPage(props) {
                 />
             </View>
 
-            <View>
+            <>
                 {
                     AllData.length ?
                         <View style={{ marginTop: 10, marginBottom: 130 }}>
                             {displayProductData()}
                         </View>
-                        : null
+                        : 
+                        <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                                     <Image style={{ width: 300, height: 300, marginTop: -100 }} resizeMode={'contain'} source={require('../../../assets/images/no-search.jpg')} />
+
+                            </View>
                 }
-            </View>
+            </>
             <ProductDetailModal
             item={productModalData}
             shippingMethods={props.shippingMethods}

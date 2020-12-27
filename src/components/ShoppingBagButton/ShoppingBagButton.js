@@ -48,15 +48,14 @@ function ShoppingBagButton(props) {
     if (getdata.data.data !== null) {
       setbagItemsdata(getdata.data.data.length)
       EventRegister.addEventListener('cartlength', (data) => {
-        console.log("data=========", data)
         setbagItemsdata(data)
       })
     }
   }
-  console.log("=======in button ", bagItemsdata)
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={props.onPress} style={{ justifyContent: 'center', marginBottom: 10, marginRight: 15 }}>
+      <TouchableOpacity onPress={props.onPress} style={{ justifyContent: 'center', marginRight: 15 }}>
         <View>
           <Image
             source={AppStyles.iconSet.shoppingBagFilled}

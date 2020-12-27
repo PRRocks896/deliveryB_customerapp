@@ -75,11 +75,11 @@ class SaveAddress extends Component {
         if (data.data) {
             this.setState({ address: data.data.address, addressid: data.data._id, isLoading: false })
             AsyncStorage.setItem("AddressId", data.data._id)
-         
-                let dataAddress = data.data.address.filter(item => item.isDefault == true)
-                AsyncStorage.setItem("CustomerAddress", JSON.stringify(dataAddress[0]))
-               
-             
+
+            let dataAddress = data.data.address.filter(item => item.isDefault == true)
+            AsyncStorage.setItem("CustomerAddress", JSON.stringify(dataAddress[0]))
+
+
             this.state.address.map((item) => {
                 if (item.isDefault == true) this.setState({ value: item._id })
             })
@@ -107,7 +107,7 @@ class SaveAddress extends Component {
         const data = await updateAddress(body, id)
     }
 
-    removeItem = async(clickid) => {
+    removeItem = async (clickid) => {
 
         let userId = await AsyncStorage.getItem('userId')
         let phoneNo = await AsyncStorage.getItem('UserMobile')
@@ -126,10 +126,10 @@ class SaveAddress extends Component {
         const data = await updateAddress(body, this.state.addressid)
         console.log("Data update address", data)
         if (data.success) {
-           this.componentDidMount()
+            this.componentDidMount()
         } else {
             Alert.alert(data.messageCode);
-            
+
         }
     }
 
@@ -142,11 +142,11 @@ class SaveAddress extends Component {
             'Remove Address',
             "Are you sure you want to remove this address.",
             [{
-              text: 'REMOVE',
-              onPress: () => this.removeItem(clickid)
+                text: 'REMOVE',
+                onPress: () => this.removeItem(clickid)
             }, { text: 'CANCEL' }],
 
-          );
+        );
 
     }
     /**
@@ -175,7 +175,7 @@ class SaveAddress extends Component {
                                     <Text style={{ color: '#000', fontSize: 12 }}>{item.item.address_line_1}</Text>
                                     <Text style={{ color: '#000', fontSize: 12 }}>{item.item.address_line_2}</Text>
                                 </View>
-                                <TouchableOpacity style={[styles.homeAddEditView,  { borderTopEndRadius: 0, borderBottomEndRadius: 0 }]} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { mainAddressId: addressid, onClickaddress: item, address: this.state.address, obclickaddressid: item.item._id })}>
+                                <TouchableOpacity style={[styles.homeAddEditView, { borderTopEndRadius: 0, borderBottomEndRadius: 0 }]} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { mainAddressId: addressid, onClickaddress: item, address: this.state.address, obclickaddressid: item.item._id })}>
                                     <Icon name={'pencil-square-o'} size={25} color='#000' />
                                 </TouchableOpacity>
                                 <TouchableOpacity style={[styles.homeAddEditView]} onPress={() => this.deleteAddress(item.item._id)}>
@@ -190,14 +190,22 @@ class SaveAddress extends Component {
         )
     }
     render() {
-
+        const { address } = this.state
         return (
             <View style={{ flex: 1 }}>
                 {
                     this.state.isLoading ? <ActivityIndicator size={'small'} color={'#000'} />
                         :
-                        <ScrollView >
-                            {this.getAddress()}
+                        <ScrollView contentContainerStyle={{flexGrow:1}}>
+                            {address.length !== 0 ?
+                                this.getAddress()
+                                :
+                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Image style={{ width: 350, height: 350, marginTop: -100 }} resizeMode={'contain'} source={require('../../../assets/images/locationimg.png')} />
+                                    <Text style={{ fontSize: 20 , marginTop:-50, fontFamily:AppStyles.fontFamily.semiBoldFont}}>No Saved Address Found</Text>
+
+                                </View>
+                            }
                         </ScrollView>
                 }
                 <TouchableOpacity style={styles.footerbtn} onPress={() => this.props.navigation.navigate("SaveAddressScreen", { addressLength: this.state.address.length, mainAddressId: this.state.addressid, address: this.state.address })}>
@@ -242,7 +250,7 @@ const styles = StyleSheet.create({
     addicon: {
         width: 30,
         height: 30,
-      
+
     },
     card: {
         margin: 5,

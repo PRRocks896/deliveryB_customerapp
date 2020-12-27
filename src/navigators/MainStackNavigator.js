@@ -46,7 +46,12 @@ const MainStackNavigator = createStackNavigator(
     ServicePaymentOptions: { screen: ServicePaymentOptions },
     PlaceServiceScrren: { screen: PlaceServiceScrren },
     AllShopListScreen: { screen: AllShopListScreen },
-    ProductDetailsPageScreen: { screen: ProductDetailsPageScreen },
+    ProductDetailsPageScreen: {
+       screen: ProductDetailsPageScreen ,
+       navigationOptions: {
+        header: null
+      }
+      },
     WelcomePage: {
       screen: WelcomePage,
       navigationOptions: {

@@ -10,7 +10,7 @@ import {
 } from "../../redux/";
 import getOrder from "../../services/Order";
 import AsyncStorage from "@react-native-community/async-storage";
-import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl , Alert} from 'react-native'
+import { StyleSheet, FlatList, View, Text, TouchableOpacity, BackHandler, RefreshControl, Alert, Image } from 'react-native'
 import Appstyle from '../../AppStyles'
 import moment from "moment";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
@@ -32,7 +32,7 @@ class OrdersScreen extends Component {
     this.state = {
       orderHistory: [],
       isShowData: true,
-      refreshing : false, 
+      refreshing: false,
       isLoadingorder: true,
       fetchingStatus: false,
       setOnLoad: false,
@@ -69,14 +69,14 @@ class OrdersScreen extends Component {
    * Get Address id 
    * For get Orders
    */
-   getAddressid = async () => {
+  getAddressid = async () => {
     let userid = await AsyncStorage.getItem('userId')
-    
+
     // get address via user
     const data = await getAddressviaUSer(userid);
-    
+
     if (data.data) {
-      let dataAddress =  data.data.address.filter(item => item.isDefault == true)
+      let dataAddress = data.data.address.filter(item => item.isDefault == true)
       AsyncStorage.setItem("CustomerAddress", JSON.stringify(dataAddress[0]))
       AsyncStorage.setItem("AddressId", data.data._id)
 
@@ -99,122 +99,123 @@ class OrdersScreen extends Component {
     })
     const data = await getOrder(addressid, body)
     // console.log("addressid", data)
-      if (data.success) {
-        this.setState({ orderHistory: data.data})
-        // that.setState({ orderHistory:  that.page == 1 ? data.data : [...this.state.orderHistory, ...data.data], isLoadingorder: false , isLoading: false, setOnLoad: true})
-      }
+    if (data.success) {
+      this.setState({ orderHistory: data.data })
+      // that.setState({ orderHistory:  that.page == 1 ? data.data : [...this.state.orderHistory, ...data.data], isLoadingorder: false , isLoading: false, setOnLoad: true})
+    }
     if (data.data.length !== 0) this.setState({ isShowData: true })
     else if (data.data.length == 0 || data.data.length == undefined) this.setState({ isShowData: false })
   }
- /**
-     * Delete book services
-     * @param {any} id 
-     */
-    deleteOrder = async(id) => {
-      console.log("delete service", id)
-      Alert.alert(
-          "",
-         "Are You Sure You Want To Cancel Order",
-         [{
-          text: 'YES',
-          onPress: () => this.removeorder(id)
-        }, { text: 'NO' }],
-          { cancelable: true }
-        );
+  /**
+      * Delete book services
+      * @param {any} id 
+      */
+  deleteOrder = async (id) => {
+    console.log("delete service", id)
+    Alert.alert(
+      "",
+      "Are You Sure You Want To Cancel Order",
+      [{
+        text: 'YES',
+        onPress: () => this.removeorder(id)
+      }, { text: 'NO' }],
+      { cancelable: true }
+    );
 
-     
+
   }
   /**
    * Remove service api call
    * @param {any} id 
    */
-  removeorder = async(id) => {
-      const response = await cancelOrderData(id)
-      console.log("Cancel Order", response)
-      if(response.statusCode == 200){
-          Toast.show(response.data.status, Toast.LONG);
-          this.getOrders()
-      }
+  removeorder = async (id) => {
+    const response = await cancelOrderData(id)
+    console.log("Cancel Order", response)
+    if (response.statusCode == 200) {
+      Toast.show(response.data.status, Toast.LONG);
+      this.getOrders()
+    }
   }
 
   getOrderList = () => {
 
-    const { orderHistory ,refreshing} = this.state
+    const { orderHistory, refreshing } = this.state
     return (
       <SwipeListView
-      data={orderHistory}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
-        this.getOrders()
-      }} />}
-                
-                renderItem={(item) => {
-                  const orderdate = moment(item.item.createdAt).format('DD/MM/YYYY HH:mm')
+        data={orderHistory}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
+          this.getOrders()
+        }} />}
 
-                    return (
-                      <TouchableOpacity onPress={ () => this.props.navigation.navigate('OrderDetailsScreen', { type:'Order', data: item.item})} style={styles.card}>
-                      <View style={styles.row}>
-                        <Text style={styles.tital}>Your Order number :  </Text>
-                        <Text style={styles.subtitle}>{item.item.order_number}</Text>
-                      </View>
-                      <View style={styles.row}>
-                        <Text style={styles.tital}>Order Status:  </Text>
-                        <Text style={[styles.subtitle, { color: '#008000', fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{item.item.status}</Text>
-                      </View>
-                
-                      <View style={styles.row}>
-                        <Text style={styles.tital}>Total amount:  </Text>
-                        <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{(item.item.amount).toFixed(2)}</Text>
-                      </View>
-                
-                      <View style={[styles.row, { position: 'absolute', right: 10, bottom: 10, marginTop: 10 }]}>
-                        <Text style={styles.timedate}>{orderdate}</Text>
-                      </View>
-                
-                      <View>
-                
-                      </View>
-                    </TouchableOpacity>
-                    )
-                }}
-                renderHiddenItem={(item, rowMap) => {
-                    if(item.item.status == 'ORDER_PLACED'){
+        renderItem={(item) => {
+          const orderdate = moment(item.item.createdAt).format('DD/MM/YYYY HH:mm')
 
-                        return(
-                        <View style={[styles.rowBack, { marginTop: 4, backgroundColor: '#fff', alignSelf: 'flex-end' }]}>
-    
-                            <TouchableOpacity
-                                onPress={() => this.deleteOrder(item.item._id)}
-                                style={{ marginRight: 10 }}>
-                                <Icon name={'delete'} size={25} color={'red'} />
-                            </TouchableOpacity>
-                        </View>
-                    )
-                    }}}
-                rightOpenValue={-75}
-               
-            />
-     
+          return (
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('OrderDetailsScreen', { type: 'Order', data: item.item })} style={styles.card}>
+              <View style={styles.row}>
+                <Text style={styles.tital}>Your Order number :  </Text>
+                <Text style={styles.subtitle}>{item.item.order_number}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.tital}>Order Status:  </Text>
+                <Text style={[styles.subtitle, { color: '#008000', fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{item.item.status}</Text>
+              </View>
+
+              <View style={styles.row}>
+                <Text style={styles.tital}>Total amount:  </Text>
+                <Text style={[styles.subtitle, { fontFamily: Appstyle.fontFamily.semiBoldFont }]}>{(item.item.amount).toFixed(2)}</Text>
+              </View>
+
+              <View style={[styles.row, { position: 'absolute', right: 10, bottom: 10, marginTop: 10 }]}>
+                <Text style={styles.timedate}>{orderdate}</Text>
+              </View>
+
+              <View>
+
+              </View>
+            </TouchableOpacity>
+          )
+        }}
+        renderHiddenItem={(item, rowMap) => {
+          if (item.item.status == 'ORDER_PLACED') {
+
+            return (
+              <View style={[styles.rowBack, { marginTop: 4, backgroundColor: '#fff', alignSelf: 'flex-end' }]}>
+
+                <TouchableOpacity
+                  onPress={() => this.deleteOrder(item.item._id)}
+                  style={{ marginRight: 10 }}>
+                  <Icon name={'delete'} size={25} color={'red'} />
+                </TouchableOpacity>
+              </View>
+            )
+          }
+        }}
+        rightOpenValue={-75}
+
+      />
+
     )
   }
   BottomView = () => {
     return (
-        <View>
-            {
-                (this.state.fetchingStatus)
-                    ?
-                    <ActivityIndicator size="large" color="#000" style={{ marginLeft: 6 }} />
-                    :
-                    null
-            }
-        </View>
+      <View>
+        {
+          (this.state.fetchingStatus)
+            ?
+            <ActivityIndicator size="large" color="#000" style={{ marginLeft: 6 }} />
+            :
+            null
+        }
+      </View>
     )
-}
+  }
   render() {
     if (this.state.isShowData == true) {
-      if(this.state.isLoadingcategory == true){
+      if (this.state.isLoadingcategory == true) {
         return (
           <SkeletonPlaceholder>
-             <View style={styles.shopmainSkeleton}>
+            <View style={styles.shopmainSkeleton}>
               <View style={styles.shopCategorySkeleton} />
             </View>
             <View style={styles.shopmainSkeleton}>
@@ -228,7 +229,7 @@ class OrdersScreen extends Component {
             </View>
           </SkeletonPlaceholder>
         )
-      }else{
+      } else {
         return (
           <>
             {this.getOrderList()}
@@ -238,7 +239,8 @@ class OrdersScreen extends Component {
     } else {
       return (
         <View style={styles.emptyView}>
-          <Text style={[styles.text, { fontSize: 20 }]}>No Orders or transactions found.</Text>
+          <Image style={{ width: 300, height: 300, marginTop: -100 }} resizeMode={'contain'} source={require('../../../assets/images/orderempty.png')} />
+          <Text style={[styles.text, { fontSize: 20, marginTop:-50 }]}>You haven't placed any order yet!</Text>
           <TouchableOpacity style={[styles.footerContainer, { borderRadius: 5 }]} onPress={() => this.props.navigation.navigate("Home")}>
             <Text style={styles.footerbtn}>Continue Shopping</Text>
           </TouchableOpacity>
@@ -339,7 +341,7 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 10
   },
-  shopmainSkeleton:{
+  shopmainSkeleton: {
     flexDirection: "row", alignItems: "center"
   }, rowBack: {
     alignItems: 'center',
@@ -349,6 +351,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingLeft: 15,
     marginTop: 10
-},
+  },
 
 })

@@ -23,14 +23,11 @@ const dynamicStyles = colorScheme => {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      // backgroundColor: "rgba(0,0,0,.55)",
-      backgroundColor: '#e7e7e7',
-      borderRadius: 6,
-      borderColor: 'black',
-      borderWidth: 1
+      backgroundColor: "rgba(0,0,0,.55)",
+      borderRadius: 6
     },
     categoryText: {
-      color: "black",
+      color: "white",
       textAlign: "center",
       justifyContent: "center",
       opacity: 1.0,

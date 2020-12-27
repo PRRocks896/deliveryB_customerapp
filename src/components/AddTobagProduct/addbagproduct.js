@@ -11,13 +11,13 @@ const addToBagProduct = async (item, alreadyAddecart, color, size, quentity, sel
 
   let userid = await AsyncStorage.getItem('userId')
   if (userid !== null) {
-    console.log("On Add to bag function", color, size, quentity)
+    console.log("On Add to bag function", color, size, quentity, selectedshopID)
     let userid = await AsyncStorage.getItem('userId')
     let products = []
     let found;
     const getdata = await getbagproduct(userid)
     console.log("add to bag function", getdata)
-    if (getdata.data.data !== null) {
+    if (getdata.data.data !== null || getdata.data.data !== []) {
       found = getdata.data.data.some(i => i.products[0].product_id.id == item.productDetail._id)
       console.log("found==========", found)
 
@@ -39,7 +39,7 @@ const addToBagProduct = async (item, alreadyAddecart, color, size, quentity, sel
           products: products
         }
         const data = await addtobag(JSON.stringify(body))
-        // console.log("Add to bage response", data)
+        console.log("Add to bage response", data)
         const getdata = await getbagproduct(userid)
         if (getdata.success && getdata.data.data !== null) {
           EventRegister.emit('cartlength', getdata.data.data.length)

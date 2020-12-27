@@ -27,7 +27,9 @@ import { Header } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { checktype } from "../../../utils/utilis";
 const { width } = Dimensions.get("window");
+
 function ShopWiseProduct(props) {
+
 
     const colorScheme = useColorScheme();
     const styles = dynamicStyles(colorScheme);
@@ -44,6 +46,7 @@ function ShopWiseProduct(props) {
 
     useEffect(() => {
         getProducts()
+
     }, [])
     console.log("shopid===============================", props.navigation.state.params.shopid)
     const getProducts = async () => {
@@ -123,7 +126,7 @@ function ShopWiseProduct(props) {
                                     <Image style={styles.productCardImage} source={{ uri: item.item.serviceImage[0] }} />
                                 </View>
 
-                                <Text style={styles.productCardPrice}
+                                <Text style={[styles.productCardPrice, { textAlign: 'center' }]}
                                 >₹ {checktype(item.item.serviceDetail.price)}</Text>
                                 <Text style={styles.productCardDescription} numberOfLines={1}>
                                     {item.item.name}
@@ -134,7 +137,15 @@ function ShopWiseProduct(props) {
                         return (
                             <TouchableOpacity
                                 activeOpacity={0.7}
-                                onPress={() => [setproductModalData(item.item), setproductmodalVisible(true)]}
+                                onPress={() => [setproductModalData(item.item),
+                                props.navigation.navigate('ProductDetailsPageScreen',
+                                    {
+                                        appConfig: props.appConfig,
+                                        title: item.item.name,
+                                        clickproduct: item.item
+                                    })
+                                    //  setproductmodalVisible(true)
+                                ]}
                                 style={[styles.productCardConainer, { width: 0.41 * width }]}
                             >
                                 <View style={styles.productCardImageConainer}>
@@ -151,7 +162,7 @@ function ShopWiseProduct(props) {
                                     <Image style={styles.productCardImage} source={{ uri: item.item.productImage[0] }} />
                                 </View>
                                 <Text
-                                    style={styles.productCardPrice}
+                                    style={[styles.productCardPrice, { textAlign: 'center' }]}
                                 >₹ {checktype(item.item.productDetail.price)}</Text>
                                 <Text style={styles.productCardDescription} numberOfLines={1}>
                                     {item.item.name}
@@ -168,6 +179,8 @@ function ShopWiseProduct(props) {
             />
         )
     }
+
+
     return (
         <SafeAreaView style={styles.container}>
             <Header
@@ -179,15 +192,22 @@ function ShopWiseProduct(props) {
                         style={{ padding: 5, position: 'absolute', left: 3, top: -15 }}
                         onPress={() => props.navigation.goBack()} />
                 }
-                centerComponent={{ text:  props.navigation.state.params.shopname, style: { color: '#000' , fontSize:20} }}
+                centerComponent={{ text: props.navigation.state.params.shopname, style: { color: '#000', fontSize: 20 } }}
                 containerStyle={{
                     backgroundColor: '#fff',
                     justifyContent: 'space-around',
-                  }}
+                }}
             />
 
             <View style={styles.container}>
-                {displayAllProducts()}
+                {allProducts.length !== 0 ?
+                    displayAllProducts()
+                    :
+                    <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
+                    <Image style={{ width: 300, height: 300, marginTop: -100 }} resizeMode={'contain'} source={require('../../../../assets/images/no-product.jpg')} />
+      
+                    </View>
+                }
             </View>
             <ProductDetailModal
                 item={productModalData}
@@ -198,11 +218,11 @@ function ShopWiseProduct(props) {
                 onCancelPress={(modalVisible) => {
                     setproductmodalVisible(!modalVisible);
                     setquentity(1)
-                  }}
+                }}
                 appConfig={props.navigation.state.params.appConfig}
                 navigation={props.navigation}
                 quentityset={quentity}
-        onSetQuantity={(value) => setquentity(value)}
+                onSetQuantity={(value) => setquentity(value)}
             />
 
             <ServiceModelComponent
@@ -218,6 +238,5 @@ function ShopWiseProduct(props) {
     );
 
 }
-
 
 export default ShopWiseProduct;

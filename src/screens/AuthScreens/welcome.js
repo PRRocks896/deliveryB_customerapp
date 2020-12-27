@@ -113,13 +113,11 @@ class WelcomePage extends Component {
 
             }
             else {
-
                 let body = JSON.stringify({
                     mobile: dialcode + mobile,
                     password: password,
                     fcmToken: fcmToken
                 })
-
                 console.log("body=================", body)
                 const data = await signin(body);
                 console.log("sigin response", data)

@@ -5,6 +5,7 @@ import { useColorScheme } from "react-native-appearance";
 import { getshopeListbyType, getshopTypeList } from "../../../services/Shop";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Component } from "react";
 import Geolocation from 'react-native-geolocation-service';
 import getkmgoogleapi from "../../../services/Googleapi/googleapi";
@@ -16,7 +17,7 @@ class AllShopListScreen extends Component {
 
 
     static navigationOptions = ({ navigation, screenProps }) => {
-        console.log("navigation.state.params", navigation.state.params)
+
         // const currentTheme = AppStyles.navThemeConstants[screenProps.theme];
         return {
             title:
@@ -105,38 +106,45 @@ class AllShopListScreen extends Component {
         })
         const response = await getshopeListbyType(body, typeid)
         if (response.statusCode == 200) {
-
+            console.log("response=========", response)
+            if (response.data.list.length == 0) this.setState({ isLoading: false })
             let datares = response.data.list
-            datares.map(async (item) => {
+
+            var result = datares.map(function (el) {
+                var o = Object.assign({}, el);
+                o.time = '0';
+                return o;
+            })
+            result.map(async (item) => {
                 let data = `origins=${clat},${clong}&destinations=${item.shopLatitude},${item.shopLongitude}&key=AIzaSyAAyBoIK3-3psCrVDMpZCKj5zaMmDAPp0I`
                 let responseofgoogle = await getkmgoogleapi(data)
                 if (responseofgoogle.status == 'OK') {
                     let responsedata = responseofgoogle.rows[0].elements
                     if (responsedata !== 'ZERO_RESULTS') {
                         time = responsedata[0].duration.text
-                        if(time.split(' ')[1] == 'min' || time.split(' ')[1] == 'mins'){
+                        if (time.split(' ')[1] == 'min' || time.split(' ')[1] == 'mins') {
                             let mintime = time.split(' ')[0]
-                            let timemin = parseFloat(mintime) + 10 
-                            time = timemin + ' mins'
-                            console.log("added time in mins", time)
-                        } else if(time.split(' ')[1] == 'hour' || time.split(' ')[1] == 'hours'){
+                            let timemin = parseFloat(mintime) + 10
+                            item.time = timemin + ' mins'
+                            console.log("added time in mins", item.time)
+                        } else if (time.split(' ')[1] == 'hour' || time.split(' ')[1] == 'hours') {
                             let datatime = time.split(' ')[2]
-                            let hourtime =  parseFloat(datatime) + 10 
-                            time =  time.split(' ')[0] + ' ' + time.split(' ')[1] + ' ' +hourtime + ' ' + 'mins'  
-                            console.log("added time in hours",time)
+                            let hourtime = parseFloat(datatime) + 10
+                            item.time = time.split(' ')[0] + ' ' + time.split(' ')[1] + ' ' + hourtime + ' ' + 'mins'
+                            console.log("added time in hours", item.time)
+                        } else if (time.split(' ')[1] == 'day' || time.split(' ')[1] == 'days') {
+                            item.time = time
+                            console.log("added time in hours", item.time)
                         }
-                        var result = datares.map(function (el) {
-                            var o = Object.assign({}, el);
-                            o.time = time;
-                            return o;
-                        })
-                        this.setState({ shopArray: result, isLoading: false })
+                        this.setState({ isLoading: false })
                     }
                 }
             })
+            this.setState({ shopArray: result, isLoading: false })
         } else {
             this.setState({ isLoading: false })
         }
+
     }
 
     getshopkm(lat1, lon1, lat2, lon2, unit = 'K') {
@@ -176,7 +184,9 @@ class AllShopListScreen extends Component {
                 data={shopArray}
                 renderItem={(item) => {
                     return (
-                        <View style={[styless.card, { flexDirection: 'row', marginTop: 10 }]}>
+                        <TouchableOpacity
+                            onPress={() => this.props.navigation.navigate('ShopWiseProduct', { shopid: item.item._id, shopname: item.item.name })}
+                            style={[styless.card, { flexDirection: 'row', marginTop: 10 }]}>
                             <View style={{ flex: 3.5, justifyContent: 'center', alignItems: 'center' }}>
                                 {
                                     item.item.shopImage ?
@@ -196,11 +206,21 @@ class AllShopListScreen extends Component {
                                     }
                                 </View>
                                 <Text style={styless.shopAddress}> {item.item.shopAddress}  </Text>
-                                <Text style={[styless.shopkm,  {marginBottom:5}]}> Open:  {item.item.openingTime ? item.item.openingTime : '00'} : 00 - {item.item.closingTime ? item.item.closingTime : '00'} : 00</Text>
+                                {
+                                    item.item.openingTime ?
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Icon name='schedule' size={20} color={'#000'} style={{ marginTop: 3 }} />
+                                            <Text style={[styless.shopkm, { marginBottom: 5 }]}>  {item.item.openingTime ? `${item.item.openingTime} : 00  -  ` : null}  {item.item.closingTime ? `${item.item.closingTime} : 00` : null} </Text>
+                                        </View>
+                                        : null
+                                }
                                 <View style={styless.border} />
-                                <Text style={[styless.shopkm, { marginTop: 5 }]}> {this.getshopkm(customerLat, customerLong, item.item.shopLatitude, item.item.shopLongitude, 'K')} kms - {item.item.time} delivery  </Text>
+                                <View style={{ flexDirection: 'row', marginTop: 5 }}>
+                                    <Icon name='place' size={18} color={'#000'} style={{ marginTop: 5 }} />
+                                    <Text style={styless.shopkm}> {this.getshopkm(customerLat, customerLong, item.item.shopLatitude, item.item.shopLongitude, 'K')} kms - {item.item.time} delivery  </Text>
+                                </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     )
                 }}
             />
@@ -214,30 +234,31 @@ class AllShopListScreen extends Component {
         if (isLoading) {
             return (
                 <SkeletonPlaceholder>
-                <View style={styless.shopmainSkeleton}>
-                 <View style={styless.shopCategorySkeleton} />
-               </View>
-               <View style={styless.shopmainSkeleton}>
-                 <View style={styless.shopCategorySkeleton} />
-               </View>
-               <View style={styless.shopmainSkeleton}>
-                 <View style={styless.shopCategorySkeleton} />
-               </View>
-               <View style={styless.shopmainSkeleton}>
-                 <View style={styless.shopCategorySkeleton} />
-               </View>
-             </SkeletonPlaceholder>
+                    <View style={styless.shopmainSkeleton}>
+                        <View style={styless.shopCategorySkeleton} />
+                    </View>
+                    <View style={styless.shopmainSkeleton}>
+                        <View style={styless.shopCategorySkeleton} />
+                    </View>
+                    <View style={styless.shopmainSkeleton}>
+                        <View style={styless.shopCategorySkeleton} />
+                    </View>
+                    <View style={styless.shopmainSkeleton}>
+                        <View style={styless.shopCategorySkeleton} />
+                    </View>
+                </SkeletonPlaceholder>
 
             )
         } else {
             return (
 
-                <View style={ {marginLeft:5, marginRight:5, flex: 1}} >
+                <View style={{ marginLeft: 5, marginRight: 5, flex: 1 }} >
                     {
                         shopArray !== null && shopArray.length !== 0 ? this.displayShopNames()
                             :
-                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Text>{'No Shop Found'}</Text>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                <Image style={{ width: 300, height: 300, marginTop: -100 }} resizeMode={'contain'} source={require('../../../../assets/images/shopimg.png')} />
+                                <Text style={{ fontFamily: AppStyles.fontFamily.boldFont, fontSize: 20, marginTop: -50 }}>{'Currently No Shop Found'}</Text>
                             </View>
                     }
                 </View>
@@ -253,29 +274,29 @@ export default AllShopListScreen;
 
 
 const styless = StyleSheet.create({
-    shopmainSkeleton:{
+    shopmainSkeleton: {
         flexDirection: "row", alignItems: "center"
-      },
-      shopCategorySkeleton: {
+    },
+    shopCategorySkeleton: {
         width: 350,
         height: 80,
         margin: 20,
         borderRadius: 10
-      },
-      
-      shopTitle:{
+    },
+
+    shopTitle: {
         fontSize: 15,
         fontFamily: AppStyles.fontFamily.boldFont,
-      },
-      shopAddress:{
+    },
+    shopAddress: {
         fontSize: 15,
         fontFamily: AppStyles.fontFamily.regularFont,
-      },
-      shopkm:{
+    },
+    shopkm: {
         fontSize: 14,
-        fontFamily: AppStyles.fontFamily.regularFont,  
-      },
-      card: {
+        fontFamily: AppStyles.fontFamily.regularFont,
+    },
+    card: {
         marginTop: 5,
         backgroundColor: '#fff',
         padding: 5,
@@ -284,14 +305,14 @@ const styless = StyleSheet.create({
         borderColor: '#fff',
         borderRadius: 5,
         elevation: 5,
-      },
-      border:{
+    },
+    border: {
         borderWidth: 0.5,
         borderRadius: 1,
         flex: 1,
         height: 1,
         flexDirection: 'row',
         borderColor: '#e7e7e7',
-        
-      }
+
+    }
 })

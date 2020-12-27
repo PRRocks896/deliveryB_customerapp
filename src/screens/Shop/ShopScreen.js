@@ -61,11 +61,13 @@ class ShopScreen extends Component {
       )
     } else {
       return (
+        
         <Shop
           categories={this.state.category}
           navigation={this.props.navigation}
           appConfig={this.appConfig}
         />
+       
       );
     }
   }

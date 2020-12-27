@@ -67,12 +67,13 @@ function ViewAllProductsPage(props) {
   const [alreadyAddecart, setalreadyAddecart] = useState(false)
 
   const [quentity, setquentity] = useState(1)
+  
 
 
   useEffect(() => {
     getBestSellerProducts()
     getServices()
-
+   
     const backAction = () => {
       props.navigation.goBack()
 
@@ -84,6 +85,8 @@ function ViewAllProductsPage(props) {
     );
     return () => backHandler.remove()
   }, [])
+
+  
 
   /**
    * Service All Get
@@ -122,7 +125,18 @@ function ViewAllProductsPage(props) {
           return (
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => [setclickproduct(item.item), setmodalVisible(true)]}
+              onPress={() => [
+                setclickproduct(item.item),
+                // setmodalVisible(true)
+                props.navigation.navigate('ProductDetailsPageScreen',
+                  {
+                    appConfig: props.appConfig,
+                    title: item.item.name,
+                    clickproduct: item.item,
+                    appConfig: props.appConfig
+                  }
+                )
+              ]}
               style={[styles.productCardConainer, { width: 0.41 * width }]}
             >
               <View style={styles.productCardImageConainer}>
@@ -136,12 +150,12 @@ function ViewAllProductsPage(props) {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }} />
-                
 
-                <Image style={styles.productCardImage} source={ item.item.productImage.length == 0 ? require('../../../assets/images/logo.png') : { uri: item.item.productImage[0] }} />
+
+                <Image style={styles.productCardImage} source={item.item.productImage.length == 0 ? require('../../../assets/images/logo.png') : { uri: item.item.productImage[0] }} />
               </View>
               <Text
-                style={styles.productCardPrice}
+                style={[styles.productCardPrice, {textAlign:'center'}]}
               >₹ {checktype(item.item.productDetail.price)}</Text>
               <Text style={styles.productCardDescription} numberOfLines={1}>
                 {item.item.name}
@@ -168,7 +182,11 @@ function ViewAllProductsPage(props) {
           return (
             <TouchableOpacity
               style={[styles.productCardConainer, { width: 0.41 * width }]}
-              onPress={() => [setservice(item.item), setservicemodalVisible(true)]}
+              onPress={() => {
+                setservice(item.item),
+                 setservicemodalVisible(true)
+                
+                }}
             >
 
               <View style={styles.productCardImageConainer}>
@@ -182,11 +200,11 @@ function ViewAllProductsPage(props) {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }} />
-                  
-                <Image style={styles.productCardImage} source={ item.item.serviceImage.lenth == 0  ? require('../../../assets/images/logo.png') : { uri: item.item.serviceImage[0] }} />
+
+                <Image style={styles.productCardImage} source={item.item.serviceImage.lenth == 0 ? require('../../../assets/images/logo.png') : { uri: item.item.serviceImage[0] }} />
               </View>
 
-              <Text style={styles.productCardPrice}
+              <Text style={[styles.productCardPrice, {textAlign:'center'}]}
               >₹ {checktype(item.item.serviceDetail.price)}</Text>
               <Text style={styles.productCardDescription} numberOfLines={1}>
                 {item.item.name}
@@ -291,7 +309,7 @@ function ViewAllProductsPage(props) {
   if (key == 'service') {
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.container} >
+        <View style={[styles.container, {flex:1}]} >
           {
             serviceData.length ?
               <View>
@@ -302,8 +320,9 @@ function ViewAllProductsPage(props) {
 
               </View>
               :
-              <View style={{ marginBottom: 10 }}>
-                <Text>{'No Data Found...'}</Text>
+              <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
+              <Image style={{ width: 300, height: 300, marginTop: -100 }} resizeMode={'contain'} source={require('../../../assets/images/no-service.jpg')} />
+
               </View>
           }
         </View>
@@ -385,7 +404,7 @@ function ViewAllProductsPage(props) {
   } else if (key == 'BestSeller') {
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.unitContainer}>
+        <View style={[styles.unitContainer, {flex: 1}]}>
           {
             bestSellerProducts.length ?
 
@@ -394,8 +413,8 @@ function ViewAllProductsPage(props) {
               </View>
 
               :
-              <View style={{ marginBottom: 10 }}>
-                <Text>{'No Data Found...'}</Text>
+              <View style={{ flex:1, justifyContent:'center', alignItems:'center'}}>
+                 <Image style={{ width: 300, height: 300, marginTop: -100 }} resizeMode={'contain'} source={require('../../../assets/images/no-product.jpg')} />
               </View>
 
           }
