@@ -256,7 +256,7 @@ class DBoyOrdersScreen extends Component {
                         <View style={{ marginLeft: 10, marginRight: 10, marginTop: 10 }}>
                             <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_PLACED' })}>
                                 <View style={{ flex: 10 }}>
-                                    <Text style={styles.filtertxt}>{'BOOKING_PLACED'}</Text>
+                                    <Text style={styles.filtertxt}>{'BOOKING PLACED'}</Text>
                                 </View>
                                 {
                                     filter == 'BOOKING_PLACED' ?
@@ -268,7 +268,7 @@ class DBoyOrdersScreen extends Component {
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_ACCEPTED' })}>
                                 <View style={{ flex: 10 }}>
-                                    <Text style={styles.filtertxt}>{'BOOKING_ACCEPTED'}</Text>
+                                    <Text style={styles.filtertxt}>{'BOOKING ACCEPTED'}</Text>
                                 </View>
                                 {
                                     filter == 'BOOKING_ACCEPTED' ?
@@ -280,7 +280,7 @@ class DBoyOrdersScreen extends Component {
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_REJECTED' })}>
                                 <View style={{ flex: 10 }}>
-                                    <Text style={styles.filtertxt}>{'BOOKING_REJECTED'}</Text>
+                                    <Text style={styles.filtertxt}>{'BOOKING REJECTED'}</Text>
                                 </View>
                                 {
                                     filter == 'BOOKING_REJECTED' ?
@@ -304,7 +304,7 @@ class DBoyOrdersScreen extends Component {
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.row} onPress={() => this.setState({ filter: 'BOOKING_CANCELLED' })}>
                                 <View style={{ flex: 10 }}>
-                                    <Text style={styles.filtertxt}>{'BOOKING_CANCELLED'}</Text>
+                                    <Text style={styles.filtertxt}>{'BOOKING CANCELLED'}</Text>
                                 </View>
                                 {
                                     filter == 'BOOKING_CANCELLED' ?

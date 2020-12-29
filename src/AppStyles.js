@@ -79,6 +79,7 @@ const imageSet = {
   creditCard: require("../assets/images/credit-card.png"),
   box: require("../assets/images/box.png"),
   logoapp: require("../assets/images/logo.png"),
+  dboy:require('../assets/images/dboybutton.png')
 };
 
 const iconSet = {

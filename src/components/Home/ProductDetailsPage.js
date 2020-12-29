@@ -369,15 +369,7 @@ class ProductDetailsPageScreen extends Component {
                                     />
                                 </TouchableOpacity>
                             </View>
-
-
-
-
-
-
                         </View>
-
-
                     </ScrollView>
 
                     {

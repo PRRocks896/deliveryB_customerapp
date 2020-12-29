@@ -247,7 +247,7 @@ function DrawerContainer(appConfig) {
 
                 <DrawerItem
                   title="DELIVERY BOY HIRE"
-                  source={AppStyles.iconSet.orderDrawer}
+                  source={AppStyles.imageSet.dboy}
                   onPress={() => {
                     navigation.closeDrawer()
                     navigation.navigate("DeliveryboyhireddrawerScreen", { appConfig });
@@ -255,7 +255,7 @@ function DrawerContainer(appConfig) {
                 />
                 <DrawerItem
                   title="DELIVERY BOY BOOKING"
-                  source={AppStyles.iconSet.orderDrawer}
+                  source={AppStyles.imageSet.dboy}
                   onPress={() => {
                     navigation.closeDrawer()
                     navigation.navigate("DBoyOrdersScreen", { appConfig });

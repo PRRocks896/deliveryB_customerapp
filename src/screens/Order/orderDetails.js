@@ -189,7 +189,7 @@ class OrderDetailsScreen extends Component {
                                 <Text style={styles.tital}>  {item.item.productname}</Text>
                                 <Text style={styles.tital}>  {item.item.productdesc}</Text>
                                 {
-                                    data.status == 'ORDER_COMPLETED' ?
+                                    data.status == 'COMPLETED' ?
                                         <TouchableOpacity onPress={() => [this.setState({ dialogVisible: true, ratingProductId: item.item.productid }), this.getproductReview(item.item.productid)]}>
                                             <Text style={[styles.tital, { marginTop: 10, color: 'green' }]}>  {'Give Review'}</Text>
                                         </TouchableOpacity>
@@ -258,7 +258,7 @@ class OrderDetailsScreen extends Component {
         const { slottime } = this.state
         const data = this.props.navigation.state.params.data
 
-        console.log("data===========params", data)
+        console.log("data===========params", data.status)
 
         if (this.props.navigation.state.params.type == 'Order') {
             console.log("order", data.status)
@@ -366,7 +366,7 @@ class OrderDetailsScreen extends Component {
                                         </View>
 
                                         {
-                                            data.status == 'ORDER_COMPLETED' ?
+                                            data.status == 'COMPLETED' ?
                                                 <TouchableOpacity onPress={() => [this.setState({ shopdialogVisible: true, ratingShopid: data.shop_id._id }), this.getShopReview(data.shop_id._id)]}>
                                                     <Text style={[styles.tital, { marginTop: 10, color: 'green' }]}>  {'Give Review'}</Text>
                                                 </TouchableOpacity>
