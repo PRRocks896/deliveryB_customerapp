@@ -111,7 +111,9 @@ class ProductDetailsPageScreen extends Component {
      * Quentity Decrement
      */
     decrementItem = async () => {
-        if (props.quentityset !== 1) {
+
+        if (this.state.quentity !== 1) {
+            console.log("this.state.quentity", this.props.quentityset, this.state.quentity)
             this.setState({ quentity: this.state.quentity - 1 })
         }
     }
@@ -237,8 +239,8 @@ class ProductDetailsPageScreen extends Component {
         if(this.state.selectedShopid !== undefined || this.state.selectedShopid !== '' ) {
             console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",this.state.selectedShopid, selectedShopid)
             addToBagProduct(item, this.state.alreadyAddecart, color, size, qty, this.state.selectedShopid)
-            this.props.navigation.goBack()
             this.setState({ quentity: 1 })
+            this.props.navigation.goBack()
 
         }else {
             Alert.alert("", "Please Select Shop")
